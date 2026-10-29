@@ -115,7 +115,7 @@ export function EvidenceList({
             </span>
             <span className="kind">{e.kind}</span>
           </div>
-          <h5>{e.title}</h5>
+          <h4>{e.title}</h4>
           <p>{e.detail}</p>
           <div className="row between" style={{ marginTop: 5 }}>
             <span className="src">{e.source}</span>

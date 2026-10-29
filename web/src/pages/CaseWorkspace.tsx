@@ -492,7 +492,7 @@ export default function CaseWorkspace() {
                       <span className="eid">{h.id}</span>
                       <span className="chip cyan" style={{ fontSize: 8 }}>{(h.similarity * 100).toFixed(0)}% match</span>
                     </div>
-                    <h5>{h.cause}</h5>
+                    <h4>{h.cause}</h4>
                     <p>{h.notes}</p>
                     <div className="src">{h.line} · {h.batch} · resolved in {h.resolution_hours} h</div>
                   </div>

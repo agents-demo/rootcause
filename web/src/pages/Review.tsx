@@ -63,7 +63,7 @@ export default function Review() {
                     <span className="eid">{r.s.case.id}</span>
                     <StatusBadge status={r.status} />
                   </div>
-                  <h5>{r.s.case.defect_type}</h5>
+                  <h4>{r.s.case.defect_type}</h4>
                   <p>{r.s.case.part} · {fmtDateTime(r.s.case.detected_at)}</p>
                   <div className="row between mt8">
                     <span className="xsmall" style={{ color: "var(--amber-2)" }}>{r.top?.label}</span>
@@ -176,7 +176,7 @@ export default function Review() {
                 {current.s.evidence.filter((e) => inv.hypotheses[0]?.evidence_ids.includes(e.id)).slice(0, 5).map((e) => (
                   <div key={e.id} className="ev-card">
                     <div className="row between"><span className="eid">{e.id}</span><span className="kind">{e.kind}</span></div>
-                    <h5>{e.title}</h5>
+                    <h4>{e.title}</h4>
                     <p>{e.detail}</p>
                   </div>
                 ))}

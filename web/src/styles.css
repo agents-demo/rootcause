@@ -425,7 +425,7 @@ input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; bo
 .ev-card .top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .ev-card .eid { font: 8px/1 var(--mono); color: var(--amber); letter-spacing: 0.05em; }
 .ev-card .kind { font: 8px/1 var(--mono); color: var(--soft); text-transform: uppercase; }
-.ev-card h5 { font-size: 10.5px; font-weight: 600; margin-top: 4px; line-height: 1.35; color: var(--ink-2); }
+ .ev-card h4 { font-size: 10.5px; font-weight: 600; margin-top: 4px; line-height: 1.35; color: var(--ink-2); }
 .ev-card p { font-size: 9.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
 .ev-card .src { font-size: 8.5px; color: var(--soft); margin-top: 5px; font-family: var(--mono); }
 .strength { display: flex; gap: 2px; }

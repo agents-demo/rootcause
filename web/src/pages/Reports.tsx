@@ -148,7 +148,7 @@ ${report.status === "approved" ? '<div class="stamp">APPROVED</div>' : ""}
                     <span className="eid">{r.s.case.id}</span>
                     <StatusBadge status={r.rep?.status ?? "draft"} />
                   </div>
-                  <h5>{r.s.case.defect_type}</h5>
+                  <h4>{r.s.case.defect_type}</h4>
                   <p>{r.top?.label} · v{r.rep?.version}</p>
                 </button>
               ))}
