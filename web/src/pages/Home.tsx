@@ -118,7 +118,7 @@ export default function Home() {
           </div>
 
           <div className="now-lead">
-            <h1>{decisions.length ? `${decisions.length} decision${decisions.length === 1 ? "" : "s"} need a human.` : "Nothing needs a decision. Keep watching."}</h1>
+            <h2>{decisions.length ? `${decisions.length} decision${decisions.length === 1 ? "" : "s"} need a human.` : "Nothing needs a decision. Keep watching."}</h2>
             <p>
               {top
                 ? `The first is ${top.title.toLowerCase()} on ${top.metaValue === "case" ? "the case queue" : "the watchlist"}. RootCause has assembled the evidence; you decide.`
