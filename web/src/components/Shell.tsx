@@ -70,6 +70,8 @@ export function Shell({ children }: { children: ReactNode }) {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  aria-label={item.label}
+                  title={item.label}
                   className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
                 >
                   <Icon name={item.icon} />

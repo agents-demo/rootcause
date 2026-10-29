@@ -84,6 +84,7 @@ export function LineChart({
         onMouseMove={onMove}
         onMouseLeave={() => setHover(null)}
         role="img"
+        aria-label={`Chart: ${series.map((s) => s.name).join(", ")}`}
       >
         {ticks.map((t, i) => (
           <g key={i}>

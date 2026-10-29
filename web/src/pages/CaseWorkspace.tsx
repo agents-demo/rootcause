@@ -142,6 +142,7 @@ export default function CaseWorkspace() {
       </div>
 
       <div className="workspace">
+        <h2 className="sr-only">Case evidence, causes and decision</h2>
         {/* ---------------------------------------------------- left: evidence on the part */}
         <div className="col-stack">
           <div className="viewer">
