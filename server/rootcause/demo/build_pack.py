@@ -689,7 +689,7 @@ def build_housing() -> Scenario:
     ]
     chain = CausalChain(
         nodes=[
-            ChainNode(id="n1", label="Wet resin", detail="Dyer 3 regeneration overdue; moisture 0.151 %", kind="root"),
+            ChainNode(id="n1", label="Wet resin", detail="Dryer 3 regeneration overdue; moisture 0.151 %", kind="root"),
             ChainNode(id="n2", label="Hydrolysis", detail="Viscosity rise and gas generation during plastification", kind="mechanism"),
             ChainNode(id="n3", label="Short shot", detail="Last rib does not fill at 1120 bar", kind="failure"),
         ],

@@ -14,7 +14,7 @@ const LINE_COLORS: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const { pack, actionsDone, completeAction, acknowledge, alertsAck, setBaseline, audits, say } = useStore();
+  const { pack, actionsDone, completeAction, acknowledge, alertsAck, setBaseline, audits, say, baselines } = useStore();
   const [baselineLine, setBaselineLine] = useState("line-6");
   const [baselineValue, setBaselineValue] = useState("62");
 
@@ -257,6 +257,16 @@ export default function Dashboard() {
             </button>
             <div className="divider" />
             <div className="xsmall mono soft">Recorded at kick-off: {hours(pack.dashboard.baseline_hours_to_cause)} median · 4 lines</div>
+            {Object.keys(baselines).length > 0 && (
+              <div className="col gap4 mt8">
+                {Object.entries(baselines).map(([lineId, value]) => (
+                  <div key={lineId} className="row between">
+                    <span className="xsmall soft">{pack.lines.find((l) => l.id === lineId)?.name ?? lineId}</span>
+                    <span className="xsmall mono">{hours(value)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

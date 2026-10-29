@@ -97,6 +97,7 @@ GET  /api/connectors                 POST /api/connectors/{id}/test
 GET  /api/npu/health                 POST /api/detect
 POST /api/investigate/new            GET  /api/compliance/{pack}
 GET  /api/sharing                    POST /api/sharing
+GET  /api/tenants
 GET  /api/export/cases.csv
 ```
 

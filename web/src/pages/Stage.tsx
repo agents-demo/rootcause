@@ -24,6 +24,8 @@ export default function Stage() {
   const [detail, setDetail] = useState<Finding | null>(null);
   const [auto, setAuto] = useState(false);
   const benchRef = useRef<HTMLDivElement>(null);
+  const loupeRef = useRef<HTMLDivElement>(null);
+  const [lensHalf, setLensHalf] = useState(77);
   const autoRef = useRef<number | null>(null);
 
   const findings = scenario?.findings ?? [];
@@ -61,6 +63,7 @@ export default function Stage() {
     const ro = new ResizeObserver(() => {
       const r = el.getBoundingClientRect();
       setBenchSize({ w: r.width, h: r.height });
+      if (loupeRef.current) setLensHalf(loupeRef.current.offsetWidth / 2);
     });
     ro.observe(el);
     const r = el.getBoundingClientRect();
@@ -286,6 +289,7 @@ export default function Stage() {
 
           <div
             className="loupe"
+            ref={loupeRef}
             style={{ left: `${lens.x * 100}%`, top: `${lens.y * 100}%` }}
           >
             <img
@@ -294,7 +298,7 @@ export default function Stage() {
               style={{
                 width: benchSize.w * ZOOM,
                 height: benchSize.h * ZOOM,
-                transform: `translate(${-lens.x * benchSize.w * ZOOM + 77}px, ${-lens.y * benchSize.h * ZOOM + 77}px)`,
+                transform: `translate(${-lens.x * benchSize.w * ZOOM + lensHalf}px, ${-lens.y * benchSize.h * ZOOM + lensHalf}px)`,
               }}
             />
             <img
@@ -305,7 +309,7 @@ export default function Stage() {
                 height: benchSize.h * ZOOM,
                 opacity: depth / 100,
                 mixBlendMode: "screen",
-                transform: `translate(${-lens.x * benchSize.w * ZOOM + 77}px, ${-lens.y * benchSize.h * ZOOM + 77}px)`,
+                transform: `translate(${-lens.x * benchSize.w * ZOOM + lensHalf}px, ${-lens.y * benchSize.h * ZOOM + lensHalf}px)`,
               }}
             />
             <div className="cross" />

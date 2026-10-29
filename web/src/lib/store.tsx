@@ -68,6 +68,7 @@ interface StoreValue {
   rejected: (caseId: string) => string[];
   actionsDone: string[];
   alertsAck: string[];
+  baselines: Record<string, number>;
   accept: (caseId: string, hypothesisId: string, actor?: string) => void;
   reject: (caseId: string, hypothesisId: string, reason: string, actor?: string) => void;
   addManual: (caseId: string, label: string, summary: string, actor?: string) => void;
@@ -516,6 +517,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       rejected: (caseId) => state.rejected[caseId] ?? [],
       actionsDone: state.actionsDone,
       alertsAck: state.alertsAck,
+      baselines: state.baselines,
       accept,
       reject,
       addManual,
@@ -533,7 +535,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [
       pack, loading, error, live, scenarioFor, caseStatus, reportFor, investigation, audits,
       state.rejected, accept, reject, addManual, patchReport, approveReport, acknowledge,
-      completeAction, setSharing, setBaseline, reset, resetCase, toast, say, state.actionsDone, state.alertsAck,
+      completeAction, setSharing, setBaseline, reset, resetCase, toast, say, state.actionsDone, state.alertsAck, state.baselines,
     ],
   );
 
