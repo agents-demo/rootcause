@@ -41,6 +41,7 @@ from ..models import (
     SensorSeries,
     User,
 )
+from .proactive import build_proactive
 
 TZ = UTC
 ANCHOR = datetime(2026, 10, 22, 6, 42, tzinfo=TZ)
@@ -880,10 +881,11 @@ def build_pack() -> Pack:
         plan="Pilot · 90 days",
         lines=4,
         per_line_month_eur=2400,
+        proactive_per_line_eur=900,
         setup_fee_eur=28000,
         npu_option_eur=1150,
         npu_enabled=True,
-        mrr_eur=4 * 2400 + 1150,
+        mrr_eur=4 * 2400 + 4 * 900 + 1150,
         next_invoice=iso(ANCHOR + timedelta(days=18)),
         invoices=[
             {"id": "INV-2026-09", "date": iso(ANCHOR - timedelta(days=30)), "amount": 10750, "status": "paid"},
@@ -954,4 +956,5 @@ def build_pack() -> Pack:
         users=users,
         connector_library=connector_library,
         sharing=sharing,
+        proactive=build_proactive(),
     )

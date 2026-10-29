@@ -1,0 +1,7 @@
+[Unit]
+Description=RootCause proactive scan (one shot)
+After=rootcause.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/curl -fsS -X POST http://127.0.0.1:8000/api/proactive/scan -H 'Content-Type: application/json' -d '{"mode":"live"}'

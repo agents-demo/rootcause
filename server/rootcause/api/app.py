@@ -6,11 +6,14 @@ firewall. Every mutation writes an audit event. The AI never approves a cause.
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
 import json
+import os
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -44,9 +47,18 @@ from ..models import (
     RejectRequest,
     Report,
     ReportPatch,
+    RiskSignal,
     now_iso,
 )
 from ..npu.broker import broker_from_env
+from ..proactive import brief as brief_engine
+from ..proactive import containment, scheduler
+from ..proactive import metrics as proactive_metrics
+from ..proactive import notifications as notify
+from ..proactive import watch as watch_engine
+from ..proactive.privacy import sanitize_note
+from ..proactive.queue import OfflineQueue
+from ..research import predictive
 from ..tenancy import DEFAULT_TENANT, StoreRouter, current_tenant, set_tenant
 
 
@@ -77,6 +89,8 @@ class State:
     alerts_ack: set[str] = field(default_factory=set)
     sharing: dict[str, bool] = field(default_factory=dict)
     loaded: set[str] = field(default_factory=set)
+    research_result: dict[str, Any] | None = None
+    offline: OfflineQueue = field(default_factory=lambda: OfflineQueue(max_items=500))
 
     def _key(self, case_id: str) -> str:
         return f"{current_tenant()}::{case_id}"
@@ -160,10 +174,47 @@ def create_state() -> State:
     return rc
 
 
+async def _scheduler_loop(app: FastAPI) -> None:
+    """Optional in-process scheduler. In production, a systemd timer or the site orchestrator may
+    call the scan endpoint instead; the state and audit are identical."""
+    while True:
+        rc = getattr(app.state, "rc", None)
+        if rc:
+            try:
+                settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+                schedule = settings.get("schedule", {})
+                interval = max(1, int(schedule.get("interval_minutes", 15)))
+                if schedule.get("enabled") and not schedule.get("stop_switch"):
+                    existing = [_as_watch(w) for w in rc.store.list_watches()]
+                    result = scheduler.run_scan(
+                        pack=rc.pack,
+                        existing=existing,
+                        mode=schedule.get("mode", "shadow"),
+                        max_alerts=int(schedule.get("max_alerts_per_shift", 10)),
+                        coverage_floor=float(schedule.get("coverage_floor", 0.95)),
+                    )
+                    run = result["run"]
+                    rc.store.save_scan_run(run.model_dump(mode="json") if hasattr(run, "model_dump") else run)
+                    for candidate in result["candidates"]:
+                        rc.store.save_watch(candidate, actor="scheduler", action="watch.opened", detail=f"Scheduled scan opened {candidate['id']}")
+                await asyncio.sleep(interval * 60)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                await asyncio.sleep(60)
+        else:
+            await asyncio.sleep(5)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.rc = create_state()
+    background = None
+    if os.getenv("ROOTCAUSE_SCHEDULER", "0").lower() in {"1", "true", "yes"}:
+        background = asyncio.create_task(_scheduler_loop(app))
     yield
+    if background:
+        background.cancel()
     app.state.rc.store.close()
 
 
@@ -380,6 +431,21 @@ def approve(case_id: str, body: ApprovalRequest, request: Request) -> dict[str, 
     rc = state(request)
     s = rc.case_scenario(case_id)
     updated = rc.store.approve(case_id, actor=body.actor, scope=body.scope, note=body.note)
+    existing = {f["case_id"] for f in rc.store.list_followups()}
+    if case_id not in existing:
+        action = next((a for a in rc.pack["actions"] if a["case_id"] == case_id and a["status"] != "done"), None)
+        if action:
+            watch = next((w for w in rc.store.list_watches() if w.get("linked_case_id") == case_id), None)
+            follow = containment.followup_for(
+                followup_id=f"FU-{case_id.split('-')[-1]}",
+                case_id=case_id,
+                action_id=action["id"],
+                title=action["title"],
+                now=datetime.now().astimezone(),
+                days=30,
+                watch_id=watch["id"] if watch else None,
+            )
+            rc.store.save_followup(follow.model_dump(mode="json"), actor=body.actor, detail="Post-fix monitoring window opened")
     return {"case": updated, "investigation": rc.investigation(s)}
 
 
@@ -610,6 +676,551 @@ async def set_sharing(request: Request) -> dict[str, Any]:
     body = await request.json()
     rc.sharing[current_tenant()] = bool(body.get("enabled", False))
     return anonymised_sharing_payload([_as_scenario(s) for s in rc.pack["scenarios"]], enabled=rc.sharing[current_tenant()])
+
+
+@app.get("/api/proactive")
+def proactive(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    data = rc.pack["proactive"]
+    settings = rc.store.proactive_settings() or data["settings"]
+    watches = rc.store.list_watches()
+    watch_objs = []
+    for w in watches:
+        try:
+            watch_objs.append(_as_watch(w))
+        except Exception:
+            continue
+    followups = rc.store.list_followups()
+    metrics = proactive_metrics.compute_metrics(rc.pack, watch_objs, coverage=data["coverage"])
+    metrics.update(proactive_metrics.alert_fatigue(watch_objs))
+    metrics["coverage"] = proactive_metrics.coverage_status(data["coverage"], floor=settings.get("schedule", {}).get("coverage_floor", 0.95))
+    metrics["followups"] = proactive_metrics.followup_effectiveness([_as_followup(f) for f in followups])
+    metrics["store"] = rc.store.proactive_counts()
+    return {
+        "settings": settings,
+        "watches": watches,
+        "patterns": data["patterns"],
+        "recommendations": rc.store.list_recommendations(),
+        "scan_runs": rc.store.list_scan_runs(),
+        "briefs": data["briefs"],
+        "notifications": rc.store.list_notifications(),
+        "exposures": rc.store.list_exposures() or data["exposures"],
+        "followups": followups or data["followups"],
+        "coverage": data["coverage"],
+        "metrics": metrics,
+        "model_cards": data["model_cards"],
+        "research": rc.research_result or data["research"],
+        "health": scheduler.health(rc.store.list_scan_runs(), now=_demo_now(rc.pack), interval_minutes=int(settings.get("schedule", {}).get("interval_minutes", 15))),
+        "replay": scheduler.replay(rc.pack),
+        "tuning": proactive_metrics.threshold_tuning(watch_objs),
+        "queue": rc.offline.summary(),
+    }
+
+
+def _demo_now(pack: dict[str, Any]) -> datetime:
+    anchor = pack.get("meta", {}).get("anchor")
+    if anchor:
+        try:
+            return datetime.fromisoformat(anchor.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+    return datetime.now().astimezone()
+
+
+def _as_watch(data: dict[str, Any]):
+    from ..models import WatchCase
+
+    return WatchCase.model_validate(data)
+
+
+def _as_rec(data: dict[str, Any]):
+    from ..models import Recommendation
+
+    return Recommendation.model_validate(data)
+
+
+def _as_followup(data: dict[str, Any]):
+    from ..models import FollowUp
+
+    return FollowUp.model_validate(data)
+
+
+def _watch_or_404(rc: State, watch_id: str):
+    watch = rc.store.get_watch(watch_id)
+    if not watch:
+        raise HTTPException(404, f"watch {watch_id} not found")
+    return _as_watch(watch)
+
+
+@app.post("/api/proactive/near-miss")
+async def near_miss(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    now = datetime.now().astimezone()
+    note = sanitize_note(body.get("note", "Operator reported an unusual condition with no defective part."))
+    signal = RiskSignal(
+        id=f"NM-{now.strftime('%Y%m%d%H%M%S')}",
+        kind="near_miss",
+        at=now.replace(microsecond=0).isoformat(),
+        line_id=body.get("line_id", "line-6"),
+        parameter=body.get("parameter", "Operator observation"),
+        severity=body.get("severity", "warning"),
+        detail=note,
+    )
+    pattern = next((p for p in rc.pack["proactive"]["patterns"] if p["id"] == "P-SEAL"), rc.pack["proactive"]["patterns"][0])
+    watch = watch_engine.build_watch(
+        watch_id=f"W-NM-{now.strftime('%H%M%S')}",
+        signals=[signal],
+        pattern=pattern,
+        owner=body.get("actor", "M. Weber"),
+        now=now,
+    )
+    rc.store.save_watch(watch.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), action="watch.near_miss", detail=note)
+    return watch.model_dump(mode="json")
+
+
+@app.post("/api/proactive/scan")
+async def proactive_scan(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    data = rc.pack["proactive"]
+    settings = rc.store.proactive_settings() or data["settings"]
+    if settings.get("schedule", {}).get("stop_switch"):
+        raise HTTPException(409, "proactive scanning is stopped; start it before scanning")
+    existing = [_as_watch(w) for w in rc.store.list_watches()]
+    result = scheduler.run_scan(
+        pack=rc.pack,
+        existing=existing,
+        mode=body.get("mode", settings.get("schedule", {}).get("mode", "shadow")),
+        owner=body.get("owner", "M. Weber"),
+        max_alerts=int(settings.get("schedule", {}).get("max_alerts_per_shift", 10)),
+        coverage_floor=float(settings.get("schedule", {}).get("coverage_floor", 0.95)),
+    )
+    run = result["run"]
+    run_data = run.model_dump(mode="json") if hasattr(run, "model_dump") else run
+    rc.store.save_scan_run(run_data)
+    for candidate in result["candidates"]:
+        w = _as_watch(candidate)
+        rc.store.save_watch(candidate, actor="scheduler", action="watch.opened", detail=f"Open watch {w.id}: {w.title}")
+        notification = notify.build_notification(
+            notification_id=f"NT-{w.id}",
+            watch=w,
+            kind="watch",
+            severity=w.severity,
+            title=f"New watch: {w.title}",
+            detail=w.summary,
+            now=datetime.now().astimezone(),
+            role="quality_manager",
+        )
+        quiet = notify.in_quiet_hours(
+            datetime.now().astimezone(),
+            settings.get("schedule", {}).get("quiet_hours", "22:00-06:00"),
+        ) and w.severity not in {"critical", "high"}
+        if quiet:
+            notification.delivered = False
+            notification.detail += " Held for the quiet-hours digest."
+        if not notify.dedupe(rc.store.list_notifications(), notification):
+            rc.store._conn.execute(
+                "INSERT OR IGNORE INTO notifications(id, at, payload, read) VALUES (?,?,?,0)",
+                (notification.id, notification.at, json.dumps(notification.model_dump(mode="json"))),
+            )
+            rc.store._conn.commit()
+            notify.deliver_webhook(settings.get("schedule", {}).get("webhook_url", ""), notification.model_dump(mode="json"))
+    reopened = containment.recurrence_guard(
+        [_as_followup(f) for f in rc.store.list_followups()],
+        [_as_watch(w) for w in rc.store.list_watches()],
+    )
+    for follow in reopened:
+        rc.store.save_followup(follow.model_dump(mode="json"), actor="scheduler", detail="Recurrence guard reopened the follow-up")
+    return {"run": run_data, "signals": result["signals"], "opened": result["candidates"], "watchlist": rc.store.list_watches(), "reopened": [f.model_dump(mode="json") for f in reopened]}
+
+
+@app.get("/api/watch/{watch_id}")
+def watch_detail(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    watch = _watch_or_404(rc, watch_id)
+    data = rc.pack["proactive"]
+    pattern = next((p for p in data["patterns"] if p["id"] == watch.pattern_id), None)
+    card = next((c for c in data["model_cards"] if c["id"].lower().find(watch.pattern_id.lower().replace("p-", "")) >= 0), None)
+    recs = [r for r in rc.store.list_recommendations(watch_id)]
+    exposure = rc.store.get_exposure(watch_id) or next((e for e in data["exposures"] if e["watch_id"] == watch_id), None)
+    linked = None
+    if watch.linked_case_id:
+        linked = next((s["case"] for s in rc.pack["scenarios"] if s["case"]["id"] == watch.linked_case_id), None)
+    return {
+        "watch": watch.model_dump(),
+        "pattern": pattern,
+        "model_card": card,
+        "recommendations": recs,
+        "exposure": exposure,
+        "linked_case": linked,
+        "audits": rc.store.audits(watch_id, limit=30),
+        "notifications": [n for n in rc.store.list_notifications() if n.get("watch_id") == watch_id],
+    }
+
+
+@app.post("/api/watch/{watch_id}/triage")
+async def watch_triage(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watch = _watch_or_404(rc, watch_id)
+    watch = watch_engine.triage(watch, actor=body.get("actor", "M. Weber"), note=body.get("note", ""), now=datetime.now().astimezone())
+    rc.store.save_watch(watch.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), action="watch.triage", detail=body.get("note", "Triage started"))
+    return watch.model_dump()
+
+
+@app.post("/api/watch/{watch_id}/snooze")
+async def watch_snooze(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watch = _watch_or_404(rc, watch_id)
+    hours = int(body.get("hours", 4))
+    watch = watch_engine.snooze(watch, hours=hours, actor=body.get("actor", "M. Weber"))
+    rc.store.save_watch(watch.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), action="watch.snoozed", detail=f"Snoozed {hours} h")
+    return watch.model_dump()
+
+
+@app.post("/api/watch/{watch_id}/dismiss")
+async def watch_dismiss(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watch = _watch_or_404(rc, watch_id)
+    actor = body.get("actor", "M. Weber")
+    watch = watch_engine.dismiss(
+        watch, actor=actor, reason=body.get("reason", "Dismissed by engineer"),
+        now=datetime.now().astimezone(), operational=bool(body.get("operational", False)),
+    )
+    rc.store.add_watch_outcome(watch.model_dump(mode="json"), actor=actor, outcome=watch.outcome, reason=watch.outcome_reason)
+    return watch.model_dump()
+
+
+@app.post("/api/watch/{watch_id}/convert")
+async def watch_convert(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watch = _watch_or_404(rc, watch_id)
+    actor = body.get("actor", "M. Weber")
+    case_id = body.get("case_id") or watch.linked_case_id
+    if not case_id:
+        raise HTTPException(400, "case_id is required to convert a watch")
+    if not any(s["case"]["id"] == case_id for s in rc.pack["scenarios"]):
+        raise HTTPException(404, f"case {case_id} not found")
+    watch = watch_engine.convert(watch, case_id=case_id, actor=actor, reason=body.get("reason", "Risk converted to a defect case"), now=datetime.now().astimezone())
+    rc.store.add_watch_outcome(watch.model_dump(mode="json"), actor=actor, outcome="converted", reason=watch.outcome_reason)
+    return watch.model_dump()
+
+
+@app.post("/api/watch/{watch_id}/true-risk")
+async def watch_true_risk(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watch = _watch_or_404(rc, watch_id)
+    actor = body.get("actor", "M. Weber")
+    watch = watch_engine.true_risk(watch, actor=actor, reason=body.get("reason", "Confirmed risk"), now=datetime.now().astimezone())
+    rc.store.save_watch(watch.model_dump(mode="json"), actor=actor, action="watch.true_risk", detail=watch.outcome_reason)
+    return watch.model_dump()
+
+
+@app.post("/api/watch/{watch_id}/checks/{check_id}")
+def watch_check(watch_id: str, check_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    watch = _watch_or_404(rc, watch_id)
+    done = False
+    for check in watch.suggested_checks:
+        if check.id == check_id:
+            check.done = True
+            done = True
+    if not done:
+        raise HTTPException(404, "check not found")
+    rc.store.save_watch(watch.model_dump(mode="json"), actor="M. Weber", action="watch.check", detail=f"Completed check {check_id}")
+    return watch.model_dump()
+
+
+@app.post("/api/recommendations/{rec_id}/{action}")
+async def recommendation_action(rec_id: str, action: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    rec_data = next((r for r in rc.store.list_recommendations() if r["id"] == rec_id), None)
+    if not rec_data:
+        raise HTTPException(404, "recommendation not found")
+    rec = _as_rec(rec_data)
+    actor = body.get("actor", "M. Weber")
+    now = datetime.now().astimezone()
+    if action == "approve":
+        rec = containment.approve(rec, actor=actor, now=now)
+    elif action == "reject":
+        rec = containment.reject(rec, actor=actor, reason=body.get("reason", "Rejected by engineer"), now=now)
+    elif action == "execute":
+        if rec.status != "approved":
+            raise HTTPException(409, "approve the recommendation before executing it")
+        rec = containment.execute(rec, actor=actor, now=now)
+    elif action == "verify":
+        rec = containment.verify(rec, actor=actor, note=body.get("note", "Verified"), now=now)
+    else:
+        raise HTTPException(400, "unknown recommendation action")
+    rc.store.save_recommendation(rec.model_dump(mode="json"), actor=actor, action=f"recommendation.{action}", detail=f"{rec.title}: {rec.reason}".strip())
+    watch = rc.store.get_watch(rec.watch_id)
+    if watch:
+        rc.store.save_watch(watch, actor=actor, action="watch.recommendation", detail=f"{action}: {rec.title}")
+    return rec.model_dump()
+
+
+@app.post("/api/recommendations/{rec_id}/corrective-draft")
+def recommendation_corrective(rec_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    rec_data = next((r for r in rc.store.list_recommendations() if r["id"] == rec_id), None)
+    if not rec_data:
+        raise HTTPException(404, "recommendation not found")
+    rec = _as_rec(rec_data)
+    watch = _watch_or_404(rc, rec.watch_id)
+    return containment.corrective_draft(watch, rec)
+
+
+@app.post("/api/recommendations/{rec_id}/supplier-notice")
+def recommendation_supplier(rec_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    rec_data = next((r for r in rc.store.list_recommendations() if r["id"] == rec_id), None)
+    if not rec_data:
+        raise HTTPException(404, "recommendation not found")
+    rec = _as_rec(rec_data)
+    watch = _watch_or_404(rc, rec.watch_id)
+    exposure = next((e for e in rc.pack["proactive"]["exposures"] if e["watch_id"] == watch.id), None)
+    batch = exposure["batch_id"] if exposure else watch.linked_case_id or "unknown"
+    return {"notice": containment.supplier_notice(watch, batch, rec), "batch_id": batch}
+
+
+@app.get("/api/exposures/{watch_id}")
+def get_exposure(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    exposure = rc.store.get_exposure(watch_id) or next((e for e in rc.pack["proactive"]["exposures"] if e["watch_id"] == watch_id), None)
+    if not exposure:
+        raise HTTPException(404, "no exposure recorded for this watch")
+    return exposure
+
+
+@app.post("/api/exposures/{watch_id}/release")
+async def release_exposure(watch_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    exposure = rc.store.get_exposure(watch_id) or next((e for e in rc.pack["proactive"]["exposures"] if e["watch_id"] == watch_id), None)
+    if not exposure:
+        raise HTTPException(404, "no exposure recorded for this watch")
+    status = body.get("status", "contained")
+    if status not in {"open", "contained", "released"}:
+        raise HTTPException(400, "status must be open, contained or released")
+    exposure["status"] = status
+    for part in exposure["parts"]:
+        if status == "released":
+            part["containment"] = "release"
+    rc.store.save_exposure(exposure, actor=body.get("actor", "M. Weber"), detail=f"{status}: {body.get('note', '')}")
+    return exposure
+
+
+@app.get("/api/exposures/{watch_id}/export.csv")
+def export_exposure(watch_id: str, request: Request) -> Response:
+    rc = state(request)
+    exposure = rc.store.get_exposure(watch_id) or next((e for e in rc.pack["proactive"]["exposures"] if e["watch_id"] == watch_id), None)
+    if not exposure:
+        raise HTTPException(404, "no exposure recorded for this watch")
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["serial", "part", "line", "shift", "customer", "status", "containment"])
+    for p in exposure["parts"]:
+        writer.writerow([p["serial"], p["part"], p["line_id"], p["shift"], p["customer"], p["status"], p["containment"]])
+    return Response(buf.getvalue(), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={watch_id}-exposure.csv"})
+
+
+@app.get("/api/briefs")
+def get_briefs(request: Request) -> list[dict[str, Any]]:
+    return state(request).pack["proactive"]["briefs"]
+
+
+@app.post("/api/briefs/generate")
+async def generate_brief(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    watches = [_as_watch(w) for w in rc.store.list_watches()]
+    followups = rc.store.list_followups() or rc.pack["proactive"]["followups"]
+    brief = brief_engine.build_brief(
+        brief_id=f"BRIEF-{datetime.now().strftime('%Y%m%d%H%M')}",
+        watches=watches,
+        cases=rc.store.list_cases(),
+        actions=rc.pack["actions"],
+        followups=followups,
+        coverage=rc.pack["proactive"]["coverage"],
+        lines=body.get("line_ids", ["line-6", "line-2", "line-4", "line-3"]),
+        shift=body.get("shift", "B"),
+        now=datetime.now().astimezone(),
+    )
+    return {"brief": brief.model_dump(mode="json"), "markdown": brief_engine.render_brief_markdown(brief)}
+
+
+@app.get("/api/notifications")
+def get_notifications(request: Request, unread_only: bool = False) -> list[dict[str, Any]]:
+    return state(request).store.list_notifications(unread_only=unread_only)
+
+
+@app.post("/api/notifications/{notification_id}/read")
+def read_notification(notification_id: str, request: Request) -> dict[str, Any]:
+    state(request).store.mark_notification(notification_id, True)
+    return {"id": notification_id, "read": True}
+
+
+@app.post("/api/notifications/read-all")
+def read_all_notifications(request: Request) -> dict[str, Any]:
+    store = state(request).store
+    for n in store.list_notifications(unread_only=True):
+        store.mark_notification(n["id"], True)
+    return {"read": True}
+
+
+@app.get("/api/proactive/metrics")
+def get_proactive_metrics(request: Request) -> dict[str, Any]:
+    return proactive(request)["metrics"]
+
+
+@app.get("/api/proactive/coverage")
+def get_coverage(request: Request) -> list[dict[str, Any]]:
+    return state(request).pack["proactive"]["coverage"]
+
+
+@app.get("/api/proactive/health")
+def get_health(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    health = scheduler.health(rc.store.list_scan_runs(), now=_demo_now(rc.pack), interval_minutes=int(settings.get("schedule", {}).get("interval_minutes", 15)))
+    health["queue"] = rc.offline.summary()
+    return health
+
+
+@app.get("/api/proactive/replay")
+def get_replay(request: Request) -> dict[str, Any]:
+    return scheduler.replay(state(request).pack)
+
+
+@app.post("/api/proactive/settings")
+async def save_settings(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    current = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    if "schedule" in body:
+        current["schedule"] = {**current.get("schedule", {}), **body["schedule"]}
+    if "thresholds" in body:
+        current["thresholds"] = body["thresholds"]
+    rc.store.save_proactive_settings(current, actor=body.get("actor", "Site Admin"), detail="Proactive settings updated")
+    return current
+
+
+@app.post("/api/proactive/thresholds/{threshold_id}")
+async def update_threshold(threshold_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    found = None
+    for rule in settings.get("thresholds", []):
+        if rule["id"] == threshold_id:
+            rule.update({k: body[k] for k in ("limit", "direction", "active", "notes", "version") if k in body})
+            rule["version"] = body.get("version", rule.get("version", "v1"))
+            found = rule
+    if not found:
+        raise HTTPException(404, "threshold not found")
+    rc.store.save_proactive_settings(settings, actor=body.get("actor", "Site Admin"), detail=f"Threshold {threshold_id} updated; requires engineer sign-off")
+    return found
+
+
+@app.post("/api/proactive/patterns/{pattern_id}")
+async def review_pattern(pattern_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    pattern = next((p for p in rc.pack["proactive"]["patterns"] if p["id"] == pattern_id), None)
+    if not pattern:
+        raise HTTPException(404, "pattern not found")
+    status = body.get("status", pattern["status"])
+    if status not in {"active", "shadow", "retired"}:
+        raise HTTPException(400, "status must be active, shadow or retired")
+    pattern["status"] = status
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    settings.setdefault("pattern_reviews", []).append(
+        {
+            "at": datetime.now().astimezone().replace(microsecond=0).isoformat(),
+            "pattern_id": pattern_id,
+            "status": status,
+            "actor": body.get("actor", "Quality manager"),
+            "note": body.get("note", ""),
+        }
+    )
+    rc.store.save_proactive_settings(settings, actor=body.get("actor", "Quality manager"), detail=f"Pattern {pattern_id} set to {status}")
+    return pattern
+
+
+@app.post("/api/proactive/stop")
+async def stop_proactive(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    settings["schedule"]["stop_switch"] = True
+    settings["schedule"]["enabled"] = False
+    reason = body.get("reason", "Stopped by site admin")
+    settings.setdefault("stop_reasons", []).append(f"{datetime.now().isoformat()}: {reason}")
+    rc.store.save_proactive_settings(settings, actor=body.get("actor", "Site Admin"), detail=f"Proactive scanning stopped: {reason}")
+    return settings["schedule"]
+
+
+@app.post("/api/proactive/start")
+def start_proactive(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    settings["schedule"]["stop_switch"] = False
+    settings["schedule"]["enabled"] = True
+    rc.store.save_proactive_settings(settings, actor="Site Admin", detail="Proactive scanning started")
+    return settings["schedule"]
+
+
+@app.post("/api/proactive/webhook/test")
+async def test_webhook(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    settings = rc.store.proactive_settings() or rc.pack["proactive"]["settings"]
+    url = body.get("url") or settings.get("schedule", {}).get("webhook_url", "")
+    return {"url": url, "result": notify.deliver_webhook(url, {"event": "rootcause.test", "site": "werk-sued"}, secret=body.get("secret", ""))}
+
+
+@app.get("/api/proactive/research")
+def get_research(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    return rc.research_result or rc.pack["proactive"]["research"]
+
+
+@app.post("/api/proactive/research/run")
+def run_research(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    y, baseline, model, _ = predictive.synthetic_events()
+    result = predictive.run(
+        rc.pack["proactive"]["research"]["question"], y, baseline, model, 14, 34, 8.0
+    )
+    rc.research_result = result.as_dict()
+    return rc.research_result
+
+
+@app.post("/api/followups/{followup_id}/verify")
+async def verify_followup(followup_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    rows = rc.store.list_followups()
+    row = next((f for f in rows if f["id"] == followup_id), None)
+    if not row:
+        raise HTTPException(404, "follow-up not found")
+    follow = containment.effectiveness(
+        _as_followup(row),
+        parameter_returned=bool(body.get("parameter_returned", False)),
+        defect_rate_delta=float(body.get("defect_rate_delta", 0)),
+        recurrence_watch_id=body.get("recurrence_watch_id"),
+    )
+    rc.store.save_followup(follow.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), detail=follow.note)
+    return follow.model_dump(mode="json")
 
 
 @app.get("/api/export/cases.csv")

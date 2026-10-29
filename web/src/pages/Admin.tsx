@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { eur, fmtDate } from "../lib/engine";
 import { Icon } from "../components/Icon";
@@ -59,6 +60,7 @@ export default function Admin() {
         actions={
           <>
             <span className="chip green"><span className="dot live" /> Pilot · day 34</span>
+            <Link className="btn sm" to="/proactive">Proactive controls <Icon name="gauge" size={12} /></Link>
             <button className="btn sm" onClick={() => say("Site settings saved")}><Icon name="check" size={12} /> Save</button>
           </>
         }
@@ -171,6 +173,7 @@ export default function Admin() {
             <div className="panel-head"><h3>Subscription</h3><span className="sub">{pack.billing.plan}</span></div>
             <div className="panel-body">
               <div className="row between" style={{ padding: "5px 0" }}><span className="small muted">Per line / month</span><span className="small mono">{eur(pack.billing.per_line_month_eur)}</span></div>
+              <div className="row between" style={{ padding: "5px 0" }}><span className="small muted">Proactive add-on / line</span><span className="small mono">{eur(pack.billing.proactive_per_line_eur ?? 0)}</span></div>
               <div className="row between" style={{ padding: "5px 0" }}><span className="small muted">Lines</span><span className="small mono">{pack.billing.lines}</span></div>
               <div className="row between" style={{ padding: "5px 0" }}><span className="small muted">Setup + integration</span><span className="small mono">{eur(pack.billing.setup_fee_eur)}</span></div>
               <div className="divider" />
@@ -184,7 +187,7 @@ export default function Admin() {
               <div className="divider" />
               <div className="row between">
                 <span className="strong">Monthly recurring</span>
-                <span className="mono strong">{eur(pack.billing.lines * pack.billing.per_line_month_eur + (npu ? pack.billing.npu_option_eur : 0))}</span>
+                <span className="mono strong">{eur(pack.billing.lines * pack.billing.per_line_month_eur + pack.billing.lines * (pack.billing.proactive_per_line_eur ?? 0) + (npu ? pack.billing.npu_option_eur : 0))}</span>
               </div>
               <div className="mt12">
                 <div className="xsmall soft mb8" style={{ letterSpacing: ".12em", textTransform: "uppercase" }}>Invoices</div>

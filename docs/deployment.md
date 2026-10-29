@@ -57,6 +57,7 @@ or serve only the API and put the static app on the factory web server.
 | `ROOTCAUSE_NPU_ENDPOINT` | `http://127.0.0.1:7788` | Broker URL |
 | `ROOTCAUSE_NPU_MODEL` | `defect.om` | Compiled model name |
 | `ROOTCAUSE_NPU_SIMULATE` | unset | `1` runs the broker service on CPU for a laptop demo |
+| `ROOTCAUSE_SCHEDULER` | `0` | `1` runs the in-process proactive scan loop; otherwise a systemd timer/orchestrator calls `/api/proactive/scan` |
 
 ## Backups
 

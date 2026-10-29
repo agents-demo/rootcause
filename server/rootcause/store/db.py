@@ -70,6 +70,54 @@ CREATE TABLE IF NOT EXISTS baselines (
   baseline_hours REAL NOT NULL,
   recorded_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS watch_cases (
+  id TEXT PRIMARY KEY,
+  status TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS watch_outcomes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  at TEXT NOT NULL,
+  watch_id TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  actor TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS recommendations (
+  id TEXT PRIMARY KEY,
+  watch_id TEXT NOT NULL,
+  status TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS scan_runs (
+  id TEXT PRIMARY KEY,
+  at TEXT NOT NULL,
+  payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS followups (
+  id TEXT PRIMARY KEY,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS notifications (
+  id TEXT PRIMARY KEY,
+  at TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  read INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS exposures (
+  id TEXT PRIMARY KEY,
+  watch_id TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS proactive_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
@@ -121,6 +169,42 @@ class Store:
             cur.execute(
                 "INSERT OR IGNORE INTO baselines(line_id, baseline_hours, recorded_at) VALUES (?,?,?)",
                 (line["id"], pack["dashboard"]["baseline_hours_to_cause"], utcnow()),
+            )
+        proactive = pack.get("proactive") or {}
+        for w in proactive.get("watches", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO watch_cases(id, status, payload, updated_at) VALUES (?,?,?,?)",
+                (w["id"], w["status"], json.dumps(w), w["updated_at"]),
+            )
+        for r in proactive.get("recommendations", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO recommendations(id, watch_id, status, payload, updated_at) VALUES (?,?,?,?,?)",
+                (r["id"], r["watch_id"], r["status"], json.dumps(r), utcnow()),
+            )
+        for s in proactive.get("scan_runs", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO scan_runs(id, at, payload) VALUES (?,?,?)",
+                (s["id"], s["at"], json.dumps(s)),
+            )
+        for f in proactive.get("followups", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO followups(id, payload, updated_at) VALUES (?,?,?)",
+                (f["id"], json.dumps(f), utcnow()),
+            )
+        for e in proactive.get("exposures", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO exposures(id, watch_id, payload, updated_at) VALUES (?,?,?,?)",
+                (e["id"], e["watch_id"], json.dumps(e), utcnow()),
+            )
+        for n in proactive.get("notifications", []):
+            cur.execute(
+                "INSERT OR IGNORE INTO notifications(id, at, payload, read) VALUES (?,?,?,?)",
+                (n["id"], n["at"], json.dumps(n), 1 if n.get("read") else 0),
+            )
+        if proactive.get("settings"):
+            cur.execute(
+                "INSERT OR IGNORE INTO proactive_settings(key, value) VALUES (?,?)",
+                ("settings", json.dumps(proactive["settings"])),
             )
         self._conn.commit()
 
@@ -300,3 +384,157 @@ class Store:
     def baselines(self) -> list[dict[str, Any]]:
         rows = self._conn.execute("SELECT * FROM baselines").fetchall()
         return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------ proactive
+    def list_watches(self) -> list[dict[str, Any]]:
+        rows = self._conn.execute("SELECT payload FROM watch_cases ORDER BY updated_at DESC").fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def get_watch(self, watch_id: str) -> dict[str, Any] | None:
+        row = self._conn.execute("SELECT payload FROM watch_cases WHERE id=?", (watch_id,)).fetchone()
+        return json.loads(row["payload"]) if row else None
+
+    def save_watch(self, watch: dict[str, Any], *, actor: str, action: str, detail: str) -> None:
+        self._conn.execute(
+            "INSERT INTO watch_cases(id, status, payload, updated_at) VALUES (?,?,?,?) "
+            "ON CONFLICT(id) DO UPDATE SET status=excluded.status, payload=excluded.payload, updated_at=excluded.updated_at",
+            (watch["id"], watch["status"], json.dumps(watch), utcnow()),
+        )
+        self._audit(actor, action, watch["id"], detail)
+        self._conn.commit()
+
+    def add_watch_outcome(self, watch: dict[str, Any], *, actor: str, outcome: str, reason: str) -> None:
+        self._conn.execute(
+            "INSERT INTO watch_outcomes(at, watch_id, outcome, actor, reason, payload) VALUES (?,?,?,?,?,?)",
+            (utcnow(), watch["id"], outcome, actor, reason, json.dumps(watch)),
+        )
+        self.save_watch(watch, actor=actor, action="watch.outcome", detail=f"{outcome}: {reason}")
+        self._conn.commit()
+
+    def watch_outcomes(self, watch_id: str | None = None) -> list[dict[str, Any]]:
+        if watch_id:
+            rows = self._conn.execute(
+                "SELECT * FROM watch_outcomes WHERE watch_id=? ORDER BY at DESC", (watch_id,)
+            ).fetchall()
+        else:
+            rows = self._conn.execute("SELECT * FROM watch_outcomes ORDER BY at DESC").fetchall()
+        return [
+            {
+                "id": r["id"],
+                "at": r["at"],
+                "watch_id": r["watch_id"],
+                "outcome": r["outcome"],
+                "actor": r["actor"],
+                "reason": r["reason"],
+            }
+            for r in rows
+        ]
+
+    def list_recommendations(self, watch_id: str | None = None) -> list[dict[str, Any]]:
+        if watch_id:
+            rows = self._conn.execute(
+                "SELECT payload FROM recommendations WHERE watch_id=? ORDER BY updated_at DESC", (watch_id,)
+            ).fetchall()
+        else:
+            rows = self._conn.execute("SELECT payload FROM recommendations ORDER BY updated_at DESC").fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def save_recommendation(self, rec: dict[str, Any], *, actor: str, action: str, detail: str) -> None:
+        self._conn.execute(
+            "INSERT INTO recommendations(id, watch_id, status, payload, updated_at) VALUES (?,?,?,?,?) "
+            "ON CONFLICT(id) DO UPDATE SET status=excluded.status, payload=excluded.payload, updated_at=excluded.updated_at",
+            (rec["id"], rec["watch_id"], rec["status"], json.dumps(rec), utcnow()),
+        )
+        self._audit(actor, action, rec["id"], detail)
+        self._conn.commit()
+
+    def list_scan_runs(self, limit: int = 20) -> list[dict[str, Any]]:
+        rows = self._conn.execute("SELECT payload FROM scan_runs ORDER BY at DESC LIMIT ?", (limit,)).fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def save_scan_run(self, run: dict[str, Any]) -> None:
+        self._conn.execute(
+            "INSERT OR REPLACE INTO scan_runs(id, at, payload) VALUES (?,?,?)",
+            (run["id"], run["at"], json.dumps(run)),
+        )
+        self._conn.commit()
+
+    def list_followups(self) -> list[dict[str, Any]]:
+        rows = self._conn.execute("SELECT payload FROM followups ORDER BY updated_at DESC").fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def save_followup(self, followup: dict[str, Any], *, actor: str = "system", detail: str = "") -> None:
+        self._conn.execute(
+            "INSERT INTO followups(id, payload, updated_at) VALUES (?,?,?) "
+            "ON CONFLICT(id) DO UPDATE SET payload=excluded.payload, updated_at=excluded.updated_at",
+            (followup["id"], json.dumps(followup), utcnow()),
+        )
+        self._audit(actor, "followup.updated", followup["id"], detail or followup.get("status", ""))
+        self._conn.commit()
+
+    def list_notifications(self, unread_only: bool = False) -> list[dict[str, Any]]:
+        query = "SELECT payload, read FROM notifications"
+        params: tuple[Any, ...] = ()
+        if unread_only:
+            query += " WHERE read=0"
+        query += " ORDER BY at DESC"
+        rows = self._conn.execute(query, params).fetchall()
+        out = []
+        for r in rows:
+            item = json.loads(r["payload"])
+            item["read"] = bool(r["read"])
+            out.append(item)
+        return out
+
+    def mark_notification(self, notification_id: str, read: bool = True) -> None:
+        row = self._conn.execute("SELECT payload FROM notifications WHERE id=?", (notification_id,)).fetchone()
+        if not row:
+            return
+        item = json.loads(row["payload"])
+        item["read"] = read
+        self._conn.execute(
+            "UPDATE notifications SET read=?, payload=? WHERE id=?",
+            (1 if read else 0, json.dumps(item), notification_id),
+        )
+        self._conn.commit()
+
+    def list_exposures(self) -> list[dict[str, Any]]:
+        rows = self._conn.execute("SELECT payload FROM exposures ORDER BY updated_at DESC").fetchall()
+        return [json.loads(r["payload"]) for r in rows]
+
+    def get_exposure(self, watch_id: str) -> dict[str, Any] | None:
+        row = self._conn.execute("SELECT payload FROM exposures WHERE watch_id=?", (watch_id,)).fetchone()
+        return json.loads(row["payload"]) if row else None
+
+    def save_exposure(self, exposure: dict[str, Any], *, actor: str, detail: str) -> None:
+        self._conn.execute(
+            "INSERT INTO exposures(id, watch_id, payload, updated_at) VALUES (?,?,?,?) "
+            "ON CONFLICT(id) DO UPDATE SET payload=excluded.payload, updated_at=excluded.updated_at",
+            (exposure["id"], exposure["watch_id"], json.dumps(exposure), utcnow()),
+        )
+        self._audit(actor, "exposure.updated", exposure["watch_id"], detail)
+        self._conn.commit()
+
+    def proactive_settings(self) -> dict[str, Any] | None:
+        row = self._conn.execute("SELECT value FROM proactive_settings WHERE key='settings'").fetchone()
+        return json.loads(row["value"]) if row else None
+
+    def save_proactive_settings(self, settings: dict[str, Any], *, actor: str, detail: str) -> None:
+        self._conn.execute(
+            "INSERT INTO proactive_settings(key, value) VALUES ('settings', ?) "
+            "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+            (json.dumps(settings),),
+        )
+        self._audit(actor, "proactive.settings", "settings", detail)
+        self._conn.commit()
+
+    def proactive_counts(self) -> dict[str, Any]:
+        total = self._conn.execute("SELECT COUNT(*) c FROM watch_cases").fetchone()["c"]
+        useful = self._conn.execute("SELECT COUNT(*) c FROM watch_outcomes WHERE outcome IN ('converted','true_risk')").fetchone()["c"]
+        outcomes = self._conn.execute("SELECT COUNT(*) c FROM watch_outcomes").fetchone()["c"]
+        return {
+            "watches": total,
+            "useful": useful,
+            "outcomes": outcomes,
+            "precision": round(useful / outcomes, 3) if outcomes else 0.0,
+        }

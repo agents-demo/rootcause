@@ -27,6 +27,11 @@ the evidence and drafts the quality report. **The engineer stays in charge.**
 | **Case workspace** | Photos, bounding box, machine window, batch, maintenance, similar cases, agent trace, ranked causes and factor weights. | [`/#/cases/RC-0417`](https://jiuwendemos.github.io/rootcause/#/cases/RC-0417) |
 | **Engineer review** | The phone version. Accept, reject with a reason, add a cause the AI missed. | [`/#/review`](https://jiuwendemos.github.io/rootcause/#/review) |
 | **Reports** | Inline editing, a version per save, sign-off, print/PDF, HTML, Markdown and Word-compatible export. | [`/#/reports`](https://jiuwendemos.github.io/rootcause/#/reports) |
+| **Watchlist** | Risk before the next defect: signals, watch cases, owner, SLA, precision and coverage. | [`/#/watchlist`](https://jiuwendemos.github.io/rootcause/#/watchlist) |
+| **Watch case** | Why now, evidence, suggested checks, human-approved containment, exposure and genealogy. | [`/#/watch/W-1042`](https://jiuwendemos.github.io/rootcause/#/watch/W-1042) |
+| **Shift brief** | Generated start-of-shift risks, open cases, actions due and “fixed but not verified”. | [`/#/brief`](https://jiuwendemos.github.io/rootcause/#/brief) |
+| **Alert center** | Deduplicated notifications, quiet hours, digest, signed webhook and alert fatigue. | [`/#/alerts`](https://jiuwendemos.github.io/rootcause/#/alerts) |
+| **Proactive control room** | Precision, triage, coverage, thresholds, pattern governance, follow-through and the research gate. | [`/#/proactive`](https://jiuwendemos.github.io/rootcause/#/proactive) |
 | **Pilot dashboard** | Time to cause, accuracy, scrap prevented, top causes, trends, corrective actions and baselines. | [`/#/dashboard`](https://jiuwendemos.github.io/rootcause/#/dashboard) |
 | **Connectors** | OPC-UA, Modbus, camera feeds, MES CSV, CMMS, SAP QM/PM, FactoryTalk, S7 and a generic REST path. | [`/#/connectors`](https://jiuwendemos.github.io/rootcause/#/connectors) |
 | **Admin** | Lines, users, billing, NPU option, compliance evidence maps and opt-in cross-factory sharing. | [`/#/admin`](https://jiuwendemos.github.io/rootcause/#/admin) |
@@ -193,6 +198,8 @@ rootcause/
     store/         SQLite case store, audit triggers, report versions, corrections
     npu/           local + Ascend broker and broker service
     training/      fine-tuning and OM export path
+    proactive/     signals · scheduler · watch cases · containment · notifications · brief · metrics · queue · privacy
+    research/      gated predictive-research harness
     demo/          deterministic demo pack builder
     data/          generated demo pack (committed for offline builds)
     tests/         ranking, detection, store immutability, API flows
@@ -248,9 +255,11 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
 - **Production scale** — connector library, multi-line, multi-factory, compliance evidence maps,
   billing/admin and opt-in anonymised sharing are in the product UI and API; legal/compliance
   validation remains a customer-specific exercise.
-- **Proactive quality** — planned, not built. Phase 4 adds risk signals, watch cases,
-  human-approved containment recommendations and shift briefs: proactive about risk before the next
-  defect, never predictive control of the line. See [Phase 4](docs/roadmap.md#phase-4--proactive-quality-planned).
+- **Proactive quality** — built. Phase 4 adds risk signals, watch cases, human-approved containment
+  recommendations, shift briefs and a proactive control room: proactive about risk before the next
+  defect, never predictive control of the line. See [Phase 4](docs/roadmap.md#phase-4--proactive-quality-implemented).
+- **Predictive research** — gated and currently stopped. The harness is in `server/rootcause/research`
+  and the result is recorded in the app. See [predictive research](docs/predictive-research.md).
 
 The full checklist, with the evidence for each item, is in [docs/roadmap.md](docs/roadmap.md).
 The original concept and stage plan are in `agentic-desk`; this repository is the implementation.

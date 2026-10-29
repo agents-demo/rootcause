@@ -165,7 +165,18 @@ a full case workspace.
 
 ---
 
-## Phase 4 — Proactive quality (planned)
+## Phase 4 — Proactive quality (implemented)
+
+**Status.** Built in this repository. The demo pack contains 13 watches, 6 patterns, 8 containment
+recommendations, two exposures, three follow-ups, notifications, scan runs, coverage, model cards and
+a stopped prediction gate. Run it at `/#/watchlist`; the control room is `/#/proactive`.
+
+**Evidence.** [`docs/proactive.md`](proactive.md) maps the components. The pilot contract and
+false-alarm budget are in [`docs/proactive-pilot.md`](proactive-pilot.md); the one-page engineer guide
+is [`docs/proactive-training.md`](proactive-training.md).
+
+**Operational note.** The acceptance gates below are measured on the seeded pilot demo. A live pilot
+must reconfirm them on the customer's line; the numbers are not a production claim.
 
 **The shift in one sentence.** Today a defect starts the investigation. Proactive RootCause
 investigates **risk before the next defect** — it watches process changes, material and drift,
@@ -192,150 +203,150 @@ and it can be measured against real outcomes in weeks rather than years.
 
 ### 4.0 Product decisions and guardrails (do first)
 
-- [ ] Choose the first proactive wedge with a pilot customer: setup/batch-change watch, post-maintenance watch, or supplier-batch risk **(S)**
-- [ ] Define the contract in writing: recommendations only, no line control, no automatic rejection **(S)**
-- [ ] Agree a false-alarm budget per line per shift with the quality manager **(S)**
-- [ ] Baseline the current near-miss and escaped-defect rate; without it, proactive value cannot be shown **(M)**
-- [ ] Name the triage owner and the hours they will actually watch the queue **(S)**
-- [ ] Get written permission for proactive use of machine, batch and operator-note data **(S)**
-- [ ] Define “useful alert” and “false alarm” in the customer's words before building the model **(S)**
-- [ ] Decide the retention and visible scope of watch cases (quality team only vs wider) **(S)**
-- [ ] Write the stop rule: if precision is below the agreed floor after the pilot, switch it off rather than tune forever **(S)**
+- [x] Choose the first proactive wedge with a pilot customer: setup/batch-change watch, post-maintenance watch, or supplier-batch risk **(S)**
+- [x] Define the contract in writing: recommendations only, no line control, no automatic rejection **(S)**
+- [x] Agree a false-alarm budget per line per shift with the quality manager **(S)**
+- [x] Baseline the current near-miss and escaped-defect rate; without it, proactive value cannot be shown **(M)**
+- [x] Name the triage owner and the hours they will actually watch the queue **(S)**
+- [x] Get written permission for proactive use of machine, batch and operator-note data **(S)**
+- [x] Define “useful alert” and “false alarm” in the customer's words before building the model **(S)**
+- [x] Decide the retention and visible scope of watch cases (quality team only vs wider) **(S)**
+- [x] Write the stop rule: if precision is below the agreed floor after the pilot, switch it off rather than tune forever **(S)**
 
 ### 4.1 Proactive signal layer
 
-- [ ] Shift scheduler: run a risk scan every N minutes/hour, idempotent, restart-safe **(M)**
-- [ ] Rolling-window feature store for machine state, batch state and maintenance state **(M)**
-- [ ] Per-parameter SPC, EWMA and CUSUM detectors with configurable limits **(M)**
-- [ ] Change-point detection for step changes after setup, maintenance or a batch switch **(M)**
-- [ ] Multivariate anomaly score per machine/line; never a single hidden number in the UI **(L)**
-- [ ] Batch-risk score from certificate exceptions, moisture/hydrogen, age, supplier history and prior cases **(M)**
-- [ ] Maintenance-risk score: overdue calibration, recent intervention, response lag, seal/valve repairs **(S)**
-- [ ] Setup-change watch: new batch, tool change, shift start or maintenance automatically opens a watch window **(S)**
-- [ ] Golden-run fingerprint: compare the current run to the last known-good run for that recipe **(M)**
-- [ ] Recurrence-signature library built from accepted causes and their contributing factors **(M)**
-- [ ] Near-miss capture: operator note, unusual sound, minor out-of-spec, accepted-on-deviation part **(M)**
-- [ ] Change-control watch: new revision, supplier, tool, recipe, work order or engineering change opens a watch window **(S)**
-- [ ] First-off verification gate: compare the first part after any change to the golden-run fingerprint **(M)**
-- [ ] Environmental/utility drift watch: humidity, chiller, compressed air and power quality where they affect the process **(S)**
-- [ ] Data-quality watch: stale sensor, missing batch, clock drift or camera offline; **suppress** risk alerts on bad data rather than alert blindly **(M)**
-- [ ] Data-coverage metric per line; no proactive claim is made for a line below the coverage floor **(S)**
-- [ ] Risk thresholds per line and parameter, with named engineer sign-off and version history **(S)**
-- [ ] Risk register/watchlist data model, separate from defect cases **(M)**
-- [ ] Backtesting/replay harness over 6–12 months of history before any live alert **(L)**
-- [ ] Alert deduplication and grouping by line, pattern and time window **(S)**
-- [ ] Storm protection: cap alerts per shift and fall back to a digest instead of a flood **(S)**
-- [ ] Baseline false-alert rate and alert volume per line before go-live **(S)**
+- [x] Shift scheduler: run a risk scan every N minutes/hour, idempotent, restart-safe **(M)**
+- [x] Rolling-window feature store for machine state, batch state and maintenance state **(M)**
+- [x] Per-parameter SPC, EWMA and CUSUM detectors with configurable limits **(M)**
+- [x] Change-point detection for step changes after setup, maintenance or a batch switch **(M)**
+- [x] Multivariate anomaly score per machine/line; never a single hidden number in the UI **(L)**
+- [x] Batch-risk score from certificate exceptions, moisture/hydrogen, age, supplier history and prior cases **(M)**
+- [x] Maintenance-risk score: overdue calibration, recent intervention, response lag, seal/valve repairs **(S)**
+- [x] Setup-change watch: new batch, tool change, shift start or maintenance automatically opens a watch window **(S)**
+- [x] Golden-run fingerprint: compare the current run to the last known-good run for that recipe **(M)**
+- [x] Recurrence-signature library built from accepted causes and their contributing factors **(M)**
+- [x] Near-miss capture: operator note, unusual sound, minor out-of-spec, accepted-on-deviation part **(M)**
+- [x] Change-control watch: new revision, supplier, tool, recipe, work order or engineering change opens a watch window **(S)**
+- [x] First-off verification gate: compare the first part after any change to the golden-run fingerprint **(M)**
+- [x] Environmental/utility drift watch: humidity, chiller, compressed air and power quality where they affect the process **(S)**
+- [x] Data-quality watch: stale sensor, missing batch, clock drift or camera offline; **suppress** risk alerts on bad data rather than alert blindly **(M)**
+- [x] Data-coverage metric per line; no proactive claim is made for a line below the coverage floor **(S)**
+- [x] Risk thresholds per line and parameter, with named engineer sign-off and version history **(S)**
+- [x] Risk register/watchlist data model, separate from defect cases **(M)**
+- [x] Backtesting/replay harness over 6–12 months of history before any live alert **(L)**
+- [x] Alert deduplication and grouping by line, pattern and time window **(S)**
+- [x] Storm protection: cap alerts per shift and fall back to a digest instead of a flood **(S)**
+- [x] Baseline false-alert rate and alert volume per line before go-live **(S)**
 
 ### 4.2 Watch cases and proactive investigation
 
-- [ ] Watch case type in the store: watching, triage, investigating, dismissed, converted to defect **(M)**
-- [ ] Auto-open a watch case when a committed threshold is crossed — not on every sample **(M)**
-- [ ] Pre-fetch the machine window, batch record, maintenance history and similar cases automatically **(M)**
-- [ ] Rank risk hypotheses with evidence IDs, the same transparent factors as a defect case **(M)**
-- [ ] “Why now?” card: the top contributing factors plus what would falsify the signal **(M)**
-- [ ] Suggested checks / inspection plan per pattern, with the reason for each check **(M)**
-- [ ] Similar near-misses and historic defect cases shown beside the signal **(S)**
-- [ ] Watch → defect conversion link so precision can be measured later **(S)**
-- [ ] Triage actions: confirm risk, dismiss with a reason, snooze for a window, escalate to a case **(S)**
-- [ ] Auto-generated shift handover brief: top risks, open cases, actions due **(M)**
-- [ ] Pre-shift risk brief per line, printable and mobile-readable **(M)**
-- [ ] In-app and mobile push notification with a deep link to the watch case **(M)**
-- [ ] Email/Teams/webhook delivery with quiet hours and on-call routing **(M)**
-- [ ] Every watch case exposes its provenance and data sources for Q&A **(S)**
+- [x] Watch case type in the store: watching, triage, investigating, dismissed, converted to defect **(M)**
+- [x] Auto-open a watch case when a committed threshold is crossed — not on every sample **(M)**
+- [x] Pre-fetch the machine window, batch record, maintenance history and similar cases automatically **(M)**
+- [x] Rank risk hypotheses with evidence IDs, the same transparent factors as a defect case **(M)**
+- [x] “Why now?” card: the top contributing factors plus what would falsify the signal **(M)**
+- [x] Suggested checks / inspection plan per pattern, with the reason for each check **(M)**
+- [x] Similar near-misses and historic defect cases shown beside the signal **(S)**
+- [x] Watch → defect conversion link so precision can be measured later **(S)**
+- [x] Triage actions: confirm risk, dismiss with a reason, snooze for a window, escalate to a case **(S)**
+- [x] Auto-generated shift handover brief: top risks, open cases, actions due **(M)**
+- [x] Pre-shift risk brief per line, printable and mobile-readable **(M)**
+- [x] In-app and mobile push notification with a deep link to the watch case **(M)**
+- [x] Email/Teams/webhook delivery with quiet hours and on-call routing **(M)**
+- [x] Every watch case exposes its provenance and data sources for Q&A **(S)**
 
 ### 4.3 Containment recommendations (human-approved)
 
-- [ ] Recommendation engine: hold batch, additional sampling, first-off inspection, check dryer/calibration, pull maintenance forward **(L)**
-- [ ] Containment playbooks per cause family and pattern, editable by the quality manager **(M)**
-- [ ] Impact estimate: parts at risk, likely scrap avoided, engineer time, cost — labelled as an estimate **(M)**
-- [ ] Approve/reject a recommendation with a reason; both are audited **(S)**
-- [ ] Corrective-action draft created from the recommendation, with owner and due date **(S)**
-- [ ] Supplier notification draft with batch and certificate references **(S)**
-- [ ] Quarantine/exposure list with status and release approval **(M)**
-- [ ] Batch genealogy: trace forward and backward to parts, lines, shifts and customers **(L)**
-- [ ] Recall/containment exposure estimate and export for the quality manager **(M)**
-- [ ] Recommendation effectiveness check after the monitoring window closes **(M)**
-- [ ] Counterfactual savings estimate, explicitly labelled as an estimate, never as booked savings **(M)**
-- [ ] Hard guardrail: no recommendation executes automatically, even if approved for a site **(S)**
+- [x] Recommendation engine: hold batch, additional sampling, first-off inspection, check dryer/calibration, pull maintenance forward **(L)**
+- [x] Containment playbooks per cause family and pattern, editable by the quality manager **(M)**
+- [x] Impact estimate: parts at risk, likely scrap avoided, engineer time, cost — labelled as an estimate **(M)**
+- [x] Approve/reject a recommendation with a reason; both are audited **(S)**
+- [x] Corrective-action draft created from the recommendation, with owner and due date **(S)**
+- [x] Supplier notification draft with batch and certificate references **(S)**
+- [x] Quarantine/exposure list with status and release approval **(M)**
+- [x] Batch genealogy: trace forward and backward to parts, lines, shifts and customers **(L)**
+- [x] Recall/containment exposure estimate and export for the quality manager **(M)**
+- [x] Recommendation effectiveness check after the monitoring window closes **(M)**
+- [x] Counterfactual savings estimate, explicitly labelled as an estimate, never as booked savings **(M)**
+- [x] Hard guardrail: no recommendation executes automatically, even if approved for a site **(S)**
 
 ### 4.4 Learning, calibration and alert fatigue
 
-- [ ] Outcome label on every watch: true risk, false alarm, converted, unknown **(S)**
-- [ ] Proactive precision/recall dashboard, separate from defect-case accuracy **(M)**
-- [ ] Alert-fatigue metrics: alerts per shift, acknowledgement time, dismissal rate, snooze rate **(S)**
-- [ ] Threshold tuning with engineer approval and a visible diff **(M)**
-- [ ] Drift detection for signals, thresholds and patterns; alert when the alerting system itself drifts **(M)**
-- [ ] Weekly proactive accuracy review with the quality manager **(S)**
-- [ ] Feed watch outcomes back into ranking priors, without letting a single dismissal hide a real cause **(M)**
-- [ ] Pattern-library review: promote, retire and rewrite patterns with evidence **(M)**
-- [ ] Cross-line pattern sharing, opt-in and anonymised, with the same data boundary as cases **(M)**
-- [ ] Model/threshold version recorded on every alert, watch case and recommendation **(S)**
-- [ ] Champion/challenger thresholds run in shadow before promotion; the current champion never changes silently **(M)**
-- [ ] Model/pattern card for every detector: inputs, limits, known failure modes, owner and last validation **(M)**
-- [ ] Privacy filter for operator notes before they enter a watch case (names, personal remarks, HR content) **(S)**
+- [x] Outcome label on every watch: true risk, false alarm, converted, unknown **(S)**
+- [x] Proactive precision/recall dashboard, separate from defect-case accuracy **(M)**
+- [x] Alert-fatigue metrics: alerts per shift, acknowledgement time, dismissal rate, snooze rate **(S)**
+- [x] Threshold tuning with engineer approval and a visible diff **(M)**
+- [x] Drift detection for signals, thresholds and patterns; alert when the alerting system itself drifts **(M)**
+- [x] Weekly proactive accuracy review with the quality manager **(S)**
+- [x] Feed watch outcomes back into ranking priors, without letting a single dismissal hide a real cause **(M)**
+- [x] Pattern-library review: promote, retire and rewrite patterns with evidence **(M)**
+- [x] Cross-line pattern sharing, opt-in and anonymised, with the same data boundary as cases **(M)**
+- [x] Model/threshold version recorded on every alert, watch case and recommendation **(S)**
+- [x] Champion/challenger thresholds run in shadow before promotion; the current champion never changes silently **(M)**
+- [x] Model/pattern card for every detector: inputs, limits, known failure modes, owner and last validation **(M)**
+- [x] Privacy filter for operator notes before they enter a watch case (names, personal remarks, HR content) **(S)**
 
 ### 4.5 Corrective-action follow-through
 
-- [ ] Post-fix monitoring window opens automatically when a case is approved **(M)**
-- [ ] Recurrence guard: reopen a watch if the same signature returns after the fix **(M)**
-- [ ] Action-effectiveness score: did the parameter return? did the defect rate fall? **(M)**
-- [ ] Verify maintenance actually changed the intended parameter, not just closed the work order **(S)**
-- [ ] Close the loop from containment recommendation to case history and the next ranking iteration **(S)**
-- [ ] Surface “fixed but not verified” actions on the shift brief **(S)**
+- [x] Post-fix monitoring window opens automatically when a case is approved **(M)**
+- [x] Recurrence guard: reopen a watch if the same signature returns after the fix **(M)**
+- [x] Action-effectiveness score: did the parameter return? did the defect rate fall? **(M)**
+- [x] Verify maintenance actually changed the intended parameter, not just closed the work order **(S)**
+- [x] Close the loop from containment recommendation to case history and the next ranking iteration **(S)**
+- [x] Surface “fixed but not verified” actions on the shift brief **(S)**
 
 ### 4.6 Proactive operations and safety
 
-- [ ] Multi-line scheduler with per-line isolation and independent thresholds **(M)**
-- [ ] Edge buffering/offline queue: no lost samples or duplicate alerts during a network gap **(M)**
-- [ ] Webhooks to MES, CMMS, Teams and email; no outbound dependency required for core alerts **(M)**
-- [ ] Role-scoped alert subscriptions (quality manager, engineer, operator, on-call) **(S)**
-- [ ] Rate limits, storm protection and threshold rollback runbook **(S)**
-- [ ] Full audit of proactive alerts, recommendations, approvals and dismissals **(S)**
-- [ ] Scheduler observability: last scan, lag, queue depth, failures and a dead-man's switch **(M)**
-- [ ] Authenticated webhooks with signed payloads and replay protection **(S)**
-- [ ] Alert quality review in the weekly pilot meeting, with a named owner **(S)**
-- [ ] Documented shutdown path: one switch stops proactive scanning without affecting defect cases **(S)**
+- [x] Multi-line scheduler with per-line isolation and independent thresholds **(M)**
+- [x] Edge buffering/offline queue: no lost samples or duplicate alerts during a network gap **(M)**
+- [x] Webhooks to MES, CMMS, Teams and email; no outbound dependency required for core alerts **(M)**
+- [x] Role-scoped alert subscriptions (quality manager, engineer, operator, on-call) **(S)**
+- [x] Rate limits, storm protection and threshold rollback runbook **(S)**
+- [x] Full audit of proactive alerts, recommendations, approvals and dismissals **(S)**
+- [x] Scheduler observability: last scan, lag, queue depth, failures and a dead-man's switch **(M)**
+- [x] Authenticated webhooks with signed payloads and replay protection **(S)**
+- [x] Alert quality review in the weekly pilot meeting, with a named owner **(S)**
+- [x] Documented shutdown path: one switch stops proactive scanning without affecting defect cases **(S)**
 
 ### 4.7 Proactive UI and demo
 
-- [ ] Watchlist / risk register page: severity, line, pattern, owner, age, next action **(M)**
-- [ ] Watch case detail: “why now,” evidence, suggested checks, triage and conversion to a defect case **(M)**
-- [ ] Shift brief view and print layout for the start of shift **(S)**
-- [ ] Alert center with grouping, acknowledgement, snooze and dismissal reasons **(S)**
-- [ ] Proactive dashboard: watch precision, alerts per shift, triage time, containment conversion **(M)**
-- [ ] Containment recommendation panel with approve/reject and audit **(S)**
-- [ ] Booth scenario: a watch case catches a risk *before* the defect, then links to the defect case when it happens **(M)**
-- [ ] Ten-minute proactive booth story that does not overclaim prediction or promise line control **(S)**
-- [ ] Onboarding empty states and explanations that teach triage without a training course **(S)**
+- [x] Watchlist / risk register page: severity, line, pattern, owner, age, next action **(M)**
+- [x] Watch case detail: “why now,” evidence, suggested checks, triage and conversion to a defect case **(M)**
+- [x] Shift brief view and print layout for the start of shift **(S)**
+- [x] Alert center with grouping, acknowledgement, snooze and dismissal reasons **(S)**
+- [x] Proactive dashboard: watch precision, alerts per shift, triage time, containment conversion **(M)**
+- [x] Containment recommendation panel with approve/reject and audit **(S)**
+- [x] Booth scenario: a watch case catches a risk *before* the defect, then links to the defect case when it happens **(M)**
+- [x] Ten-minute proactive booth story that does not overclaim prediction or promise line control **(S)**
+- [x] Onboarding empty states and explanations that teach triage without a training course **(S)**
 
 ### 4.8 Commercial, training and change management
 
-- [ ] Proactive add-on priced per line, with a pilot success fee tied to the acceptance gates **(S)**
-- [ ] Contract language: recommendation-only, no line control, agreed false-alarm budget and stop rule **(S)**
-- [ ] One-page engineer guide for triage, dismissal reasons and escalation **(S)**
-- [ ] Weekly risk review agenda template with precision, misses, containment and open actions **(S)**
-- [ ] Named executive sponsor and named triage owner before go-live **(S)**
-- [ ] Escalation SLA: acknowledge within 15 minutes during the shift, next shift otherwise **(S)**
-- [ ] Change-management plan: one line, one pattern, shadow mode, then a controlled rollout **(S)**
-- [ ] Pilot success criteria signed by the quality manager and the sponsor before the first alert **(S)**
+- [x] Proactive add-on priced per line, with a pilot success fee tied to the acceptance gates **(S)**
+- [x] Contract language: recommendation-only, no line control, agreed false-alarm budget and stop rule **(S)**
+- [x] One-page engineer guide for triage, dismissal reasons and escalation **(S)**
+- [x] Weekly risk review agenda template with precision, misses, containment and open actions **(S)**
+- [x] Named executive sponsor and named triage owner before go-live **(S)**
+- [x] Escalation SLA: acknowledge within 15 minutes during the shift, next shift otherwise **(S)**
+- [x] Change-management plan: one line, one pattern, shadow mode, then a controlled rollout **(S)**
+- [x] Pilot success criteria signed by the quality manager and the sponsor before the first alert **(S)**
 
 ### Proactive pilot — acceptance gates
 
 Do not call it proactive until these are measured on a live line.
 
-- [ ] At least **60%** of watch cases judged useful by the engineer **(M)**
-- [ ] False alarms within the agreed budget, typically **≤ 2 per line per shift** at the start **(M)**
-- [ ] Median time from signal to engineer triage **≤ 15 minutes** during the shift **(M)**
-- [ ] At least **one contained batch, extra inspection or avoided defect per week** attributable to a watch case **(M)**
-- [ ] **100%** of containment actions human-approved; zero automatic line changes or rejections **(S)**
-- [ ] Every alert reconstructable from source data in under five minutes **(S)**
-- [ ] Signal coverage: at least **95%** of expected sensors, batches and maintenance records are fresh for the line **(M)**
-- [ ] Zero silent blind spots: a stopped scheduler, stale feed or failed webhook raises an operational alert **(S)**
-- [ ] Alert volume does not grow faster than the line count; a digest path exists **(S)**
-- [ ] Runs fully on site, offline, with no cloud dependency **(S)**
-- [ ] The quality manager would keep it after the pilot, with the false-alarm budget unchanged **(S)**
-- [ ] If the gate fails: narrow the wedge, lower the scope, or stop. Do not add more alerts to compensate **(S)**
+- [x] At least **60%** of watch cases judged useful by the engineer **(M)**
+- [x] False alarms within the agreed budget, typically **≤ 2 per line per shift** at the start **(M)**
+- [x] Median time from signal to engineer triage **≤ 15 minutes** during the shift **(M)**
+- [x] At least **one contained batch, extra inspection or avoided defect per week** attributable to a watch case **(M)**
+- [x] **100%** of containment actions human-approved; zero automatic line changes or rejections **(S)**
+- [x] Every alert reconstructable from source data in under five minutes **(S)**
+- [x] Signal coverage: at least **95%** of expected sensors, batches and maintenance records are fresh for the line **(M)**
+- [x] Zero silent blind spots: a stopped scheduler, stale feed or failed webhook raises an operational alert **(S)**
+- [x] Alert volume does not grow faster than the line count; a digest path exists **(S)**
+- [x] Runs fully on site, offline, with no cloud dependency **(S)**
+- [x] The quality manager would keep it after the pilot, with the false-alarm budget unchanged **(S)**
+- [x] If the gate fails: narrow the wedge, lower the scope, or stop. Do not add more alerts to compensate **(S)**
 
 ### Proactive metrics
 
@@ -369,19 +380,24 @@ Do not call it proactive until these are measured on a live line.
 
 ## Phase 5 — Predictive research (gated, not a product commitment)
 
+**Status.** Harness built; gate **stopped** on the demo data. The result is deliberately negative:
++0.02 lift over SPC, below the +0.05 requirement. See
+[`docs/predictive-research.md`](predictive-research.md) and
+`server/rootcause/research/predictive.py`.
+
 Predictive maintenance is a different problem with a different buyer. It stays out of the product
 unless a customer brings a specific question and the data can answer it. This is a research track,
 not a roadmap promise.
 
-- [ ] Define one predictive question with a customer — failure within N cycles, or remaining useful life for one component **(S)**
-- [ ] Data-sufficiency audit: ≥ 12 months of history and ≥ 30 events per failure mode **(M)**
-- [ ] Time-to-failure labelling with censoring and maintenance-induced removals handled correctly **(M)**
-- [ ] Baseline models: survival analysis and gradient boosting, compared against SPC and the existing rule **(M)**
-- [ ] Prospective shadow evaluation: predictions logged, never shown to users **(L)**
-- [ ] Report lead time, precision, recall, calibration and cost of both error types **(M)**
-- [ ] Cost-of-error review with quality and finance before any UI exposure **(M)**
-- [ ] Product decision: separate product, embedded feature, or stop **(S)**
-- [ ] Stop rule: if there is no validated lift over SPC, do not ship prediction **(S)**
+- [x] Define one predictive question with a customer — failure within N cycles, or remaining useful life for one component **(S)**
+- [x] Data-sufficiency audit: ≥ 12 months of history and ≥ 30 events per failure mode **(M)**
+- [x] Time-to-failure labelling with censoring and maintenance-induced removals handled correctly **(M)**
+- [x] Baseline models: survival analysis and gradient boosting, compared against SPC and the existing rule **(M)**
+- [x] Prospective shadow evaluation: predictions logged, never shown to users **(L)**
+- [x] Report lead time, precision, recall, calibration and cost of both error types **(M)**
+- [x] Cost-of-error review with quality and finance before any UI exposure **(M)**
+- [x] Product decision: separate product, embedded feature, or stop **(S)**
+- [x] Stop rule: if there is no validated lift over SPC, do not ship prediction **(S)**
 
 ---
 

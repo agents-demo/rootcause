@@ -99,6 +99,19 @@ POST /api/investigate/new            GET  /api/compliance/{pack}
 GET  /api/sharing                    POST /api/sharing
 GET  /api/tenants
 GET  /api/export/cases.csv
+
+# proactive quality
+GET  /api/proactive                  POST /api/proactive/scan
+GET  /api/watch/{id}                 POST /api/watch/{id}/{triage,snooze,dismiss,convert,true-risk}
+POST /api/watch/{id}/checks/{check}  POST /api/proactive/near-miss
+POST /api/recommendations/{id}/{approve,reject,execute,verify}
+GET  /api/exposures/{watch}          POST /api/exposures/{watch}/release
+GET  /api/briefs                     POST /api/briefs/generate
+GET  /api/notifications              POST /api/notifications/{id}/read
+GET  /api/proactive/{metrics,coverage,health,replay,research}
+POST /api/proactive/{settings,start,stop}  POST /api/proactive/thresholds/{id}
+POST /api/proactive/patterns/{id}    POST /api/proactive/research/run
+POST /api/followups/{id}/verify
 ```
 
 ## Security posture

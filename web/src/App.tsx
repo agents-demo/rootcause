@@ -13,6 +13,12 @@ import Dashboard from "./pages/Dashboard";
 import Connectors from "./pages/Connectors";
 import Admin from "./pages/Admin";
 import MobileCapture from "./pages/MobileCapture";
+import Watchlist from "./pages/Watchlist";
+import WatchDetail from "./pages/WatchDetail";
+import ShiftBriefPage from "./pages/ShiftBrief";
+import Alerts from "./pages/Alerts";
+import ProactiveDashboard from "./pages/ProactiveDashboard";
+import ProactiveBooth from "./pages/ProactiveBooth";
 import { Icon } from "./components/Icon";
 
 function ScrollToTop() {
@@ -52,6 +58,11 @@ function Routed() {
       "/about": "About — RootCause",
       "/stage": "The 90-second teardown — RootCause",
       "/booth": "Functional demo — RootCause",
+      "/booth/proactive": "Proactive quality — RootCause",
+      "/watchlist": "Risk watchlist — RootCause",
+      "/brief": "Shift risk brief — RootCause",
+      "/alerts": "Alert center — RootCause",
+      "/proactive": "Proactive operations — RootCause",
       "/cases": "Cases — RootCause",
       "/review": "Engineer review — RootCause",
       "/reports": "Quality reports — RootCause",
@@ -104,6 +115,12 @@ function Routed() {
         <Route path="/about" element={<About />} />
         <Route path="/booth" element={<Booth />} />
         <Route path="/booth/run/:sid" element={<BoothRun />} />
+        <Route path="/booth/proactive" element={<ProactiveBooth />} />
+        <Route path="/watchlist" element={<Watchlist />} />
+        <Route path="/watch/:watchId" element={<WatchDetail />} />
+        <Route path="/brief" element={<ShiftBriefPage />} />
+        <Route path="/alerts" element={<Alerts />} />
+        <Route path="/proactive" element={<ProactiveDashboard />} />
         <Route path="/cases" element={<Cases />} />
         <Route path="/cases/:caseId" element={<CaseWorkspace />} />
         <Route path="/review" element={<Review />} />

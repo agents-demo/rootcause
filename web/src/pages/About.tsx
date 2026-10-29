@@ -3,7 +3,7 @@ import { useStore } from "../lib/store";
 import { Icon } from "../components/Icon";
 
 export default function About() {
-  const { pack } = useStore();
+  const { pack, proactive } = useStore();
   return (
     <div>
       <div className="panel" style={{ padding: "clamp(24px, 4vw, 46px)", position: "relative", overflow: "hidden", background: "radial-gradient(80% 120% at 0% 0%, rgba(255,180,84,.09), transparent 55%), rgba(255,255,255,.016)" }}>
@@ -68,6 +68,31 @@ export default function About() {
               <p>{b}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="panel mt16" style={{ background: "radial-gradient(80% 120% at 0% 0%, rgba(94,234,212,.06), transparent 55%), rgba(255,255,255,.016)" }}>
+        <div className="panel-body" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+          <div style={{ maxWidth: 720 }}>
+            <div className="xsmall mono cyan" style={{ letterSpacing: ".16em" }}>PHASE 4 · PROACTIVE QUALITY</div>
+            <h3 style={{ fontSize: 22, margin: "6px 0 5px" }}>The defect is late. The signal was early.</h3>
+            <p className="small muted" style={{ lineHeight: 1.6 }}>
+              RootCause now watches process changes, drift, batch risk and coverage, opens a watch case
+              before the next bad part, assembles the evidence and recommends containment. The engineer
+              approves. No line control, no automatic rejection. Prediction stays behind a stopped
+              research gate.
+            </p>
+            <div className="row gap6 mt12" style={{ flexWrap: "wrap" }}>
+              <span className="chip amber">{proactive?.watches.length ?? 0} watches</span>
+              <span className="chip green">{proactive ? Math.round(proactive.metrics.watch_precision * 100) : 0}% precision</span>
+              <span className="chip cyan">{proactive?.metrics.median_triage_min ?? 0} min triage</span>
+              <span className="chip red">prediction stopped</span>
+            </div>
+          </div>
+          <div className="row gap8">
+            <Link className="btn primary" to="/watchlist">Open the watchlist</Link>
+            <Link className="btn" to="/booth/proactive">Run the proactive story</Link>
+          </div>
         </div>
       </div>
 

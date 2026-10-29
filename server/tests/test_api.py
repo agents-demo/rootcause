@@ -137,3 +137,95 @@ def test_tenant_isolation(tmp_path, monkeypatch):
         assert not any(h["status"] == "accepted" for h in default_inv["hypotheses"])
 
         assert c.get("/api/tenants").json()["header"] == "X-RootCause-Tenant"
+
+
+def test_proactive_pack_and_watch_workflow(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        r = c.get("/api/proactive")
+        assert r.status_code == 200
+        data = r.json()
+        assert len(data["watches"]) >= 7
+        assert data["metrics"]["watch_precision"] > 0
+        assert data["health"]["status"] == "ok"
+        assert data["patterns"]
+
+        detail = c.get("/api/watch/W-1042")
+        assert detail.status_code == 200
+        assert detail.json()["watch"]["linked_case_id"] == "RC-0417"
+        assert detail.json()["recommendations"]
+
+        triaged = c.post("/api/watch/W-1044/triage", json={"actor": "M. Weber", "note": "checking"})
+        assert triaged.status_code == 200
+        assert triaged.json()["status"] == "triage"
+
+        approved = c.post("/api/recommendations/REC-2205/approve", json={"actor": "M. Weber"})
+        assert approved.status_code == 200
+        assert approved.json()["status"] == "approved"
+        executed = c.post("/api/recommendations/REC-2205/execute", json={"actor": "M. Weber"})
+        assert executed.status_code == 200
+        assert executed.json()["status"] == "executed"
+
+        dismissed = c.post("/api/watch/W-1048/dismiss", json={"actor": "M. Weber", "reason": "setup watch, no signal"})
+        assert dismissed.status_code == 200
+        assert dismissed.json()["outcome"] == "false_alarm"
+
+        converted = c.post("/api/watch/W-1046/convert", json={"actor": "M. Weber", "case_id": "RC-0417"})
+        assert converted.status_code == 200
+        assert converted.json()["outcome"] == "converted"
+
+
+def test_proactive_brief_scan_notifications_and_settings(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        scan = c.post("/api/proactive/scan", json={"mode": "shadow"})
+        assert scan.status_code == 200
+        assert "run" in scan.json()
+
+        brief = c.post("/api/briefs/generate", json={"shift": "B"})
+        assert brief.status_code == 200
+        assert "Shift B" in brief.json()["brief"]["title"]
+        assert "Recommendations only" in brief.json()["markdown"]
+
+        notes = c.get("/api/notifications").json()
+        assert notes
+        read = c.post(f"/api/notifications/{notes[0]['id']}/read")
+        assert read.status_code == 200
+
+        stopped = c.post("/api/proactive/stop", json={"reason": "test"})
+        assert stopped.status_code == 200
+        assert stopped.json()["stop_switch"] is True
+        blocked = c.post("/api/proactive/scan", json={})
+        assert blocked.status_code == 409
+        started = c.post("/api/proactive/start")
+        assert started.status_code == 200
+        assert started.json()["stop_switch"] is False
+
+        threshold = c.post("/api/proactive/thresholds/TH-1", json={"limit": 1.3})
+        assert threshold.status_code == 200
+        assert threshold.json()["limit"] == 1.3
+
+        research = c.post("/api/proactive/research/run")
+        assert research.status_code == 200
+        assert research.json()["status"] in {"stopped", "shadow"}
+
+        near = c.post("/api/proactive/near-miss", json={"line_id": "line-6", "note": "Unusual sound, no defect yet"})
+        assert near.status_code == 200
+        assert near.json()["signals"][0]["kind"] == "near_miss"
+
+        exposure = c.get("/api/exposures/W-1042")
+        assert exposure.status_code == 200
+        assert exposure.json()["parts"]
+        released = c.post("/api/exposures/W-1042/release", json={"status": "contained", "actor": "M. Weber"})
+        assert released.status_code == 200
+        assert released.json()["status"] == "contained"
+        csv_exposure = c.get("/api/exposures/W-1042/export.csv")
+        assert csv_exposure.status_code == 200
+        assert "serial" in csv_exposure.text
+
+        pattern = c.post("/api/proactive/patterns/P-SEAL", json={"status": "active", "actor": "M. Weber"})
+        assert pattern.status_code == 200
+        assert pattern.json()["status"] == "active"
+
+        follow = c.post("/api/followups/FU-102/verify", json={"parameter_returned": True, "defect_rate_delta": -0.1})
+        assert follow.status_code == 200
+        assert follow.json()["status"] == "verified"
+

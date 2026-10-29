@@ -35,6 +35,20 @@ export default function Booth() {
         <div className="stat"><div className="label">Network</div><div className="value">0<small> calls</small></div><div className="foot">runs with the cable out</div></div>
       </div>
 
+      <Link to="/booth/proactive" className="panel mb16" style={{ display: "block", borderColor: "rgba(94,234,212,.32)", background: "radial-gradient(70% 140% at 0% 0%, rgba(94,234,212,.07), transparent 60%), rgba(255,255,255,.016)" }}>
+        <div className="panel-body" style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ width: 42, height: 42, borderRadius: 9, border: "1px solid rgba(94,234,212,.4)", display: "grid", placeItems: "center", flex: "none" }}>
+            <Icon name="target" size={20} />
+          </div>
+          <div style={{ flex: 1, minWidth: 240 }}>
+            <div className="xsmall mono cyan" style={{ letterSpacing: ".16em" }}>THE SECOND ACT · 10 MINUTES</div>
+            <h3 style={{ fontSize: 19, margin: "4px 0 3px" }}>Catch it before the scrap</h3>
+            <p className="small muted">A watch opens before the defect, the evidence is assembled, containment is recommended and a human approves it. Proactive about risk — never in control of the line.</p>
+          </div>
+          <span className="btn primary">Run the proactive story <Icon name="arrow" size={12} /></span>
+        </div>
+      </Link>
+
       <div className="grid g2 mb16" style={{ alignItems: "stretch" }}>
         {scenarios.map((s) => {
           const inv = investigation(s.case.id);

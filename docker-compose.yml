@@ -8,6 +8,7 @@ services:
       ROOTCAUSE_DB: /data/rootcause.sqlite3
       ROOTCAUSE_NPU: ${ROOTCAUSE_NPU:-}
       ROOTCAUSE_NPU_ENDPOINT: ${ROOTCAUSE_NPU_ENDPOINT:-http://npu-broker:7788}
+      ROOTCAUSE_SCHEDULER: ${ROOTCAUSE_SCHEDULER:-0}
       ROOTCAUSE_CORS: http://127.0.0.1:8000,http://localhost:8000
     volumes:
       - rootcause-data:/data

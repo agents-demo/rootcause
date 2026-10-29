@@ -14,6 +14,15 @@ const groups = [
     ],
   },
   {
+    label: "Proactive",
+    items: [
+      { to: "/watchlist", label: "Watchlist", icon: "target" },
+      { to: "/brief", label: "Shift brief", icon: "calendar" },
+      { to: "/alerts", label: "Alert center", icon: "alert" },
+      { to: "/proactive", label: "Proactive ops", icon: "gauge" },
+    ],
+  },
+  {
     label: "Work",
     items: [
       { to: "/review", label: "Review queue", icon: "review", pill: "2" },
@@ -36,6 +45,12 @@ const titles: Record<string, { section: string; page: string; crumb?: string }> 
   "/about": { section: "Product", page: "About RootCause" },
   "/stage": { section: "Stage", page: "The 90-second teardown" },
   "/booth": { section: "Booth", page: "Functional demo" },
+  "/booth/proactive": { section: "Booth", page: "Proactive story" },
+  "/watchlist": { section: "Proactive", page: "Risk watchlist" },
+  "/watch": { section: "Proactive", page: "Watch case" },
+  "/brief": { section: "Proactive", page: "Shift risk brief" },
+  "/alerts": { section: "Proactive", page: "Alert center" },
+  "/proactive": { section: "Proactive", page: "Proactive operations" },
   "/cases": { section: "Cases", page: "Case history" },
   "/dashboard": { section: "Pilot", page: "Quality dashboard" },
   "/review": { section: "Work", page: "Engineer review" },
@@ -51,6 +66,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const base = location.pathname === "/" ? "/" : `/${location.pathname.split("/")[1] || "about"}`;
   const meta = titles[base] ?? titles["/about"];
   const alertCount = pack?.alerts.filter((a) => !a.acknowledged).length ?? 0;
+  const flatItems = groups.flatMap((group) => group.items);
 
   return (
     <div className="app">
@@ -97,6 +113,20 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </aside>
+
+      <nav className="mobile-nav" aria-label="Primary">
+        {flatItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            aria-label={item.label}
+            className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+          >
+            <Icon name={item.icon} />
+            <span className="label">{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
       <div className="main">
         <header className="topbar">

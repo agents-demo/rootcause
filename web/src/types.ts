@@ -269,6 +269,7 @@ export interface Billing {
   plan: string;
   lines: number;
   per_line_month_eur: number;
+  proactive_per_line_eur?: number;
   setup_fee_eur: number;
   npu_option_eur: number;
   npu_enabled: boolean;
@@ -330,6 +331,354 @@ export interface Pack {
     shared_causes: number;
     note: string;
   };
+  proactive: ProactivePack;
+}
+
+// ------------------------------------------------------------------ proactive quality
+export type SignalKind =
+  | "spc"
+  | "ewma"
+  | "cusum"
+  | "change_point"
+  | "batch"
+  | "maintenance"
+  | "setup"
+  | "golden_run"
+  | "recurrence"
+  | "data_quality"
+  | "coverage"
+  | "environment"
+  | "near_miss"
+  | "first_off";
+
+export interface RiskSignal {
+  id: string;
+  kind: SignalKind;
+  at: string;
+  line_id: string;
+  parameter: string;
+  value?: number | null;
+  baseline?: number | null;
+  z?: number | null;
+  severity: "info" | "warning" | "high" | "critical";
+  detail: string;
+  evidence_id: string;
+  cleared: boolean;
+}
+
+export interface SuggestedCheck {
+  id: string;
+  label: string;
+  why: string;
+  owner: string;
+  done: boolean;
+}
+
+export interface ImpactEstimate {
+  parts_at_risk: number;
+  scrap_avoided_eur: number;
+  engineer_hours: number;
+  cost_eur: number;
+  note: string;
+}
+
+export type RecommendationKind =
+  | "hold_batch"
+  | "extra_sampling"
+  | "first_off"
+  | "check_dryer"
+  | "check_calibration"
+  | "pull_maintenance"
+  | "supplier_notice"
+  | "verify_parameter";
+
+export interface Recommendation {
+  id: string;
+  watch_id: string;
+  kind: RecommendationKind;
+  title: string;
+  detail: string;
+  impact: ImpactEstimate;
+  status: "proposed" | "approved" | "rejected" | "executed" | "verified";
+  approved_by?: string | null;
+  approved_at?: string | null;
+  executed_at?: string | null;
+  verified_at?: string | null;
+  reason: string;
+  pattern_id: string;
+}
+
+export type WatchStatus = "watching" | "triage" | "investigating" | "snoozed" | "dismissed" | "converted";
+
+export interface WatchCase {
+  id: string;
+  plant_id: string;
+  line_id: string;
+  title: string;
+  summary: string;
+  status: WatchStatus;
+  severity: "info" | "warning" | "high" | "critical";
+  risk_score: number;
+  confidence: number;
+  opened_at: string;
+  updated_at: string;
+  owner: string;
+  sla_due: string;
+  group_key: string;
+  pattern_id: string;
+  pattern_name: string;
+  pattern_version?: string;
+  signal_count: number;
+  signals: RiskSignal[];
+  evidence_ids: string[];
+  suggested_checks: SuggestedCheck[];
+  recommendation_ids: string[];
+  linked_case_id?: string | null;
+  triage_note: string;
+  outcome: "pending" | "converted" | "true_risk" | "false_alarm" | "operational";
+  outcome_reason: string;
+  outcome_at?: string | null;
+  outcome_actor?: string | null;
+  useful?: boolean | null;
+}
+
+export interface RiskPattern {
+  id: string;
+  version: string;
+  name: string;
+  cause_family: string;
+  description: string;
+  trigger: string;
+  historical_precision: number;
+  checks: string[];
+  recommendation_kinds: string[];
+  status: "active" | "shadow" | "retired";
+  owner: string;
+  last_validated: string;
+  card: Record<string, unknown>;
+}
+
+export interface ThresholdRule {
+  id: string;
+  line_id: string;
+  parameter: string;
+  method: "spc" | "ewma" | "cusum" | "change_point" | "batch" | "maintenance" | "data_quality";
+  limit: number;
+  direction: "above" | "below" | "either";
+  owner: string;
+  version: string;
+  active: boolean;
+  notes: string;
+}
+
+export interface ScheduleSettings {
+  enabled: boolean;
+  stop_switch: boolean;
+  interval_minutes: number;
+  mode: "shadow" | "live";
+  false_alarm_budget: number;
+  max_alerts_per_shift: number;
+  quiet_hours: string;
+  digest_mode: boolean;
+  coverage_floor: number;
+  triage_sla_min: number;
+  reconstruction_target_min: number;
+  webhook_url: string;
+  notification_roles: string[];
+  champion: string;
+  challenger: string;
+}
+
+export interface ProactiveSettings {
+  schedule: ScheduleSettings;
+  thresholds: ThresholdRule[];
+  stop_reasons: string[];
+  contract_note: string;
+  escalation_sla: string;
+}
+
+export interface ScanRun {
+  id: string;
+  at: string;
+  mode: string;
+  lines_scanned: number;
+  signals: number;
+  watches_opened: number;
+  suppressed: number;
+  duration_ms: number;
+  status: "ok" | "degraded" | "failed";
+  lag_seconds: number;
+  note: string;
+}
+
+export interface ShiftBrief {
+  id: string;
+  at: string;
+  shift: string;
+  line_ids: string[];
+  title: string;
+  summary: string;
+  top_risks: { watch_id: string; title: string; severity: string; action: string }[];
+  open_cases: { case_id: string; title: string; status: string }[];
+  actions_due: { action_id: string; title: string; owner: string; due: string }[];
+  fixed_not_verified: { case_id: string; title: string; note: string }[];
+  coverage_note: string;
+  generated_by: string;
+}
+
+export interface Notification {
+  id: string;
+  at: string;
+  kind: "watch" | "recommendation" | "followup" | "data_quality" | "system";
+  severity: "info" | "warning" | "high" | "critical";
+  title: string;
+  detail: string;
+  watch_id?: string | null;
+  role: string;
+  delivered: boolean;
+  read: boolean;
+  dedup_key: string;
+}
+
+export interface ExposurePart {
+  serial: string;
+  part: string;
+  line_id: string;
+  shift: string;
+  customer: string;
+  status: "in_plant" | "in_transit" | "at_customer" | "fitted";
+  containment: "hold" | "inspect" | "release" | "unknown";
+}
+
+export interface Exposure {
+  id: string;
+  watch_id: string;
+  batch_id: string;
+  generated_at: string;
+  parts: ExposurePart[];
+  customers: number;
+  estimated_eur: number;
+  status: "open" | "contained" | "released";
+  note: string;
+}
+
+export interface FollowUp {
+  id: string;
+  case_id: string;
+  action_id: string;
+  title: string;
+  window_start: string;
+  window_end: string;
+  status: "monitoring" | "verified" | "reopened" | "closed";
+  parameter_returned: boolean;
+  defect_rate_delta: number;
+  recurrence_watch_id?: string | null;
+  pattern_id?: string;
+  note: string;
+}
+
+export interface Coverage {
+  line_id: string;
+  expected_sources: number;
+  fresh_sources: number;
+  pct: number;
+  stale: string[];
+  status: "ok" | "degraded" | "blind";
+  last_scan: string;
+}
+
+export interface ProactiveMetrics {
+  watch_precision: number;
+  watch_recall: number;
+  alerts_per_line_shift: number;
+  median_triage_min: number;
+  containment_conversion: number;
+  defects_prevented_month: number;
+  escaped_defects: number;
+  coverage_pct: number;
+  reconstruction_min: number;
+  alert_volume_growth: number;
+  cost_per_useful_alert_eur: number;
+  useful_watches: number;
+  total_watches: number;
+  open_watches?: number;
+  alerts_open?: number;
+  dismissal_rate?: number;
+  snooze_rate?: number;
+  followups?: {
+    total: number;
+    verified: number;
+    reopened: number;
+    monitoring: number;
+    verification_rate: number;
+    reopened_ids: (string | null)[];
+  };
+  coverage?: { floor: number; coverage_pct: number; below_floor: string[]; status: string };
+  store?: { watches: number; useful: number; outcomes: number; precision: number };
+  drift?: { status: string; delta?: number; detail: string };
+  weekly: { week: string; precision: number; alerts: number; triage: number; conversion: number; useful: number; total: number }[];
+  channels: { name: string; delivered: number; opened: number; note: string }[];
+}
+
+export interface ModelCard {
+  id: string;
+  name: string;
+  version: string;
+  kind: "threshold" | "spc" | "ewma" | "cusum" | "change_point" | "risk_score" | "research";
+  inputs: string[];
+  limits: string[];
+  failure_modes: string[];
+  owner: string;
+  last_validated: string;
+  status: "champion" | "challenger" | "retired" | "research";
+}
+
+export interface ResearchGate {
+  question: string;
+  status: "not_started" | "data_audit" | "shadow" | "stopped" | "approved";
+  decision: string;
+  data_months: number;
+  events: number;
+  required_events: number;
+  model_lift: number;
+  lead_time_hours: number;
+  false_alarm_rate: number;
+  cost_of_errors_eur: number;
+  checks: { id: string; label: string; done: boolean; note: string }[];
+  updated_at: string;
+  note: string;
+  baseline_auc?: number;
+  model_auc?: number;
+  precision?: number;
+  recall?: number;
+}
+
+export interface ProactivePack {
+  settings: ProactiveSettings;
+  watches: WatchCase[];
+  patterns: RiskPattern[];
+  recommendations: Recommendation[];
+  scan_runs: ScanRun[];
+  briefs: ShiftBrief[];
+  notifications: Notification[];
+  exposures: Exposure[];
+  followups: FollowUp[];
+  coverage: Coverage[];
+  metrics: ProactiveMetrics;
+  model_cards: ModelCard[];
+  research: ResearchGate;
+  health?: { status: string; last_scan: string | null; lag_seconds: number | null; detail: string };
+  replay?: {
+    rows: { scenario: string; signals: number; expected_risk: boolean; opened: boolean; line: string }[];
+    precision: number;
+    recall: number;
+    true_positive: number;
+    false_positive: number;
+    false_negative: number;
+    note: string;
+  };
+  tuning?: { action: string; reason: string; suggestion: string; requires_approval: boolean }[];
+  queue?: { queued: number; dropped: number; max_items: number };
 }
 
 export interface FactorRow {

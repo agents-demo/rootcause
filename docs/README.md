@@ -2,7 +2,11 @@
 
 Start here:
 
-- [Roadmap and implementation status](roadmap.md) — every original checkbox with the evidence, plus the planned proactive phase.
+- [Roadmap and implementation status](roadmap.md) — every original checkbox with the evidence, plus the proactive phase.
+- [Proactive quality](proactive.md) — signals, watch cases, containment, notifications and controls.
+- [Proactive pilot](proactive-pilot.md) — contract, false-alarm budget, roles, training and change management.
+- [Proactive engineer guide](proactive-training.md) — one page for the floor.
+- [Predictive research gate](predictive-research.md) — the gated, stopped-by-default prediction harness.
 - [Stage script](stage-script.md) — the 90-second teardown, word for word.
 - [Stage acceptance](stage-acceptance.md) — test sheets, hostile Q&A, offline checklist.
 - [Props](props.md) — bracket, crack, tool mark, lights and sound.
