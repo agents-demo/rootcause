@@ -1,0 +1,39 @@
+services:
+  rootcause:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      ROOTCAUSE_RUNTIME: /data
+      ROOTCAUSE_DB: /data/rootcause.sqlite3
+      ROOTCAUSE_NPU: ${ROOTCAUSE_NPU:-}
+      ROOTCAUSE_NPU_ENDPOINT: ${ROOTCAUSE_NPU_ENDPOINT:-http://npu-broker:7788}
+      ROOTCAUSE_CORS: http://127.0.0.1:8000,http://localhost:8000
+    volumes:
+      - rootcause-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  npu-broker:
+    build: .
+    profiles: ["npu"]
+    command: ["uvicorn", "rootcause.npu.service:app", "--host", "0.0.0.0", "--port", "7788", "--app-dir", "/app/server"]
+    environment:
+      ROOTCAUSE_NPU_MODEL: /models/defect.om
+      ROOTCAUSE_NPU_SIMULATE: ${ROOTCAUSE_NPU_SIMULATE:-0}
+    devices:
+      - /dev/davinci0:/dev/davinci0
+      - /dev/davinci_manager:/dev/davinci_manager
+      - /dev/devmm_svm:/dev/devmm_svm
+      - /dev/hisi_hdc:/dev/hisi_hdc
+    volumes:
+      - /usr/local/Ascend/driver:/usr/local/Ascend/driver:ro
+      - ./runtime/models:/models:ro
+    restart: unless-stopped
+
+volumes:
+  rootcause-data:

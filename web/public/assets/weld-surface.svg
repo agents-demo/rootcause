@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c7c9c4"/>
+      <stop offset=".3" stop-color="#93968f"/>
+      <stop offset=".6" stop-color="#6a6d67"/>
+      <stop offset="1" stop-color="#434641"/>
+    </linearGradient>
+    <radialGradient id="weld" cx=".42" cy=".38" r=".7">
+      <stop offset="0" stop-color="#d8d2c3"/>
+      <stop offset=".35" stop-color="#9c8f78"/>
+      <stop offset=".7" stop-color="#6b5f4e"/>
+      <stop offset="1" stop-color="#3c352c"/>
+    </radialGradient>
+    <filter id="wnoise">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="31"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".14"/></feComponentTransfer>
+    </filter>
+    <filter id="wsoft"><feGaussianBlur stdDeviation="6"/></filter>
+    <radialGradient id="wspot" cx=".32" cy=".24" r=".8">
+      <stop offset="0" stop-color="#fff4dd" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1000" height="620" fill="#0c0c0b"/>
+  <ellipse cx="500" cy="320" rx="520" ry="300" fill="#181713"/>
+  <ellipse cx="380" cy="230" rx="340" ry="220" fill="url(#wspot)"/>
+
+  <g>
+    <rect x="80" y="130" width="840" height="360" rx="18" fill="url(#foil)"/>
+    <rect x="80" y="130" width="840" height="360" rx="18" filter="url(#wnoise)" opacity=".8"/>
+    <rect x="80" y="130" width="840" height="360" rx="18" fill="none" stroke="#e8e4d9" stroke-opacity=".15"/>
+    <path d="M80 250 L920 236" stroke="#f7f3e8" stroke-opacity=".08" stroke-width="2"/>
+    <path d="M80 390 L920 404" stroke="#17160f" stroke-opacity=".4" stroke-width="3"/>
+
+    <!-- tab -->
+    <rect x="360" y="196" width="290" height="236" rx="12" fill="#b7b7ae" opacity=".55"/>
+    <rect x="372" y="206" width="266" height="216" rx="9" fill="url(#foil)" stroke="#e6e2d7" stroke-opacity=".2"/>
+
+    <!-- weld nugget -->
+    <ellipse cx="505" cy="314" rx="104" ry="98" fill="#221f1a" opacity=".55" filter="url(#wsoft)"/>
+    <ellipse cx="505" cy="314" rx="88" ry="82" fill="url(#weld)"/>
+    <g fill="none" stroke="#3b342a" stroke-opacity=".65">
+      <ellipse cx="505" cy="314" rx="70" ry="65" stroke-width="7"/>
+      <ellipse cx="505" cy="314" rx="52" ry="48" stroke-width="5" stroke-dasharray="16 8"/>
+      <ellipse cx="505" cy="314" rx="30" ry="28" stroke-width="4"/>
+    </g>
+    <g fill="none" stroke="#efe7d5" stroke-opacity=".18">
+      <ellipse cx="490" cy="296" rx="58" ry="48" stroke-width="2"/>
+      <path d="M430 330 A80 74 0 0 1 500 242"/>
+    </g>
+
+    <!-- crack -->
+    <path d="M470 282 L486 312 L478 334 L505 356 L520 380" fill="none" stroke="#12100c" stroke-width="7" stroke-linecap="round"/>
+    <path d="M470 282 L486 312 L478 334 L505 356 L520 380" fill="none" stroke="#f4ead6" stroke-opacity=".25" stroke-width="1.2"/>
+    <path d="M505 356 L530 366" stroke="#12100c" stroke-width="3" stroke-linecap="round"/>
+
+    <g stroke="#f8f3e8" stroke-opacity=".08">
+      <path d="M140 210 L280 204"/>
+      <path d="M700 430 L830 424"/>
+      <path d="M160 440 L240 436"/>
+    </g>
+    <text x="690" y="470" font-family="monospace" font-size="8" fill="#d9d2c2" opacity=".4">WELD 7 · 1.82 kW · 210 mm/s</text>
+  </g>
+</svg>

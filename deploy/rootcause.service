@@ -1,0 +1,22 @@
+[Unit]
+Description=RootCause on-site API and web app
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rootcause
+Group=rootcause
+WorkingDirectory=/opt/rootcause
+Environment=ROOTCAUSE_RUNTIME=/var/lib/rootcause
+Environment=ROOTCAUSE_DB=/var/lib/rootcause/rootcause.sqlite3
+ExecStart=/opt/rootcause/venv/bin/uvicorn rootcause.api.app:app --host 0.0.0.0 --port 8000 --app-dir /opt/rootcause/server
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/rootcause
+
+[Install]
+WantedBy=multi-user.target

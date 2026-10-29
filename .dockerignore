@@ -1,0 +1,14 @@
+node_modules
+web/dist
+web/.vite
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.venv
+runtime
+logs
+.git
+.idea
+.vscode
+*.sqlite3

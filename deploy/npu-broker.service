@@ -1,0 +1,17 @@
+[Unit]
+Description=RootCause NPU broker (Ascend)
+After=network-online.target
+
+[Service]
+Type=simple
+User=rootcause
+Group=rootcause
+WorkingDirectory=/opt/rootcause
+Environment=ROOTCAUSE_NPU_MODEL=/opt/rootcause/models/defect.om
+ExecStart=/opt/rootcause/venv/bin/uvicorn rootcause.npu.service:app --host 127.0.0.1 --port 7788 --app-dir /opt/rootcause/server
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

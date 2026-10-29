@@ -1,0 +1,5882 @@
+{
+  "meta": {
+    "version": "0.9.0",
+    "generated": "2026-10-22T06:42:00Z",
+    "anchor": "2026-10-22T06:42:00Z",
+    "seed": 417,
+    "scenario_ids": [
+      "bracket",
+      "housing",
+      "battery",
+      "electronics"
+    ],
+    "model": "rootcause-detector-0.9 (synthetic weights)",
+    "note": "Deterministic synthetic data pack. No customer data, no network calls."
+  },
+  "plants": [
+    {
+      "id": "plant-de",
+      "name": "Werk Süd",
+      "site": "Stuttgart",
+      "country": "Germany",
+      "timezone": "Europe/Berlin"
+    },
+    {
+      "id": "plant-cn",
+      "name": "Werk East",
+      "site": "Suzhou",
+      "country": "China",
+      "timezone": "Europe/Berlin"
+    }
+  ],
+  "lines": [
+    {
+      "id": "line-6",
+      "plant_id": "plant-de",
+      "name": "Line 6 · casting",
+      "process": "Casting / machining",
+      "part": "Turbine bracket",
+      "cameras": 3,
+      "machines": 4
+    },
+    {
+      "id": "line-2",
+      "plant_id": "plant-de",
+      "name": "Line 2 · moulding",
+      "process": "Injection moulding",
+      "part": "Housing PA66",
+      "cameras": 2,
+      "machines": 3
+    },
+    {
+      "id": "line-4",
+      "plant_id": "plant-de",
+      "name": "Line 4 · cell weld",
+      "process": "Laser welding",
+      "part": "21700 cell tab",
+      "cameras": 4,
+      "machines": 3
+    },
+    {
+      "id": "line-3",
+      "plant_id": "plant-de",
+      "name": "Line 3 · SMT",
+      "process": "Reflow",
+      "part": "Control board",
+      "cameras": 2,
+      "machines": 2
+    },
+    {
+      "id": "line-8",
+      "plant_id": "plant-cn",
+      "name": "Line 8 · moulding",
+      "process": "Injection moulding",
+      "part": "Housing PA66",
+      "cameras": 2,
+      "machines": 3
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bracket",
+      "title": "Turbine bracket — service fracture",
+      "subtitle": "Casting · hydrogen porosity · the stage story",
+      "process": "Aluminium casting / machining",
+      "defect": "Fracture at root fillet",
+      "part": "Turbine bracket, cast AlSi7Mg",
+      "image_keys": [
+        "bracket-surface",
+        "bracket-xray"
+      ],
+      "case": {
+        "id": "RC-0417",
+        "scenario_id": "bracket",
+        "plant_id": "plant-de",
+        "line_id": "line-6",
+        "part": "Turbine bracket, cast AlSi7Mg",
+        "serial": "BRK-0417-B",
+        "defect_type": "Fracture at root fillet",
+        "severity": "critical",
+        "detected_at": "2026-10-22T06:42:00Z",
+        "machine_id": "FURNACE-2",
+        "batch_id": "B-2291",
+        "image_key": "bracket-surface",
+        "bbox": [
+          33.0,
+          36.0,
+          17.0,
+          20.0
+        ],
+        "detection_confidence": 0.97,
+        "status": "investigating",
+        "hours_in_service": 1842.0,
+        "station": "Final inspection",
+        "shift": "B"
+      },
+      "findings": [
+        {
+          "id": "origin",
+          "x": 37.2,
+          "y": 43.5,
+          "depth": 0,
+          "title": "Crack origin",
+          "detail": "The fracture begins 0.4 mm below the root fillet, not at the surface. The initiation site is a casting void.",
+          "evidence_id": "EV-01",
+          "kind": "surface"
+        },
+        {
+          "id": "tool",
+          "x": 27.5,
+          "y": 64.5,
+          "depth": 0,
+          "title": "Tool mark",
+          "detail": "A machining ridge from pass 3 sits 7 mm from the crack. It is a real surface defect, but the crack path ignores it.",
+          "evidence_id": "EV-03",
+          "kind": "surface"
+        },
+        {
+          "id": "porosity",
+          "x": 62.4,
+          "y": 56.6,
+          "depth": 55,
+          "title": "Gas porosity cluster",
+          "detail": "Six voids under the fillet. Largest void 0.8 mm, aligned with the crack path. Hydrogen level ran 0.86 ppm above baseline.",
+          "evidence_id": "EV-02",
+          "kind": "subsurface"
+        }
+      ],
+      "sensors": [
+        {
+          "id": "pour_temp",
+          "name": "Pour temperature",
+          "unit": "°C",
+          "spec_low": 700.0,
+          "spec_high": 725.0,
+          "baseline": 712.0,
+          "std": 6.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 704.66
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 714.27
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 717.97
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 708.92
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 704.03
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 711.61
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 714.87
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 718.59
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 704.7
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 704.24
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 716.24
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 714.84
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 721.2
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 717.89
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 711.39
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 710.35
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 727.42
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 710.27
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 707.29
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 705.17
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 712.57
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 722.1
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 727.55
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 736.03
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 742.63
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 747.1
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 748.68
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 739.78
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 721.8
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 728.91
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 711.19
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 718.68
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 703.16
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 712.01
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 707.33
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 713.28
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 731.8
+            }
+          ],
+          "deviation_z": 2.96,
+          "out_of_spec": 9
+        },
+        {
+          "id": "mould_temp",
+          "name": "Mould temperature",
+          "unit": "°C",
+          "spec_low": 170.0,
+          "spec_high": 200.0,
+          "baseline": 184.0,
+          "std": 3.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 179.66
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 184.7
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 183.17
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 182.56
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 186.9
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 184.2
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 183.18
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 189.41
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 182.52
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 180.21
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 179.88
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 182.42
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 185.98
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 186.56
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 187.42
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 189.56
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 189.17
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 186.0
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 188.08
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 186.07
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 182.41
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 183.93
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 179.21
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 176.43
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 181.77
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 177.5
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 173.95
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 176.23
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 185.28
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 179.73
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 184.15
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 183.81
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 185.72
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 185.95
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 182.7
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 182.76
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 183.68
+            }
+          ],
+          "deviation_z": -1.21,
+          "out_of_spec": 0
+        },
+        {
+          "id": "quench_temp",
+          "name": "Quench bath temperature",
+          "unit": "°C",
+          "spec_low": 45.0,
+          "spec_high": 65.0,
+          "baseline": 58.0,
+          "std": 2.5,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 57.78
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 61.8
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 56.04
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 53.55
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 58.71
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 59.66
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 59.08
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 59.43
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 57.87
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 56.69
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 56.3
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 57.66
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 57.26
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 60.55
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 59.79
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 55.08
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 60.0
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 58.18
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 61.06
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 62.03
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 59.66
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 49.03
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 50.82
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 41.74
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 47.26
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 40.64
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 42.26
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 49.18
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 43.22
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 51.79
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 51.58
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 52.98
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 56.26
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 60.0
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 57.51
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 59.15
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 59.9
+            }
+          ],
+          "deviation_z": -3.86,
+          "out_of_spec": 4
+        },
+        {
+          "id": "hold_time",
+          "name": "Furnace hold time",
+          "unit": "min",
+          "spec_low": 90.0,
+          "spec_high": 110.0,
+          "baseline": 96.0,
+          "std": 4.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 100.88
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 99.87
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 90.52
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 88.24
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 95.59
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 99.05
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 95.41
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 90.17
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 94.02
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 101.74
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 90.48
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 100.19
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 98.09
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 97.93
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 99.07
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 93.81
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 95.53
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 103.21
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 94.46
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 94.32
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 90.4
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 89.96
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 91.0
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 89.98
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 85.5
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 84.56
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 84.75
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 85.37
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 90.75
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 89.7
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 96.81
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 92.26
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 89.66
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 90.92
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 95.25
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 94.21
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 91.2
+            }
+          ],
+          "deviation_z": -1.69,
+          "out_of_spec": 9
+        },
+        {
+          "id": "hydrogen",
+          "name": "Melt hydrogen",
+          "unit": "ppm",
+          "spec_low": 0.0,
+          "spec_high": 1.4,
+          "baseline": 1.18,
+          "std": 0.09,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 1.19
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 1.18
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 1.18
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 1.13
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 1.2
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 1.18
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 1.28
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 1.09
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 1.41
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 0.89
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 1.19
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 1.26
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 1.16
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 1.11
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 1.17
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 1.24
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 1.29
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 1.04
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 1.2
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 1.12
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 1.28
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 1.39
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 1.68
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 1.96
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 1.95
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 2.06
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 1.94
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 1.88
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 1.56
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 1.44
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 1.34
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 1.32
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 1.37
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 0.96
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 0.96
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 1.19
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 1.23
+            }
+          ],
+          "deviation_z": 5.22,
+          "out_of_spec": 9
+        },
+        {
+          "id": "die_cycles",
+          "name": "Die thermal cycles",
+          "unit": "k",
+          "spec_low": null,
+          "spec_high": null,
+          "baseline": 41.2,
+          "std": 0.8,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 40.61
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 41.9
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 40.45
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 41.63
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 40.21
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 41.83
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 41.14
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 42.33
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 41.88
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 41.24
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 40.97
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 41.58
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 41.17
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 40.51
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 41.69
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 39.26
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 41.16
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 42.89
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 41.62
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 40.09
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 42.07
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 42.07
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 42.09
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 42.61
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 43.55
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 44.28
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 43.46
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 44.66
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 42.31
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 42.87
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 40.58
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 40.27
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 41.14
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 41.43
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 42.69
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 40.95
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 41.44
+            }
+          ],
+          "deviation_z": 1.71,
+          "out_of_spec": 0
+        }
+      ],
+      "batch": {
+        "id": "B-2291",
+        "material": "AlSi7Mg",
+        "supplier": "Rheinmetall Casting",
+        "lot": "HX-88211",
+        "received": "2026-10-13T06:42:00Z",
+        "certificate": "CERT-88211-3",
+        "moisture_pct": null,
+        "hydrogen_ppm": 1.9,
+        "notes": "Accepted on a 1.4 ppm hydrogen deviation. Supplier note: 'within measurement tolerance'."
+      },
+      "maintenance": [
+        {
+          "id": "WO-88231",
+          "machine": "FURNACE-2",
+          "kind": "Door seal replacement",
+          "at": "2026-10-10T06:42:00Z",
+          "technician": "A. Novak",
+          "note": "Seal showed heat damage. Furnace not re-validated for hydrogen pick-up after the repair.",
+          "days_before_defect": 12
+        },
+        {
+          "id": "WO-88104",
+          "machine": "QUENCH-1",
+          "kind": "Control valve calibration",
+          "at": "2026-09-21T06:42:00Z",
+          "technician": "J. Silva",
+          "note": "Valve response lag logged at 4 s. No follow-up measurement.",
+          "days_before_defect": 31
+        },
+        {
+          "id": "WO-87998",
+          "machine": "LINE-6",
+          "kind": "Finishing insert change",
+          "at": "2026-10-20T06:42:00Z",
+          "technician": "L. Brandt",
+          "note": "Insert changed on schedule. Surface finish in tolerance.",
+          "days_before_defect": 2
+        }
+      ],
+      "history": [
+        {
+          "id": "RC-0398",
+          "at": "2026-09-05T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Gas porosity",
+          "line": "Line 6",
+          "batch": "B-2277",
+          "similarity": 0.91,
+          "resolution_hours": 4.1,
+          "notes": "Same fillet, same supplier heat."
+        },
+        {
+          "id": "RC-0361",
+          "at": "2026-07-26T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Gas porosity",
+          "line": "Line 6",
+          "batch": "B-2204",
+          "similarity": 0.87,
+          "resolution_hours": 3.6,
+          "notes": "Tool mark proposed and rejected."
+        },
+        {
+          "id": "RC-0352",
+          "at": "2026-07-11T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Quench crack",
+          "line": "Line 6",
+          "batch": "B-2191",
+          "similarity": 0.71,
+          "resolution_hours": 5.2,
+          "notes": "Quench bath control valve stuck."
+        },
+        {
+          "id": "RC-0330",
+          "at": "2026-06-02T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Gas porosity",
+          "line": "Line 4",
+          "batch": "B-2148",
+          "similarity": 0.78,
+          "resolution_hours": 6.8,
+          "notes": "Hydrogen 2.2 ppm, seal leak."
+        },
+        {
+          "id": "RC-0301",
+          "at": "2026-04-15T06:42:00Z",
+          "defect": "Porosity",
+          "cause": "Gas porosity",
+          "line": "Line 4",
+          "batch": "B-2090",
+          "similarity": 0.73,
+          "resolution_hours": 2.9,
+          "notes": "Detected before machining."
+        },
+        {
+          "id": "RC-0288",
+          "at": "2026-03-12T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Tool mark",
+          "line": "Line 6",
+          "batch": "B-2055",
+          "similarity": 0.34,
+          "resolution_hours": 8.4,
+          "notes": "Confirmed surface crack from tooling."
+        },
+        {
+          "id": "RC-0264",
+          "at": "2026-01-28T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Material mix-up",
+          "line": "Line 4",
+          "batch": "B-2011",
+          "similarity": 0.41,
+          "resolution_hours": 11.0,
+          "notes": "Wrong alloy supplied."
+        },
+        {
+          "id": "RC-0241",
+          "at": "2025-12-15T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Quench crack",
+          "line": "Line 6",
+          "batch": "B-1977",
+          "similarity": 0.55,
+          "resolution_hours": 7.3,
+          "notes": "Cold quench after maintenance."
+        },
+        {
+          "id": "RC-0219",
+          "at": "2025-10-31T06:42:00Z",
+          "defect": "Porosity",
+          "cause": "Gas porosity",
+          "line": "Line 6",
+          "batch": "B-1930",
+          "similarity": 0.8,
+          "resolution_hours": 3.2,
+          "notes": "Degassed late in the shift."
+        },
+        {
+          "id": "RC-0198",
+          "at": "2025-09-15T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Tool mark",
+          "line": "Line 6",
+          "batch": "B-1881",
+          "similarity": 0.29,
+          "resolution_hours": 6.0,
+          "notes": "Ridge at the fillet, surface crack."
+        },
+        {
+          "id": "RC-0177",
+          "at": "2025-07-31T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Gas porosity",
+          "line": "Line 4",
+          "batch": "B-1840",
+          "similarity": 0.68,
+          "resolution_hours": 4.8,
+          "notes": "Long hold, hydrogen pick-up."
+        },
+        {
+          "id": "RC-0150",
+          "at": "2025-06-06T06:42:00Z",
+          "defect": "Bracket fracture",
+          "cause": "Quench crack",
+          "line": "Line 6",
+          "batch": "B-1796",
+          "similarity": 0.5,
+          "resolution_hours": 5.9,
+          "notes": "Quench delay 22 s."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "tool_mark",
+          "label": "Tool mark / operator error",
+          "category": "process",
+          "summary": "A machining ridge sits near the root fillet and the previous shift changed the finishing insert. This is the most common answer for a fillet crack and the strongest match to surface evidence.",
+          "score": 0.475,
+          "confidence": 38.1,
+          "rank": 1,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.82,
+            "deviation": 0.2,
+            "batch_match": 0.05,
+            "similarity": 0.74,
+            "recurrence": 0.72
+          },
+          "evidence_ids": [
+            "EV-03",
+            "EV-08",
+            "EV-11"
+          ],
+          "note": "Plausible because a real ridge is visible 7 mm from the crack."
+        },
+        {
+          "id": "gas_porosity",
+          "label": "Gas porosity in the casting",
+          "category": "material",
+          "summary": "Hydrogen picked up during the hold formed a void cluster under the fillet. The largest void sits on the crack path. Batch B-2291 was accepted on a hydrogen exception.",
+          "score": 0.4502,
+          "confidence": 30.4,
+          "rank": 2,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.44,
+            "deviation": 0.18,
+            "batch_match": 0.88,
+            "similarity": 0.52,
+            "recurrence": 0.35
+          },
+          "evidence_ids": [
+            "EV-02",
+            "EV-04",
+            "EV-06",
+            "EV-09",
+            "EV-10",
+            "EV-11"
+          ],
+          "note": "Evidence is subsurface; it only appears after the depth reveal."
+        },
+        {
+          "id": "quench_crack",
+          "label": "Quench cracking",
+          "category": "process",
+          "summary": "Quench bath temperature dropped 16 °C below setpoint. The steep thermal gradient can open a hairline crack from any existing void.",
+          "score": 0.3918,
+          "confidence": 17.9,
+          "rank": 3,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.3,
+            "deviation": 0.72,
+            "batch_match": 0.2,
+            "similarity": 0.25,
+            "recurrence": 0.18
+          },
+          "evidence_ids": [
+            "EV-05",
+            "EV-07"
+          ],
+          "note": "A contributing mechanism, not the initiator."
+        },
+        {
+          "id": "batch_contamination",
+          "label": "Contaminated material batch",
+          "category": "supplier",
+          "summary": "Batch B-2291 came in at 1.9 ppm hydrogen against a 1.4 ppm limit. The supplier granted a deviation. Other parts from the batch have not failed, which weakens this as a standalone cause.",
+          "score": 0.2712,
+          "confidence": 6.0,
+          "rank": 4,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.18,
+            "deviation": 0.3,
+            "batch_match": 0.55,
+            "similarity": 0.15,
+            "recurrence": 0.08
+          },
+          "evidence_ids": [
+            "EV-06",
+            "EV-07"
+          ],
+          "note": ""
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-01",
+          "kind": "image",
+          "title": "Crack origin at the root fillet",
+          "detail": "Optical macro, 2.6x. The beach marks radiate from a point 0.4 mm below the surface.",
+          "source": "Inspection camera CAM-06 / case image",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.82,
+          "payload": {
+            "image": "bracket-surface",
+            "finding": "origin"
+          }
+        },
+        {
+          "id": "EV-02",
+          "kind": "image",
+          "title": "Porosity cluster under the fillet",
+          "detail": "X-ray CT slice. Six voids, largest 0.8 mm, aligned with the crack path.",
+          "source": "X-ray station XR-02 / case image",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.94,
+          "payload": {
+            "image": "bracket-xray",
+            "finding": "porosity",
+            "largest_void_mm": 0.8,
+            "voids": 6
+          }
+        },
+        {
+          "id": "EV-03",
+          "kind": "image",
+          "title": "Machining ridge, pass 3",
+          "detail": "Surface topography. 0.05 mm deep, 7 mm from the crack origin. Surface-only feature.",
+          "source": "Inspection camera CAM-06",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.61,
+          "payload": {
+            "image": "bracket-surface",
+            "finding": "tool"
+          }
+        },
+        {
+          "id": "EV-04",
+          "kind": "chart",
+          "title": "Hydrogen above baseline",
+          "detail": "Melt hydrogen averaged 2.04 ppm through the cast window against a 1.18 ppm baseline (9.6 sigma).",
+          "source": "OPC-UA / furnace 2 / 6-hour window",
+          "at": "2026-10-22T04:42:00Z",
+          "strength": 0.9,
+          "payload": {
+            "sensor": "hydrogen",
+            "z": 9.6
+          }
+        },
+        {
+          "id": "EV-05",
+          "kind": "chart",
+          "title": "Quench bath ran cold",
+          "detail": "Quench temperature fell to 42 °C against a 58 °C setpoint. Cold quench raises the thermal gradient at the fillet.",
+          "source": "OPC-UA / quench line / 6-hour window",
+          "at": "2026-10-22T05:42:00Z",
+          "strength": 0.74,
+          "payload": {
+            "sensor": "quench_temp",
+            "z": -6.4
+          }
+        },
+        {
+          "id": "EV-06",
+          "kind": "record",
+          "title": "Material batch B-2291",
+          "detail": "Supplier certificate reports 1.9 ppm hydrogen at the ingot. Batch was accepted on a 1.4 ppm limit exception.",
+          "source": "MES batch record / B-2291",
+          "at": "2026-10-13T06:42:00Z",
+          "strength": 0.86,
+          "payload": {
+            "lot": "B-2291",
+            "supplier": "Rheinmetall Casting",
+            "hydrogen_ppm": 1.9
+          }
+        },
+        {
+          "id": "EV-07",
+          "kind": "record",
+          "title": "Furnace door seal replaced",
+          "detail": "Seal replaced 12 days before the failure. Degraded seal explains the hydrogen pick-up during the hold.",
+          "source": "CMMS / WO-88231",
+          "at": "2026-10-10T06:42:00Z",
+          "strength": 0.58,
+          "payload": {
+            "work_order": "WO-88231"
+          }
+        },
+        {
+          "id": "EV-08",
+          "kind": "record",
+          "title": "Operator note, shift B",
+          "detail": "Operator flagged a 'different pour sound' at 05:50 and logged no alarm. No process change was made.",
+          "source": "Shift log / line 6",
+          "at": "2026-10-22T05:42:00Z",
+          "strength": 0.44,
+          "payload": {}
+        },
+        {
+          "id": "EV-09",
+          "kind": "similar",
+          "title": "Case 0398 — same batch family",
+          "detail": "Hydrogen porosity initiated a quench crack on the same fillet. Approved cause: gas porosity. 4.1 h to resolve.",
+          "source": "Case history / 6 months",
+          "at": "2026-09-05T06:42:00Z",
+          "strength": 0.79,
+          "payload": {
+            "case": "RC-0398",
+            "cause": "gas_porosity"
+          }
+        },
+        {
+          "id": "EV-10",
+          "kind": "similar",
+          "title": "Case 0361 — tool mark false lead",
+          "detail": "A machining ridge was proposed and rejected: the crack origin was subsurface. Confirmed gas porosity.",
+          "source": "Case history / 6 months",
+          "at": "2026-07-26T06:42:00Z",
+          "strength": 0.72,
+          "payload": {
+            "case": "RC-0361",
+            "cause": "gas_porosity"
+          }
+        },
+        {
+          "id": "EV-11",
+          "kind": "finding",
+          "title": "Crack starts below the surface",
+          "detail": "Depth measurement: initiation at 0.4 mm. Tool marks are surface-only and cannot initiate this crack.",
+          "source": "Engineer measurement / loupe",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.92,
+          "payload": {
+            "depth_mm": 0.4
+          }
+        }
+      ],
+      "chain": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Gas porosity",
+            "detail": "Hydrogen voids under the fillet, largest 0.8 mm",
+            "kind": "root"
+          },
+          {
+            "id": "n2",
+            "label": "Quench crack",
+            "detail": "Cold quench opens a hairline from the largest void",
+            "kind": "mechanism"
+          },
+          {
+            "id": "n3",
+            "label": "Service growth",
+            "detail": "1,842 hours of cyclic load grows the crack",
+            "kind": "growth"
+          },
+          {
+            "id": "n4",
+            "label": "Failure",
+            "detail": "Bracket fractures at the root fillet",
+            "kind": "failure"
+          }
+        ],
+        "edges": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n2",
+            "n3"
+          ],
+          [
+            "n3",
+            "n4"
+          ]
+        ],
+        "verdict": "It was not fatigue. It started in the casting.",
+        "confidence": 0.86
+      },
+      "trace": [
+        {
+          "step": 1,
+          "agent": "Intake",
+          "tool": "detector.detect",
+          "title": "Defect confirmed on camera 06",
+          "detail": "Fracture at the root fillet, confidence 0.97. Case RC-0417 opened.",
+          "status": "done",
+          "evidence": [
+            "EV-01"
+          ],
+          "ms": 240
+        },
+        {
+          "step": 2,
+          "agent": "Data",
+          "tool": "opcua.read_window",
+          "title": "Pulled 6 hours of machine state",
+          "detail": "37 samples across 6 parameters around the defect timestamp. Two parameters out of spec.",
+          "status": "done",
+          "evidence": [
+            "EV-04",
+            "EV-05"
+          ],
+          "ms": 610
+        },
+        {
+          "step": 3,
+          "agent": "Data",
+          "tool": "mes.batch",
+          "title": "Linked batch B-2291",
+          "detail": "Supplier certificate flagged hydrogen at 1.9 ppm. Accepted on deviation.",
+          "status": "done",
+          "evidence": [
+            "EV-06"
+          ],
+          "ms": 180
+        },
+        {
+          "step": 4,
+          "agent": "Data",
+          "tool": "cmms.history",
+          "title": "Found 2 relevant maintenance events",
+          "detail": "Furnace door seal replaced 12 days earlier; quench valve calibration overdue.",
+          "status": "done",
+          "evidence": [
+            "EV-07"
+          ],
+          "ms": 150
+        },
+        {
+          "step": 5,
+          "agent": "Reasoner",
+          "tool": "similar.search",
+          "title": "Matched 2 of 12 historical cases",
+          "detail": "RC-0398 (0.91) and RC-0361 (0.87) both resolved to gas porosity on the same fillet.",
+          "status": "done",
+          "evidence": [
+            "EV-09",
+            "EV-10"
+          ],
+          "ms": 320
+        },
+        {
+          "step": 6,
+          "agent": "Reasoner",
+          "tool": "cause.rank",
+          "title": "Ranked 4 causes",
+          "detail": "Tool mark / operator error leads on surface evidence. Subsurface evidence is not yet reviewed.",
+          "status": "done",
+          "evidence": [
+            "EV-03",
+            "EV-11"
+          ],
+          "ms": 430
+        },
+        {
+          "step": 7,
+          "agent": "Guard",
+          "tool": "engineer.check",
+          "title": "Waiting for engineer",
+          "detail": "No cause is approved automatically. The engineer must accept or reject each candidate.",
+          "status": "waiting",
+          "evidence": [],
+          "ms": 0
+        }
+      ],
+      "report": {
+        "id": "RPT-0417",
+        "case_id": "RC-0417",
+        "version": 1,
+        "status": "draft",
+        "title": "Root cause report — RC-0417",
+        "summary": "Gas porosity in the casting initiated a quench crack, which grew in service to a brittle fracture of the root fillet.",
+        "sections": [
+          {
+            "id": "s1",
+            "heading": "Finding",
+            "body": "Gas porosity in the casting initiated a quench crack, which grew in service to a brittle fracture of the root fillet.\n\nCausal chain: Gas porosity -> Quench crack -> Service growth -> Failure."
+          },
+          {
+            "id": "s2",
+            "heading": "Evidence reviewed",
+            "body": "Reviewed: camera 06 macro image, x-ray CT slice, 6-hour machine window for furnace 2 and the quench line, batch B-2291 certificate, 12 matching historical cases, and the last 90 days of maintenance records."
+          },
+          {
+            "id": "s3",
+            "heading": "Corrective action",
+            "body": "1. Quarantine the remainder of batch B-2291 and re-test hydrogen on three sample castings.\n2. Replace the furnace door seal and add a post-repair hydrogen validation step.\n3. Bring the quench control valve back inside 2 °C of setpoint and log response lag weekly.\n4. Add an x-ray check on the first part of every pour for the next 30 days."
+          },
+          {
+            "id": "s4",
+            "heading": "Limitations",
+            "body": "Synthetic demo data. The ranking is evidence-weighted, not a physical simulation. No automatic line control is performed; the engineer owns the decision."
+          }
+        ],
+        "approved_by": null,
+        "approved_at": null,
+        "edits": 0
+      },
+      "operator_note": "Operator flagged a different pour sound at 05:50. No alarm was raised and no process change was made.",
+      "provenance": {
+        "data": "Synthetic, generated in-house with a fixed seed",
+        "model": "RootCause detector v0.9 (synthetic weights) + evidence ranking",
+        "date": "2026-10-22T06:42:00Z",
+        "licence": "MIT — no third-party image data",
+        "note": "No MVTec AD or customer data is used in this public demo."
+      },
+      "baseline_hours": 62.0,
+      "current_hours": 3.2
+    },
+    {
+      "id": "housing",
+      "title": "Housing — short shot",
+      "subtitle": "Injection moulding · wet resin · 3 minutes",
+      "process": "Injection moulding",
+      "defect": "Short shot at rib 4",
+      "part": "Housing, PA66-GF30",
+      "image_keys": [
+        "housing-surface"
+      ],
+      "case": {
+        "id": "RC-0431",
+        "scenario_id": "housing",
+        "plant_id": "plant-de",
+        "line_id": "line-2",
+        "part": "Housing, PA66-GF30",
+        "serial": "HSG-0431-A",
+        "defect_type": "Short shot at rib 4",
+        "severity": "high",
+        "detected_at": "2026-10-22T06:50:00Z",
+        "machine_id": "PRESS-4",
+        "batch_id": "PL-8840",
+        "image_key": "housing-surface",
+        "bbox": [
+          52.0,
+          44.0,
+          21.0,
+          17.0
+        ],
+        "detection_confidence": 0.96,
+        "status": "investigating",
+        "hours_in_service": null,
+        "station": "Vision cell 2",
+        "shift": "A"
+      },
+      "findings": [],
+      "sensors": [
+        {
+          "id": "barrel_temp",
+          "name": "Barrel zone 4",
+          "unit": "°C",
+          "spec_low": 230.0,
+          "spec_high": 245.0,
+          "baseline": 238.0,
+          "std": 2.4,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 239.87
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 241.16
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 236.19
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 235.94
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 238.9
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 242.16
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 239.02
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 235.31
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 236.24
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 237.94
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 240.31
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 238.05
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 237.22
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 237.54
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 238.47
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 236.32
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 238.08
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 238.7
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 241.93
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 237.94
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 240.35
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 238.15
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 244.87
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 245.07
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 244.66
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 246.4
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 248.35
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 244.5
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 246.06
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 245.1
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 243.98
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 243.98
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 235.09
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 238.88
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 236.48
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 240.31
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 238.25
+            }
+          ],
+          "deviation_z": 2.62,
+          "out_of_spec": 5
+        },
+        {
+          "id": "injection_pressure",
+          "name": "Injection pressure",
+          "unit": "bar",
+          "spec_low": 1050.0,
+          "spec_high": 1200.0,
+          "baseline": 1120.0,
+          "std": 24.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 1132.75
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 1116.57
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 1206.2
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 1132.88
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 1124.88
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 1131.14
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 1107.17
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 1102.0
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 1133.4
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 1108.85
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 1140.38
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 1114.7
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 1075.2
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 1086.96
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 1098.45
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 1069.98
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 1118.03
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 1112.7
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 1143.54
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 1098.28
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 1114.2
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 1105.9
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 1084.07
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 1018.72
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 1068.51
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 1008.45
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 1056.91
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 1030.39
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 1045.86
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 1049.35
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 1092.95
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 1156.19
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 1104.0
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 1158.65
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 1153.41
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 1110.21
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 1148.09
+            }
+          ],
+          "deviation_z": -2.11,
+          "out_of_spec": 6
+        },
+        {
+          "id": "cooling_time",
+          "name": "Cooling time",
+          "unit": "s",
+          "spec_low": 20.0,
+          "spec_high": 30.0,
+          "baseline": 22.5,
+          "std": 0.8,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 24.24
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 21.61
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 22.76
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 22.29
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 21.8
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 22.04
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 22.08
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 22.42
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 22.81
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 23.31
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 22.66
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 23.37
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 22.83
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 22.55
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 22.29
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 21.69
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 21.2
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 22.4
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 22.33
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 22.71
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 22.72
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 20.38
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 19.85
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 18.73
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 19.88
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 18.77
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 19.05
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 18.65
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 19.06
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 20.51
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 21.47
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 21.92
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 21.24
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 22.71
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 21.77
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 22.03
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 22.18
+            }
+          ],
+          "deviation_z": -3.02,
+          "out_of_spec": 7
+        },
+        {
+          "id": "mould_temp",
+          "name": "Mould temperature",
+          "unit": "°C",
+          "spec_low": 55.0,
+          "spec_high": 80.0,
+          "baseline": 68.0,
+          "std": 2.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 67.1
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 64.28
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 70.93
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 74.51
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 69.03
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 70.8
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 70.82
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 69.84
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 69.82
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 70.55
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 67.46
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 64.64
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 64.26
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 69.44
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 68.99
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 67.92
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 62.99
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 67.47
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 67.85
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 65.84
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 66.34
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 70.81
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 67.39
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 64.84
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 62.85
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 60.83
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 61.19
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 64.21
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 62.05
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 64.96
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 70.03
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 63.64
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 66.29
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 71.88
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 68.82
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 68.38
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 66.18
+            }
+          ],
+          "deviation_z": -1.54,
+          "out_of_spec": 0
+        },
+        {
+          "id": "moisture",
+          "name": "Resin moisture",
+          "unit": "%",
+          "spec_low": 0.0,
+          "spec_high": 0.12,
+          "baseline": 0.08,
+          "std": 0.012,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 0.06
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 0.099
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 0.085
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 0.073
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 0.092
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 0.068
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 0.109
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 0.088
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 0.08
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 0.09
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 0.066
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 0.087
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 0.093
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 0.093
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 0.087
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 0.067
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 0.085
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 0.064
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 0.083
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 0.073
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 0.071
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 0.112
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 0.146
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 0.156
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 0.143
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 0.147
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 0.138
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 0.135
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 0.13
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 0.116
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 0.093
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 0.099
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 0.067
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 0.074
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 0.097
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 0.098
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 0.087
+            }
+          ],
+          "deviation_z": 3.65,
+          "out_of_spec": 7
+        },
+        {
+          "id": "clamp_force",
+          "name": "Clamp force",
+          "unit": "kN",
+          "spec_low": 600.0,
+          "spec_high": 700.0,
+          "baseline": 640.0,
+          "std": 12.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 639.86
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 631.92
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 644.52
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 655.62
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 659.46
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 647.25
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 640.32
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 636.51
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 634.24
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 627.04
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 620.39
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 617.63
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 652.27
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 638.98
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 651.76
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 622.5
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 642.86
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 639.49
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 647.87
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 636.76
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 651.13
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 643.43
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 640.02
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 592.45
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 599.01
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 629.0
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 643.79
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 622.11
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 617.39
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 643.0
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 635.59
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 635.57
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 656.23
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 640.78
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 619.53
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 631.73
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 647.48
+            }
+          ],
+          "deviation_z": -0.89,
+          "out_of_spec": 2
+        }
+      ],
+      "batch": {
+        "id": "PL-8840",
+        "material": "PA66-GF30",
+        "supplier": "SABIC",
+        "lot": "PL-8840",
+        "received": "2026-10-16T06:42:00Z",
+        "certificate": "CERT-PL-8840",
+        "moisture_pct": 0.151,
+        "hydrogen_ppm": null,
+        "notes": "Dryer 3 regeneration overdue."
+      },
+      "maintenance": [
+        {
+          "id": "WO-88412",
+          "machine": "DRYER-3",
+          "kind": "Regeneration",
+          "at": "2026-10-14T06:42:00Z",
+          "technician": "K. Meier",
+          "note": "Regeneration overdue by 38 h.",
+          "days_before_defect": 8
+        }
+      ],
+      "history": [
+        {
+          "id": "RC-0402",
+          "at": "2026-09-14T06:42:00Z",
+          "defect": "Short shot",
+          "cause": "Moisture",
+          "line": "Line 2",
+          "batch": "PL-8691",
+          "similarity": 0.84,
+          "resolution_hours": 3.1,
+          "notes": "Drying restored the process."
+        },
+        {
+          "id": "RC-0344",
+          "at": "2026-06-20T06:42:00Z",
+          "defect": "Warpage",
+          "cause": "Cooling deviation",
+          "line": "Line 2",
+          "batch": "PL-8320",
+          "similarity": 0.61,
+          "resolution_hours": 4.8,
+          "notes": "Cooling time restored."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "moisture",
+          "label": "Resin moisture above limit",
+          "category": "material",
+          "summary": "Dryer 3 missed regeneration. Resin moisture reached 0.151 %, causing hydrolysis and a short shot at the last rib.",
+          "score": 0.7838,
+          "confidence": 77.5,
+          "rank": 1,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.68,
+            "deviation": 0.92,
+            "batch_match": 0.78,
+            "similarity": 0.8,
+            "recurrence": 0.55
+          },
+          "evidence_ids": [
+            "H-EV-02",
+            "H-EV-04",
+            "H-EV-05",
+            "H-EV-06"
+          ],
+          "note": ""
+        },
+        {
+          "id": "cooling",
+          "label": "Cooling time too short",
+          "category": "process",
+          "summary": "Cooling time fell 3.6 s below setpoint. This explains the warpage seen on the same shift, but not the unfilled rib.",
+          "score": 0.45,
+          "confidence": 11.2,
+          "rank": 2,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.42,
+            "deviation": 0.7,
+            "batch_match": 0.1,
+            "similarity": 0.48,
+            "recurrence": 0.3
+          },
+          "evidence_ids": [
+            "H-EV-03",
+            "H-EV-07"
+          ],
+          "note": ""
+        },
+        {
+          "id": "pressure",
+          "label": "Injection pressure drift",
+          "category": "machine",
+          "summary": "Pressure ran 96 bar low for 40 minutes. A contributing factor, likely secondary to the moisture-driven viscosity change.",
+          "score": 0.36,
+          "confidence": 6.6,
+          "rank": 3,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.36,
+            "deviation": 0.58,
+            "batch_match": 0.05,
+            "similarity": 0.35,
+            "recurrence": 0.22
+          },
+          "evidence_ids": [
+            "H-EV-03"
+          ],
+          "note": ""
+        }
+      ],
+      "evidence": [
+        {
+          "id": "H-EV-01",
+          "kind": "image",
+          "title": "Short shot at the rib",
+          "detail": "Glossy unfilled area at the last rib. 18.4 mm of missing fill.",
+          "source": "Camera CAM-02",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.91,
+          "payload": {
+            "image": "housing-surface",
+            "finding": "short"
+          }
+        },
+        {
+          "id": "H-EV-02",
+          "kind": "chart",
+          "title": "Resin moisture above limit",
+          "detail": "Moisture averaged 0.151 % against a 0.12 % upper limit for 47 minutes before the defect.",
+          "source": "MES / dryer 3",
+          "at": "2026-10-22T05:42:00Z",
+          "strength": 0.88,
+          "payload": {
+            "sensor": "moisture",
+            "z": 5.9
+          }
+        },
+        {
+          "id": "H-EV-03",
+          "kind": "chart",
+          "title": "Cooling time short",
+          "detail": "Cooling time dropped to 18.9 s. Short cooling raises warpage, but does not cause a short shot.",
+          "source": "OPC-UA / press 4",
+          "at": "2026-10-22T05:42:00Z",
+          "strength": 0.6,
+          "payload": {
+            "sensor": "cooling_time",
+            "z": -4.5
+          }
+        },
+        {
+          "id": "H-EV-04",
+          "kind": "record",
+          "title": "Resin batch PL-8840",
+          "detail": "Lot opened 6 days ago. Dryer 3 regeneration overdue by 38 hours.",
+          "source": "MES batch / PL-8840",
+          "at": "2026-10-16T06:42:00Z",
+          "strength": 0.86,
+          "payload": {
+            "lot": "PL-8840",
+            "supplier": "SABIC",
+            "moisture": 0.151
+          }
+        },
+        {
+          "id": "H-EV-05",
+          "kind": "record",
+          "title": "Dryer 3 regeneration overdue",
+          "detail": "Regeneration due 2026-10-20. Last completed 2026-10-14 06:00.",
+          "source": "CMMS / WO-88412",
+          "at": "2026-10-14T06:42:00Z",
+          "strength": 0.78,
+          "payload": {
+            "work_order": "WO-88412"
+          }
+        },
+        {
+          "id": "H-EV-06",
+          "kind": "similar",
+          "title": "Case 0402 — moisture short shot",
+          "detail": "Same press, same resin family. Drying restored the process. Approved cause: material moisture.",
+          "source": "Case history",
+          "at": "2026-09-14T06:42:00Z",
+          "strength": 0.84,
+          "payload": {
+            "case": "RC-0402",
+            "cause": "moisture"
+          }
+        },
+        {
+          "id": "H-EV-07",
+          "kind": "similar",
+          "title": "Case 0344 — cooling time",
+          "detail": "Warpage, not short shot. Cooling time restored. Approved cause: cooling deviation.",
+          "source": "Case history",
+          "at": "2026-06-20T06:42:00Z",
+          "strength": 0.61,
+          "payload": {
+            "case": "RC-0344",
+            "cause": "cooling"
+          }
+        }
+      ],
+      "chain": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Wet resin",
+            "detail": "Dyer 3 regeneration overdue; moisture 0.151 %",
+            "kind": "root"
+          },
+          {
+            "id": "n2",
+            "label": "Hydrolysis",
+            "detail": "Viscosity rise and gas generation during plastification",
+            "kind": "mechanism"
+          },
+          {
+            "id": "n3",
+            "label": "Short shot",
+            "detail": "Last rib does not fill at 1120 bar",
+            "kind": "failure"
+          }
+        ],
+        "edges": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n2",
+            "n3"
+          ]
+        ],
+        "verdict": "The dryer, not the mould, made the short shot.",
+        "confidence": 0.82
+      },
+      "trace": [],
+      "report": {
+        "id": "RPT-0431",
+        "case_id": "RC-0431",
+        "version": 1,
+        "status": "draft",
+        "title": "Root cause report — RC-0431",
+        "summary": "Moisture in resin batch PL-8840 caused hydrolysis and a short shot at rib 4. Cooling deviation is a secondary finding.",
+        "sections": [
+          {
+            "id": "s1",
+            "heading": "Finding",
+            "body": "Moisture in resin batch PL-8840 caused hydrolysis and a short shot at rib 4. Cooling deviation is a secondary finding.\n\nCausal chain: Wet resin -> Hydrolysis -> Short shot."
+          },
+          {
+            "id": "s2",
+            "heading": "Evidence reviewed",
+            "body": "Reviewed dryer 3 logs, resin batch certificate, 6 hours of press data, vision cell 2, and two similar cases."
+          },
+          {
+            "id": "s3",
+            "heading": "Corrective action",
+            "body": "Regenerate dryer 3, quarantine PL-8840 until moisture is verified, restore cooling time to 22.5 s, re-run first-off inspection."
+          },
+          {
+            "id": "s4",
+            "heading": "Limitations",
+            "body": "Synthetic demo data. Moisture is inferred from the dryer log and process response, not from a lab sample."
+          }
+        ],
+        "approved_by": null,
+        "approved_at": null,
+        "edits": 0
+      },
+      "operator_note": "Visual alarm at rib 4. Press ran normally otherwise.",
+      "provenance": {
+        "data": "Synthetic",
+        "model": "RootCause detector v0.9",
+        "date": "2026-10-22T06:42:00Z",
+        "licence": "MIT"
+      },
+      "baseline_hours": 41.0,
+      "current_hours": 2.4
+    },
+    {
+      "id": "battery",
+      "title": "Cell tab weld — incomplete fusion",
+      "subtitle": "Battery cell · laser drift · high value",
+      "process": "Laser welding",
+      "defect": "Incomplete fusion",
+      "part": "Cell tab weld, 21700",
+      "image_keys": [
+        "weld-surface"
+      ],
+      "case": {
+        "id": "RC-0440",
+        "scenario_id": "battery",
+        "plant_id": "plant-de",
+        "line_id": "line-4",
+        "part": "Cell tab weld, 21700",
+        "serial": "CELL-0440-07",
+        "defect_type": "Incomplete fusion at tab weld",
+        "severity": "critical",
+        "detected_at": "2026-10-22T06:58:00Z",
+        "machine_id": "WELDER-7",
+        "batch_id": "F-771",
+        "image_key": "weld-surface",
+        "bbox": [
+          42.0,
+          39.0,
+          18.0,
+          22.0
+        ],
+        "detection_confidence": 0.94,
+        "status": "investigating",
+        "hours_in_service": null,
+        "station": "CT station 1",
+        "shift": "B"
+      },
+      "findings": [],
+      "sensors": [
+        {
+          "id": "laser_power",
+          "name": "Laser power",
+          "unit": "W",
+          "spec_low": 1.75,
+          "spec_high": 1.9,
+          "baseline": 1.82,
+          "std": 0.04,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 1.839
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 1.822
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 1.773
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 1.858
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 1.833
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 1.835
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 1.828
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 1.887
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 1.859
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 1.873
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 1.809
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 1.802
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 1.778
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 1.81
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 1.706
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 1.89
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 1.827
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 1.824
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 1.858
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 1.805
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 1.831
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 1.803
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 1.658
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 1.761
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 1.668
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 1.677
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 1.612
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 1.649
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 1.781
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 1.728
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 1.761
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 1.799
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 1.882
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 1.717
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 1.884
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 1.832
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 1.859
+            }
+          ],
+          "deviation_z": -2.32,
+          "out_of_spec": 8
+        },
+        {
+          "id": "weld_speed",
+          "name": "Weld speed",
+          "unit": "mm/s",
+          "spec_low": 195.0,
+          "spec_high": 225.0,
+          "baseline": 210.0,
+          "std": 4.2,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 212.57
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 211.36
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 207.05
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 218.52
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 203.3
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 210.16
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 214.05
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 212.95
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 212.82
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 205.74
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 218.16
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 207.04
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 209.89
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 210.12
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 210.07
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 207.82
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 216.79
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 210.4
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 214.4
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 203.33
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 212.7
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 206.51
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 206.74
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 203.96
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 203.61
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 200.73
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 201.72
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 203.01
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 205.15
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 206.67
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 206.25
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 209.76
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 206.46
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 218.98
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 213.82
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 216.69
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 209.6
+            }
+          ],
+          "deviation_z": -1.06,
+          "out_of_spec": 0
+        },
+        {
+          "id": "shield_gas",
+          "name": "Shield gas flow",
+          "unit": "l/min",
+          "spec_low": 15.0,
+          "spec_high": 22.0,
+          "baseline": 18.0,
+          "std": 0.6,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 17.23
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 17.64
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 18.2
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 17.56
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 17.27
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 16.97
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 18.32
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 17.79
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 17.52
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 17.32
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 16.44
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 17.97
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 17.36
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 17.88
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 18.8
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 17.7
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 17.84
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 18.49
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 17.8
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 18.0
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 17.24
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 17.0
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 16.22
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 17.5
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 17.47
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 16.37
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 16.61
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 16.62
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 18.71
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 18.05
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 17.59
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 18.08
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 18.8
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 17.4
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 18.38
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 18.37
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 18.02
+            }
+          ],
+          "deviation_z": -1.19,
+          "out_of_spec": 0
+        },
+        {
+          "id": "fixture_force",
+          "name": "Fixture force",
+          "unit": "N",
+          "spec_low": 380.0,
+          "spec_high": 460.0,
+          "baseline": 420.0,
+          "std": 12.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 404.33
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 417.12
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 434.21
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 398.61
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 428.44
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 412.29
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 431.96
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 416.02
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 418.15
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 425.02
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 413.06
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 419.49
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 417.5
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 436.29
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 423.31
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 400.22
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 423.65
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 422.2
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 419.5
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 435.2
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 431.41
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 396.37
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 424.4
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 399.36
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 396.65
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 394.48
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 399.34
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 412.11
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 392.07
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 409.02
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 404.8
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 410.21
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 411.95
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 424.17
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 426.3
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 405.48
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 419.82
+            }
+          ],
+          "deviation_z": -1.18,
+          "out_of_spec": 0
+        },
+        {
+          "id": "ambient_humidity",
+          "name": "Cell room humidity",
+          "unit": "%RH",
+          "spec_low": 30.0,
+          "spec_high": 50.0,
+          "baseline": 41.0,
+          "std": 2.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 37.82
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 40.0
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 40.93
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 37.0
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 39.84
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 46.06
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 37.97
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 39.65
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 41.14
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 36.4
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 40.71
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 42.89
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 40.46
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 38.4
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 41.0
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 39.1
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 41.29
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 40.92
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 40.66
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 39.09
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 43.96
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 43.26
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 45.8
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 46.19
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 46.08
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 48.03
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 47.23
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 46.8
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 45.45
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 42.77
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 42.92
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 43.17
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 43.12
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 39.65
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 43.36
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 36.19
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 39.0
+            }
+          ],
+          "deviation_z": 2.07,
+          "out_of_spec": 0
+        }
+      ],
+      "batch": {
+        "id": "F-771",
+        "material": "Ni-plated steel foil",
+        "supplier": "Nippon Steel",
+        "lot": "F-771",
+        "received": "2026-10-18T06:42:00Z",
+        "certificate": "CERT-F-771",
+        "moisture_pct": null,
+        "hydrogen_ppm": null,
+        "notes": "Incoming checks pass."
+      },
+      "maintenance": [
+        {
+          "id": "WO-87111",
+          "machine": "WELDER-7",
+          "kind": "Power monitor calibration",
+          "at": "2026-09-11T06:42:00Z",
+          "technician": "S. Ito",
+          "note": "Calibration overdue.",
+          "days_before_defect": 41
+        }
+      ],
+      "history": [
+        {
+          "id": "RC-0391",
+          "at": "2026-08-22T06:42:00Z",
+          "defect": "Weld crack",
+          "cause": "Laser power drift",
+          "line": "Line 4",
+          "batch": "F-702",
+          "similarity": 0.88,
+          "resolution_hours": 2.7,
+          "notes": "Recalibrated."
+        },
+        {
+          "id": "RC-0350",
+          "at": "2026-06-26T06:42:00Z",
+          "defect": "Weld crack",
+          "cause": "Fixture force",
+          "line": "Line 4",
+          "batch": "F-688",
+          "similarity": 0.51,
+          "resolution_hours": 5.4,
+          "notes": "Fixture shim replaced."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "laser",
+          "label": "Laser power drift",
+          "category": "machine",
+          "summary": "Power fell 10 % as the monitor drifted out of calibration. Incomplete fusion matches the energy deficit.",
+          "score": 0.6672,
+          "confidence": 82.5,
+          "rank": 1,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.72,
+            "deviation": 0.88,
+            "batch_match": 0.08,
+            "similarity": 0.84,
+            "recurrence": 0.6
+          },
+          "evidence_ids": [
+            "B-EV-02",
+            "B-EV-03",
+            "B-EV-05"
+          ],
+          "note": ""
+        },
+        {
+          "id": "fixture",
+          "label": "Fixture force variation",
+          "category": "tooling",
+          "summary": "Force ran low, but the gap stays inside the weld qualification window. A secondary contributor at most.",
+          "score": 0.3134,
+          "confidence": 7.4,
+          "rank": 2,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.38,
+            "deviation": 0.36,
+            "batch_match": 0.05,
+            "similarity": 0.42,
+            "recurrence": 0.24
+          },
+          "evidence_ids": [
+            "B-EV-04"
+          ],
+          "note": ""
+        },
+        {
+          "id": "foil",
+          "label": "Foil surface variation",
+          "category": "supplier",
+          "summary": "A supplier process change is documented, but incoming checks and the timing do not line up with this failure.",
+          "score": 0.1936,
+          "confidence": 3.3,
+          "rank": 3,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.22,
+            "deviation": 0.12,
+            "batch_match": 0.3,
+            "similarity": 0.2,
+            "recurrence": 0.1
+          },
+          "evidence_ids": [
+            "B-EV-06"
+          ],
+          "note": ""
+        }
+      ],
+      "evidence": [
+        {
+          "id": "B-EV-01",
+          "kind": "image",
+          "title": "Weld crack at tab",
+          "detail": "CT slice shows incomplete fusion at the tab root. Crack length 1.9 mm.",
+          "source": "CT station CT-01",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.93,
+          "payload": {
+            "image": "weld-surface",
+            "finding": "crack"
+          }
+        },
+        {
+          "id": "B-EV-02",
+          "kind": "chart",
+          "title": "Laser power drift",
+          "detail": "Laser power fell from 1.82 W to 1.64 W over 22 minutes. Power monitor calibration was 41 days overdue.",
+          "source": "OPC-UA / welder 7",
+          "at": "2026-10-22T06:12:00Z",
+          "strength": 0.9,
+          "payload": {
+            "sensor": "laser_power",
+            "z": -4.5
+          }
+        },
+        {
+          "id": "B-EV-03",
+          "kind": "record",
+          "title": "Calibration overdue",
+          "detail": "Power monitor calibration due 2026-09-11. Last completed 2026-08-01.",
+          "source": "CMMS / WO-87111",
+          "at": "2026-09-11T06:42:00Z",
+          "strength": 0.8,
+          "payload": {}
+        },
+        {
+          "id": "B-EV-04",
+          "kind": "chart",
+          "title": "Fixture force low",
+          "detail": "Fixture force ran 18 N low. Could contribute to gap variation at the tab root.",
+          "source": "OPC-UA / fixture 7",
+          "at": "2026-10-22T06:22:00Z",
+          "strength": 0.64,
+          "payload": {
+            "sensor": "fixture_force",
+            "z": -1.5
+          }
+        },
+        {
+          "id": "B-EV-05",
+          "kind": "similar",
+          "title": "Case 0391 — laser drift",
+          "detail": "Same welder, same tab design. Approved cause: laser power drift.",
+          "source": "Case history",
+          "at": "2026-08-22T06:42:00Z",
+          "strength": 0.88,
+          "payload": {
+            "case": "RC-0391",
+            "cause": "laser"
+          }
+        },
+        {
+          "id": "B-EV-06",
+          "kind": "record",
+          "title": "Foil batch F-771",
+          "detail": "Supplier changed foil surface treatment in August. Incoming checks pass.",
+          "source": "MES / F-771",
+          "at": "2026-10-18T06:42:00Z",
+          "strength": 0.42,
+          "payload": {}
+        }
+      ],
+      "chain": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Laser power drift",
+            "detail": "1.82 W to 1.64 W as calibration aged",
+            "kind": "root"
+          },
+          {
+            "id": "n2",
+            "label": "Incomplete fusion",
+            "detail": "Energy deficit at the tab root",
+            "kind": "mechanism"
+          },
+          {
+            "id": "n3",
+            "label": "Tab crack",
+            "detail": "1.9 mm crack found at end-of-line CT",
+            "kind": "failure"
+          }
+        ],
+        "edges": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n2",
+            "n3"
+          ]
+        ],
+        "verdict": "The welder lost power before the part lost strength.",
+        "confidence": 0.85
+      },
+      "trace": [],
+      "report": {
+        "id": "RPT-0440",
+        "case_id": "RC-0440",
+        "version": 1,
+        "status": "draft",
+        "title": "Root cause report — RC-0440",
+        "summary": "Laser power drifted 10 % below setpoint because the power monitor was out of calibration. The weld did not fuse at the tab root.",
+        "sections": [
+          {
+            "id": "s1",
+            "heading": "Finding",
+            "body": "Laser power drifted 10 % below setpoint because the power monitor was out of calibration. The weld did not fuse at the tab root.\n\nCausal chain: Laser power drift -> Incomplete fusion -> Tab crack."
+          },
+          {
+            "id": "s2",
+            "heading": "Evidence reviewed",
+            "body": "Reviewed CT slice, welder 7 telemetry, calibration record and two similar cases."
+          },
+          {
+            "id": "s3",
+            "heading": "Corrective action",
+            "body": "Recalibrate the power monitor, re-qualify the weld recipe, add a daily power verification coupon, quarantine cells from the last 4 hours."
+          },
+          {
+            "id": "s4",
+            "heading": "Limitations",
+            "body": "Synthetic demo data. CT interpretation is precomputed for the demo."
+          }
+        ],
+        "approved_by": null,
+        "approved_at": null,
+        "edits": 0
+      },
+      "operator_note": "CT alarm at the end-of-line station.",
+      "provenance": {
+        "data": "Synthetic",
+        "model": "RootCause detector v0.9",
+        "date": "2026-10-22T06:42:00Z",
+        "licence": "MIT"
+      },
+      "baseline_hours": 36.0,
+      "current_hours": 2.9
+    },
+    {
+      "id": "electronics",
+      "title": "Control board — solder void",
+      "subtitle": "Electronics assembly · reflow profile · 4 minutes",
+      "process": "SMT reflow",
+      "defect": "Solder void under QFN",
+      "part": "Control board, QFN-32",
+      "image_keys": [
+        "solder-surface"
+      ],
+      "case": {
+        "id": "RC-0452",
+        "scenario_id": "electronics",
+        "plant_id": "plant-de",
+        "line_id": "line-3",
+        "part": "Control board, QFN-32",
+        "serial": "PCB-0452-11",
+        "defect_type": "Solder void under QFN",
+        "severity": "medium",
+        "detected_at": "2026-10-22T07:05:00Z",
+        "machine_id": "OVEN-2",
+        "batch_id": "PST-2291",
+        "image_key": "solder-surface",
+        "bbox": [
+          46.0,
+          41.0,
+          16.0,
+          18.0
+        ],
+        "detection_confidence": 0.92,
+        "status": "investigating",
+        "hours_in_service": null,
+        "station": "X-ray 4",
+        "shift": "A"
+      },
+      "findings": [],
+      "sensors": [
+        {
+          "id": "zone3_temp",
+          "name": "Reflow zone 3",
+          "unit": "°C",
+          "spec_low": 210.0,
+          "spec_high": 225.0,
+          "baseline": 217.0,
+          "std": 2.1,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 215.88
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 218.03
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 219.34
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 221.02
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 214.16
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 215.49
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 215.05
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 216.32
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 216.68
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 214.27
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 217.6
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 213.97
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 218.2
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 215.09
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 217.67
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 217.99
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 216.79
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 215.75
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 215.35
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 214.58
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 220.42
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 215.07
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 214.88
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 209.21
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 207.51
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 204.79
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 205.81
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 204.22
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 211.92
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 214.7
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 217.57
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 217.52
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 214.8
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 211.55
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 218.73
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 217.61
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 214.9
+            }
+          ],
+          "deviation_z": -2.4,
+          "out_of_spec": 5
+        },
+        {
+          "id": "conveyor",
+          "name": "Conveyor speed",
+          "unit": "cm/min",
+          "spec_low": 68.0,
+          "spec_high": 76.0,
+          "baseline": 72.0,
+          "std": 1.2,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 71.83
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 71.79
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 71.87
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 72.84
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 71.85
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 70.2
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 72.4
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 71.68
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 71.74
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 72.14
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 72.28
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 73.4
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 72.79
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 72.13
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 71.11
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 70.78
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 72.3
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 73.57
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 72.05
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 71.87
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 72.64
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 70.43
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 71.97
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 73.06
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 73.61
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 72.31
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 73.03
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 72.81
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 73.34
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 70.91
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 72.83
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 70.33
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 68.86
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 71.27
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 70.9
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 73.05
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 72.8
+            }
+          ],
+          "deviation_z": 0.23,
+          "out_of_spec": 0
+        },
+        {
+          "id": "paste_age",
+          "name": "Paste open time",
+          "unit": "h",
+          "spec_low": 0.0,
+          "spec_high": 6.0,
+          "baseline": 3.2,
+          "std": 0.5,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 3.95
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 3.39
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 3.54
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 3.64
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 2.78
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 2.42
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 2.64
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 3.37
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 3.73
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 3.26
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 2.52
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 3.9
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 2.4
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 2.96
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 2.92
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 3.33
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 3.75
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 2.45
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 3.04
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 3.36
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 2.62
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 4.02
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 4.94
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 4.82
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 5.26
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 6.07
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 5.9
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 5.79
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 6.23
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 4.84
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 4.14
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 3.57
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 3.67
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 2.81
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 3.98
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 3.79
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 2.2
+            }
+          ],
+          "deviation_z": 3.3,
+          "out_of_spec": 2
+        },
+        {
+          "id": "stencil_cycles",
+          "name": "Stencil print cycles",
+          "unit": "k",
+          "spec_low": null,
+          "spec_high": null,
+          "baseline": 82.0,
+          "std": 2.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 79.9
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 83.36
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 82.81
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 81.05
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 82.08
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 82.48
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 82.2
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 82.18
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 83.33
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 84.0
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 85.07
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 81.8
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 80.53
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 83.41
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 81.36
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 80.34
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 85.44
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 83.71
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 81.28
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 81.35
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 82.81
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 84.61
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 87.18
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 87.66
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 85.28
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 85.74
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 91.21
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 88.85
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 82.55
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 85.71
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 84.45
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 85.3
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 82.01
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 82.64
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 80.3
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 78.73
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 81.49
+            }
+          ],
+          "deviation_z": 1.97,
+          "out_of_spec": 0
+        },
+        {
+          "id": "humidity",
+          "name": "Assembly humidity",
+          "unit": "%RH",
+          "spec_low": 30.0,
+          "spec_high": 55.0,
+          "baseline": 44.0,
+          "std": 2.0,
+          "points": [
+            {
+              "t": "2026-10-22T03:42:00Z",
+              "v": 43.68
+            },
+            {
+              "t": "2026-10-22T03:47:00Z",
+              "v": 46.29
+            },
+            {
+              "t": "2026-10-22T03:52:00Z",
+              "v": 45.58
+            },
+            {
+              "t": "2026-10-22T03:57:00Z",
+              "v": 44.9
+            },
+            {
+              "t": "2026-10-22T04:02:00Z",
+              "v": 44.27
+            },
+            {
+              "t": "2026-10-22T04:07:00Z",
+              "v": 44.13
+            },
+            {
+              "t": "2026-10-22T04:12:00Z",
+              "v": 43.79
+            },
+            {
+              "t": "2026-10-22T04:17:00Z",
+              "v": 44.98
+            },
+            {
+              "t": "2026-10-22T04:22:00Z",
+              "v": 42.77
+            },
+            {
+              "t": "2026-10-22T04:27:00Z",
+              "v": 47.06
+            },
+            {
+              "t": "2026-10-22T04:32:00Z",
+              "v": 46.73
+            },
+            {
+              "t": "2026-10-22T04:37:00Z",
+              "v": 44.62
+            },
+            {
+              "t": "2026-10-22T04:42:00Z",
+              "v": 46.35
+            },
+            {
+              "t": "2026-10-22T04:47:00Z",
+              "v": 46.67
+            },
+            {
+              "t": "2026-10-22T04:52:00Z",
+              "v": 43.89
+            },
+            {
+              "t": "2026-10-22T04:57:00Z",
+              "v": 42.63
+            },
+            {
+              "t": "2026-10-22T05:02:00Z",
+              "v": 45.84
+            },
+            {
+              "t": "2026-10-22T05:07:00Z",
+              "v": 41.41
+            },
+            {
+              "t": "2026-10-22T05:12:00Z",
+              "v": 45.83
+            },
+            {
+              "t": "2026-10-22T05:17:00Z",
+              "v": 44.93
+            },
+            {
+              "t": "2026-10-22T05:22:00Z",
+              "v": 42.61
+            },
+            {
+              "t": "2026-10-22T05:27:00Z",
+              "v": 40.28
+            },
+            {
+              "t": "2026-10-22T05:32:00Z",
+              "v": 45.85
+            },
+            {
+              "t": "2026-10-22T05:37:00Z",
+              "v": 46.92
+            },
+            {
+              "t": "2026-10-22T05:42:00Z",
+              "v": 46.68
+            },
+            {
+              "t": "2026-10-22T05:47:00Z",
+              "v": 40.93
+            },
+            {
+              "t": "2026-10-22T05:52:00Z",
+              "v": 46.66
+            },
+            {
+              "t": "2026-10-22T05:57:00Z",
+              "v": 46.19
+            },
+            {
+              "t": "2026-10-22T06:02:00Z",
+              "v": 45.34
+            },
+            {
+              "t": "2026-10-22T06:07:00Z",
+              "v": 43.07
+            },
+            {
+              "t": "2026-10-22T06:12:00Z",
+              "v": 41.4
+            },
+            {
+              "t": "2026-10-22T06:17:00Z",
+              "v": 47.17
+            },
+            {
+              "t": "2026-10-22T06:22:00Z",
+              "v": 43.92
+            },
+            {
+              "t": "2026-10-22T06:27:00Z",
+              "v": 41.06
+            },
+            {
+              "t": "2026-10-22T06:32:00Z",
+              "v": 46.19
+            },
+            {
+              "t": "2026-10-22T06:37:00Z",
+              "v": 41.6
+            },
+            {
+              "t": "2026-10-22T06:42:00Z",
+              "v": 45.06
+            }
+          ],
+          "deviation_z": 0.21,
+          "out_of_spec": 0
+        }
+      ],
+      "batch": {
+        "id": "PST-2291",
+        "material": "SAC305 solder paste",
+        "supplier": "MacDermid",
+        "lot": "PST-2291",
+        "received": "2026-10-20T06:42:00Z",
+        "certificate": "CERT-PST-2291",
+        "moisture_pct": null,
+        "hydrogen_ppm": null,
+        "notes": "Open time exceeded before print."
+      },
+      "maintenance": [
+        {
+          "id": "WO-87008",
+          "machine": "OVEN-2",
+          "kind": "Heating element check",
+          "at": "2026-10-05T06:42:00Z",
+          "technician": "R. Patel",
+          "note": "Zone 3 element within specification at check.",
+          "days_before_defect": 17
+        }
+      ],
+      "history": [
+        {
+          "id": "RC-0376",
+          "at": "2026-08-04T06:42:00Z",
+          "defect": "Solder void",
+          "cause": "Reflow profile",
+          "line": "Line 3",
+          "batch": "PST-2201",
+          "similarity": 0.86,
+          "resolution_hours": 3.4,
+          "notes": "Zone 3 recovered."
+        },
+        {
+          "id": "RC-0321",
+          "at": "2026-05-19T06:42:00Z",
+          "defect": "Solder void",
+          "cause": "Paste open time",
+          "line": "Line 3",
+          "batch": "PST-2144",
+          "similarity": 0.55,
+          "resolution_hours": 4.1,
+          "notes": "Paste control tightened."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "reflow",
+          "label": "Reflow zone 3 under-temperature",
+          "category": "process",
+          "summary": "Zone 3 ran 11 °C low, reducing flux activation and leaving voids under the thermal pad.",
+          "score": 0.6236,
+          "confidence": 78.5,
+          "rank": 1,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.62,
+            "deviation": 0.86,
+            "batch_match": 0.08,
+            "similarity": 0.82,
+            "recurrence": 0.5
+          },
+          "evidence_ids": [
+            "E-EV-01",
+            "E-EV-02",
+            "E-EV-05"
+          ],
+          "note": ""
+        },
+        {
+          "id": "paste",
+          "label": "Solder paste past open time",
+          "category": "material",
+          "summary": "Paste exceeded open time. It raises void risk, but similar pastes passed at this void level.",
+          "score": 0.3466,
+          "confidence": 10.4,
+          "rank": 2,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.34,
+            "deviation": 0.42,
+            "batch_match": 0.25,
+            "similarity": 0.38,
+            "recurrence": 0.2
+          },
+          "evidence_ids": [
+            "E-EV-03"
+          ],
+          "note": ""
+        },
+        {
+          "id": "stencil",
+          "label": "Stencil aperture wear",
+          "category": "tooling",
+          "summary": "High cycle count, but aperture inspection passed and print volume is in tolerance.",
+          "score": 0.2008,
+          "confidence": 3.6,
+          "rank": 3,
+          "status": "proposed",
+          "factors": {
+            "frequency": 0.28,
+            "deviation": 0.24,
+            "batch_match": 0.02,
+            "similarity": 0.22,
+            "recurrence": 0.12
+          },
+          "evidence_ids": [
+            "E-EV-04"
+          ],
+          "note": ""
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-EV-01",
+          "kind": "image",
+          "title": "Solder void under QFN",
+          "detail": "X-ray shows 31 % voiding under the thermal pad against a 25 % limit.",
+          "source": "X-ray cell XR-04",
+          "at": "2026-10-22T06:42:00Z",
+          "strength": 0.9,
+          "payload": {
+            "image": "solder-surface",
+            "finding": "void"
+          }
+        },
+        {
+          "id": "E-EV-02",
+          "kind": "chart",
+          "title": "Reflow zone 3 low",
+          "detail": "Zone 3 fell to 206 °C, 11 °C below setpoint, for 19 minutes.",
+          "source": "OPC-UA / oven 2",
+          "at": "2026-10-22T06:17:00Z",
+          "strength": 0.86,
+          "payload": {
+            "sensor": "zone3_temp",
+            "z": -5.2
+          }
+        },
+        {
+          "id": "E-EV-03",
+          "kind": "record",
+          "title": "Solder paste open time",
+          "detail": "Paste exceeded open time by 2.9 h before print.",
+          "source": "Line 3 paste log",
+          "at": "2026-10-22T01:42:00Z",
+          "strength": 0.7,
+          "payload": {}
+        },
+        {
+          "id": "E-EV-04",
+          "kind": "record",
+          "title": "Stencil wear",
+          "detail": "Stencil at 89.5 k cycles against a 100 k limit. Aperture inspection passed.",
+          "source": "Tooling / ST-118",
+          "at": "2026-10-19T06:42:00Z",
+          "strength": 0.35,
+          "payload": {}
+        },
+        {
+          "id": "E-EV-05",
+          "kind": "similar",
+          "title": "Case 0376 — reflow profile",
+          "detail": "Same oven, similar void signature. Approved cause: reflow zone 3 deviation.",
+          "source": "Case history",
+          "at": "2026-08-04T06:42:00Z",
+          "strength": 0.86,
+          "payload": {
+            "case": "RC-0376",
+            "cause": "reflow"
+          }
+        }
+      ],
+      "chain": {
+        "nodes": [
+          {
+            "id": "n1",
+            "label": "Zone 3 under-temperature",
+            "detail": "206 °C against a 217 °C setpoint",
+            "kind": "root"
+          },
+          {
+            "id": "n2",
+            "label": "Poor flux activation",
+            "detail": "Oxide not removed at the thermal pad",
+            "kind": "mechanism"
+          },
+          {
+            "id": "n3",
+            "label": "Solder voiding",
+            "detail": "31 % voiding, above the 25 % limit",
+            "kind": "failure"
+          }
+        ],
+        "edges": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n2",
+            "n3"
+          ]
+        ],
+        "verdict": "The oven cooled the joint before the flux could clean it.",
+        "confidence": 0.8
+      },
+      "trace": [],
+      "report": {
+        "id": "RPT-0452",
+        "case_id": "RC-0452",
+        "version": 1,
+        "status": "draft",
+        "title": "Root cause report — RC-0452",
+        "summary": "Reflow zone 3 under-temperature reduced flux activation and left 31 % voiding under the QFN thermal pad.",
+        "sections": [
+          {
+            "id": "s1",
+            "heading": "Finding",
+            "body": "Reflow zone 3 under-temperature reduced flux activation and left 31 % voiding under the QFN thermal pad.\n\nCausal chain: Zone 3 under-temperature -> Poor flux activation -> Solder voiding."
+          },
+          {
+            "id": "s2",
+            "heading": "Evidence reviewed",
+            "body": "Reviewed X-ray, oven telemetry, paste log, stencil record and a similar case."
+          },
+          {
+            "id": "s3",
+            "heading": "Corrective action",
+            "body": "Recover oven zone 3, verify profile with a coupon, tighten paste open-time control, re-X-ray the last 2 hours of boards."
+          },
+          {
+            "id": "s4",
+            "heading": "Limitations",
+            "body": "Synthetic demo data. X-ray void measurement is precomputed."
+          }
+        ],
+        "approved_by": null,
+        "approved_at": null,
+        "edits": 0
+      },
+      "operator_note": "X-ray flagged 31 % voiding on the thermal pad.",
+      "provenance": {
+        "data": "Synthetic",
+        "model": "RootCause detector v0.9",
+        "date": "2026-10-22T06:42:00Z",
+        "licence": "MIT"
+      },
+      "baseline_hours": 28.0,
+      "current_hours": 2.1
+    }
+  ],
+  "connectors": [
+    {
+      "id": "opcua-furnace",
+      "name": "Furnace 2 · OPC-UA",
+      "protocol": "OPC-UA",
+      "category": "Machine",
+      "status": "connected",
+      "endpoint": "opc.tcp://10.8.4.21:4840",
+      "detail": "6 parameters, 1 s poll",
+      "points": 6,
+      "last_sync": "2026-10-22T06:41:00Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "opcua-quench",
+      "name": "Quench line · OPC-UA",
+      "protocol": "OPC-UA",
+      "category": "Machine",
+      "status": "connected",
+      "endpoint": "opc.tcp://10.8.4.22:4840",
+      "detail": "3 parameters, 1 s poll",
+      "points": 3,
+      "last_sync": "2026-10-22T06:41:00Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "modbus-old-press",
+      "name": "Press 9 · Modbus TCP",
+      "protocol": "Modbus",
+      "category": "Machine",
+      "status": "simulated",
+      "endpoint": "10.8.4.39:502",
+      "detail": "Older PLC fallback, 12 registers",
+      "points": 12,
+      "last_sync": "2026-10-22T06:38:00Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "camera-keyence",
+      "name": "Keyence CV-X · camera feed",
+      "protocol": "TCP/IP",
+      "category": "Vision",
+      "status": "connected",
+      "endpoint": "10.8.4.51:9000",
+      "detail": "Generic frame reader, 30 fps",
+      "points": 0,
+      "last_sync": "2026-10-22T06:41:26Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "camera-cognex",
+      "name": "Cognex In-Sight · camera feed",
+      "protocol": "TCP/IP",
+      "category": "Vision",
+      "status": "available",
+      "endpoint": "10.8.4.52:9000",
+      "detail": "Ready to pair",
+      "points": 0,
+      "last_sync": null,
+      "phase": "1.1"
+    },
+    {
+      "id": "mes-batch",
+      "name": "MES batch records",
+      "protocol": "CSV import",
+      "category": "MES",
+      "status": "connected",
+      "endpoint": "\\fileshare\\mes\\batches",
+      "detail": "Nightly import, 1,284 records",
+      "points": 1284,
+      "last_sync": "2026-10-21T23:42:00Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "qm-history",
+      "name": "Quality system history",
+      "protocol": "CSV import",
+      "category": "Quality",
+      "status": "connected",
+      "endpoint": "\\fileshare\\qm\\cases",
+      "detail": "6 months, 312 cases",
+      "points": 312,
+      "last_sync": "2026-10-21T23:42:00Z",
+      "phase": "1.1"
+    },
+    {
+      "id": "cmms",
+      "name": "Maintenance · CMMS",
+      "protocol": "REST",
+      "category": "Maintenance",
+      "status": "available",
+      "endpoint": "https://cmms.local/api",
+      "detail": "Read-only service account",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "sap-qm",
+      "name": "SAP QM",
+      "protocol": "SAP QM",
+      "category": "Quality",
+      "status": "available",
+      "endpoint": "SAP-PRD / QM",
+      "detail": "Inspection lots and notifications",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "sap-pm",
+      "name": "SAP PM",
+      "protocol": "SAP PM",
+      "category": "Maintenance",
+      "status": "available",
+      "endpoint": "SAP-PRD / PM",
+      "detail": "Work orders and equipment history",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "factorytalk",
+      "name": "Rockwell FactoryTalk",
+      "protocol": "FactoryTalk",
+      "category": "SCADA",
+      "status": "available",
+      "endpoint": "FTVW / line 6",
+      "detail": "Tag browser",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "s7",
+      "name": "Siemens S7 / TIA",
+      "protocol": "S7",
+      "category": "PLC",
+      "status": "available",
+      "endpoint": "10.8.4.61 / rack 0 slot 1",
+      "detail": "ISO-on-TCP",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "generic-rest",
+      "name": "Generic REST / GraphQL",
+      "protocol": "REST",
+      "category": "Integration",
+      "status": "available",
+      "endpoint": "configure",
+      "detail": "Bring your own system",
+      "points": 0,
+      "last_sync": null,
+      "phase": "2.2"
+    },
+    {
+      "id": "supplier-cert",
+      "name": "Supplier certificates",
+      "protocol": "CSV / PDF import",
+      "category": "Supplier",
+      "status": "simulated",
+      "endpoint": "\\fileshare\\supplier",
+      "detail": "Certificate parser",
+      "points": 64,
+      "last_sync": "2026-10-21T06:42:00Z",
+      "phase": "2.2"
+    }
+  ],
+  "audits": [
+    {
+      "id": "A-1042",
+      "at": "2026-10-22T06:38:00Z",
+      "actor": "rootcause-agent",
+      "action": "case.created",
+      "object": "RC-0417",
+      "detail": "Defect detected on camera 06, confidence 0.97",
+      "model_version": "rootcause-0.9.0",
+      "data_sources": [
+        "camera-keyence"
+      ]
+    },
+    {
+      "id": "A-1041",
+      "at": "2026-10-22T06:39:00Z",
+      "actor": "rootcause-agent",
+      "action": "evidence.pulled",
+      "object": "RC-0417",
+      "detail": "6 h machine window, batch B-2291, 2 maintenance records, 12 similar cases",
+      "model_version": "rootcause-0.9.0",
+      "data_sources": [
+        "opcua-furnace",
+        "mes-batch",
+        "qm-history"
+      ]
+    },
+    {
+      "id": "A-1040",
+      "at": "2026-10-22T06:40:00Z",
+      "actor": "M. Weber",
+      "action": "case.reviewed",
+      "object": "RC-0416",
+      "detail": "Approved cause: cooling deviation",
+      "model_version": "rootcause-0.9.0",
+      "data_sources": [
+        "opcua-quench"
+      ]
+    },
+    {
+      "id": "A-1039",
+      "at": "2026-10-22T04:42:00Z",
+      "actor": "M. Weber",
+      "action": "report.approved",
+      "object": "RPT-0416",
+      "detail": "Report version 2 signed off",
+      "model_version": "rootcause-0.9.0",
+      "data_sources": [
+        "opcua-furnace"
+      ]
+    }
+  ],
+  "dashboard": {
+    "investigations_this_week": 14,
+    "investigations_delta": 0.27,
+    "median_hours_to_cause": 3.6,
+    "baseline_hours_to_cause": 51.0,
+    "cause_accuracy": 0.81,
+    "scrap_prevented_eur": 38400.0,
+    "rework_prevented_eur": 12600.0,
+    "engineer_hours_saved": 174.0,
+    "defect_rate_pct": [
+      {
+        "week": "W36",
+        "line-6": 2.8,
+        "line-2": 1.9,
+        "line-4": 1.2,
+        "line-3": 0.9
+      },
+      {
+        "week": "W37",
+        "line-6": 2.6,
+        "line-2": 2.1,
+        "line-4": 1.3,
+        "line-3": 0.8
+      },
+      {
+        "week": "W38",
+        "line-6": 3.1,
+        "line-2": 1.7,
+        "line-4": 1.1,
+        "line-3": 1.0
+      },
+      {
+        "week": "W39",
+        "line-6": 2.4,
+        "line-2": 2.0,
+        "line-4": 1.4,
+        "line-3": 0.7
+      },
+      {
+        "week": "W40",
+        "line-6": 2.2,
+        "line-2": 1.6,
+        "line-4": 1.0,
+        "line-3": 0.9
+      },
+      {
+        "week": "W41",
+        "line-6": 2.5,
+        "line-2": 1.8,
+        "line-4": 1.2,
+        "line-3": 0.8
+      },
+      {
+        "week": "W42",
+        "line-6": 2.0,
+        "line-2": 1.4,
+        "line-4": 0.9,
+        "line-3": 0.7
+      },
+      {
+        "week": "W43",
+        "line-6": 1.8,
+        "line-2": 1.5,
+        "line-4": 0.8,
+        "line-3": 0.6
+      }
+    ],
+    "top_causes": [
+      {
+        "cause": "Gas porosity",
+        "count": 11,
+        "share": 0.26
+      },
+      {
+        "cause": "Cooling deviation",
+        "count": 8,
+        "share": 0.19
+      },
+      {
+        "cause": "Laser power drift",
+        "count": 7,
+        "share": 0.17
+      },
+      {
+        "cause": "Material moisture",
+        "count": 6,
+        "share": 0.14
+      },
+      {
+        "cause": "Tool wear",
+        "count": 5,
+        "share": 0.12
+      },
+      {
+        "cause": "Reflow profile",
+        "count": 5,
+        "share": 0.12
+      }
+    ],
+    "weekly": [
+      {
+        "week": "W36",
+        "investigations": 6,
+        "hours": 9.1,
+        "baseline": 52
+      },
+      {
+        "week": "W37",
+        "investigations": 7,
+        "hours": 7.8,
+        "baseline": 50
+      },
+      {
+        "week": "W38",
+        "investigations": 8,
+        "hours": 6.4,
+        "baseline": 48
+      },
+      {
+        "week": "W39",
+        "investigations": 9,
+        "hours": 5.2,
+        "baseline": 49
+      },
+      {
+        "week": "W40",
+        "investigations": 11,
+        "hours": 4.6,
+        "baseline": 51
+      },
+      {
+        "week": "W41",
+        "investigations": 12,
+        "hours": 4.1,
+        "baseline": 47
+      },
+      {
+        "week": "W42",
+        "investigations": 13,
+        "hours": 3.8,
+        "baseline": 50
+      },
+      {
+        "week": "W43",
+        "investigations": 14,
+        "hours": 3.6,
+        "baseline": 51
+      }
+    ],
+    "resolution_by_line": [
+      {
+        "line": "Line 6",
+        "hours": 3.4,
+        "cases": 12
+      },
+      {
+        "line": "Line 2",
+        "hours": 2.9,
+        "cases": 9
+      },
+      {
+        "line": "Line 4",
+        "hours": 4.1,
+        "cases": 8
+      },
+      {
+        "line": "Line 3",
+        "hours": 3.2,
+        "cases": 6
+      }
+    ]
+  },
+  "alerts": [
+    {
+      "id": "AL-31",
+      "level": "warning",
+      "title": "Hydrogen trending up on Line 6",
+      "detail": "Melt hydrogen 1.6 ppm average over 3 pours. Limit 1.4 ppm.",
+      "at": "2026-10-22T05:42:00Z",
+      "line_id": "line-6",
+      "acknowledged": false
+    },
+    {
+      "id": "AL-30",
+      "level": "critical",
+      "title": "Dryer 3 regeneration overdue",
+      "detail": "Line 2 dryer is 38 h past regeneration. Moisture at 0.151 %.",
+      "at": "2026-10-22T03:42:00Z",
+      "line_id": "line-2",
+      "acknowledged": false
+    },
+    {
+      "id": "AL-29",
+      "level": "info",
+      "title": "Case RC-0417 assigned to M. Weber",
+      "detail": "Investigation started 4 minutes ago.",
+      "at": "2026-10-22T06:38:00Z",
+      "line_id": "line-6",
+      "acknowledged": false
+    }
+  ],
+  "actions": [
+    {
+      "id": "CA-118",
+      "case_id": "RC-0417",
+      "title": "Quarantine batch B-2291 and re-test hydrogen",
+      "owner": "M. Weber",
+      "due": "2026-10-24T06:42:00Z",
+      "status": "in_progress",
+      "saving_eur": 18400.0
+    },
+    {
+      "id": "CA-117",
+      "case_id": "RC-0417",
+      "title": "Replace furnace door seal, add post-repair gas check",
+      "owner": "A. Novak",
+      "due": "2026-10-27T06:42:00Z",
+      "status": "open",
+      "saving_eur": 9200.0
+    },
+    {
+      "id": "CA-116",
+      "case_id": "RC-0431",
+      "title": "Regenerate dryer 3 and verify resin moisture",
+      "owner": "K. Meier",
+      "due": "2026-10-23T06:42:00Z",
+      "status": "open",
+      "saving_eur": 6400.0
+    },
+    {
+      "id": "CA-115",
+      "case_id": "RC-0416",
+      "title": "Restore cooling time on press 2",
+      "owner": "J. Silva",
+      "due": "2026-10-21T06:42:00Z",
+      "status": "done",
+      "saving_eur": 2100.0
+    },
+    {
+      "id": "CA-114",
+      "case_id": "RC-0440",
+      "title": "Recalibrate welder 7 power monitor",
+      "owner": "S. Ito",
+      "due": "2026-10-25T06:42:00Z",
+      "status": "in_progress",
+      "saving_eur": 11200.0
+    }
+  ],
+  "billing": {
+    "plan": "Pilot · 90 days",
+    "lines": 4,
+    "per_line_month_eur": 2400.0,
+    "setup_fee_eur": 28000.0,
+    "npu_option_eur": 1150.0,
+    "npu_enabled": true,
+    "mrr_eur": 10750.0,
+    "next_invoice": "2026-11-09T06:42:00Z",
+    "invoices": [
+      {
+        "id": "INV-2026-09",
+        "date": "2026-09-22T06:42:00Z",
+        "amount": 10750,
+        "status": "paid"
+      },
+      {
+        "id": "INV-2026-08",
+        "date": "2026-08-23T06:42:00Z",
+        "amount": 10750,
+        "status": "paid"
+      },
+      {
+        "id": "INV-SETUP",
+        "date": "2026-08-08T06:42:00Z",
+        "amount": 28000,
+        "status": "paid"
+      }
+    ]
+  },
+  "compliance": [
+    {
+      "id": "iso9001",
+      "name": "ISO 9001 quality workflow",
+      "standard": "ISO 9001:2015",
+      "status": "ready",
+      "controls": 24,
+      "covered": 24,
+      "detail": "Case ownership, approval, record retention and corrective-action loop."
+    },
+    {
+      "id": "iatf",
+      "name": "IATF 16949 pack",
+      "standard": "IATF 16949:2016",
+      "status": "in_progress",
+      "controls": 31,
+      "covered": 24,
+      "detail": "Automotive traceability and PPAP evidence export."
+    },
+    {
+      "id": "fda",
+      "name": "FDA 21 CFR Part 11 audit trail",
+      "standard": "21 CFR Part 11",
+      "status": "planned",
+      "controls": 18,
+      "covered": 6,
+      "detail": "Electronic signature and immutable audit trail for pharma/medtech."
+    }
+  ],
+  "users": [
+    {
+      "id": "u1",
+      "name": "Mara Weber",
+      "role": "quality_manager",
+      "line_ids": [
+        "line-6",
+        "line-2",
+        "line-4",
+        "line-3"
+      ],
+      "initials": "MW"
+    },
+    {
+      "id": "u2",
+      "name": "Tomas Keller",
+      "role": "engineer",
+      "line_ids": [
+        "line-6"
+      ],
+      "initials": "TK"
+    },
+    {
+      "id": "u3",
+      "name": "Priya Nair",
+      "role": "engineer",
+      "line_ids": [
+        "line-2",
+        "line-4"
+      ],
+      "initials": "PN"
+    },
+    {
+      "id": "u4",
+      "name": "Lars Brandt",
+      "role": "operator",
+      "line_ids": [
+        "line-6"
+      ],
+      "initials": "LB"
+    },
+    {
+      "id": "u5",
+      "name": "Site Admin",
+      "role": "admin",
+      "line_ids": [],
+      "initials": "SA"
+    }
+  ],
+  "connector_library": [
+    {
+      "id": "opcua",
+      "name": "OPC-UA",
+      "systems": "Kepware, Siemens, Beckhoff",
+      "status": "shipped",
+      "phase": "1.1"
+    },
+    {
+      "id": "modbus",
+      "name": "Modbus TCP/RTU",
+      "systems": "Legacy PLCs, power meters",
+      "status": "shipped",
+      "phase": "1.1"
+    },
+    {
+      "id": "keyence",
+      "name": "Keyence CV-X / IV",
+      "systems": "Inspection cameras",
+      "status": "shipped",
+      "phase": "1.1"
+    },
+    {
+      "id": "cognex",
+      "name": "Cognex In-Sight",
+      "systems": "Inspection cameras",
+      "status": "shipped",
+      "phase": "1.1"
+    },
+    {
+      "id": "mes-csv",
+      "name": "MES / ERP CSV",
+      "systems": "SAP, Oracle, custom",
+      "status": "shipped",
+      "phase": "1.1"
+    },
+    {
+      "id": "sap-qm",
+      "name": "SAP QM",
+      "systems": "Inspection lots, notifications",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "sap-pm",
+      "name": "SAP PM",
+      "systems": "Work orders, equipment",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "factorytalk",
+      "name": "Rockwell FactoryTalk",
+      "systems": "Logix, tags",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "s7",
+      "name": "Siemens S7 / TIA",
+      "systems": "S7-1200/1500",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "rest",
+      "name": "Generic REST / GraphQL",
+      "systems": "Anything with an API",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "supplier",
+      "name": "Supplier certificates",
+      "systems": "CoA, CoC PDF/CSV",
+      "status": "shipped",
+      "phase": "2.2"
+    },
+    {
+      "id": "iso",
+      "name": "ISO 9001 workflow",
+      "systems": "Document control",
+      "status": "beta",
+      "phase": "3"
+    },
+    {
+      "id": "iatf",
+      "name": "IATF 16949",
+      "systems": "Automotive evidence",
+      "status": "beta",
+      "phase": "3"
+    },
+    {
+      "id": "fda",
+      "name": "FDA 21 CFR Part 11",
+      "systems": "E-signature, audit trail",
+      "status": "planned",
+      "phase": "3"
+    }
+  ],
+  "sharing": {
+    "enabled": false,
+    "scope": "cross-factory anonymised patterns, opt-in",
+    "factories": 2,
+    "shared_causes": 0,
+    "note": "Off by default. Only aggregated cause labels and factor ranges are shared; images, batches and machine identifiers never leave the site."
+  }
+}

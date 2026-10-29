@@ -1,0 +1,24 @@
+{
+  "name": "RootCause — quality intelligence",
+  "short_name": "RootCause",
+  "description": "When a factory finds a bad part, RootCause finds the likely cause and writes the quality report with evidence.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Stage piece", "url": "./#/stage" },
+    { "name": "Review queue", "url": "./#/review" },
+    { "name": "Cases", "url": "./#/cases" }
+  ]
+}

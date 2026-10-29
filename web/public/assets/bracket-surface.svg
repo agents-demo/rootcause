@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a7f87"/>
+      <stop offset=".28" stop-color="#565c65"/>
+      <stop offset=".55" stop-color="#43474f"/>
+      <stop offset=".8" stop-color="#34383f"/>
+      <stop offset="1" stop-color="#24272c"/>
+    </linearGradient>
+    <linearGradient id="steel2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8d939b"/>
+      <stop offset=".5" stop-color="#5c626b"/>
+      <stop offset="1" stop-color="#3a3e45"/>
+    </linearGradient>
+    <radialGradient id="spot" cx=".32" cy=".22" r=".75">
+      <stop offset="0" stop-color="#b8bec6" stop-opacity=".38"/>
+      <stop offset=".45" stop-color="#737a83" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#0a0b0d" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="boss" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#949aa2"/>
+      <stop offset=".6" stop-color="#5a6068"/>
+      <stop offset="1" stop-color="#31353b"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" seed="7"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".13"/></feComponentTransfer>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="noise2">
+      <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="4" seed="17"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer>
+    </filter>
+    <pattern id="machining" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(112)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#ffffff" stroke-opacity=".035" stroke-width="1"/>
+    </pattern>
+    <clipPath id="plateClip">
+      <rect x="110" y="82" width="780" height="452" rx="46"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1000" height="620" fill="#0b0c0e"/>
+  <ellipse cx="500" cy="330" rx="520" ry="320" fill="#16181c"/>
+  <ellipse cx="410" cy="250" rx="330" ry="220" fill="url(#spot)"/>
+
+  <g>
+    <rect x="110" y="82" width="780" height="452" rx="46" fill="#14161a" opacity=".9"/>
+    <rect x="104" y="76" width="792" height="464" rx="50" fill="url(#steel)"/>
+    <rect x="104" y="76" width="792" height="464" rx="50" fill="url(#machining)"/>
+    <rect x="104" y="76" width="792" height="464" rx="50" filter="url(#noise2)" opacity=".45"/>
+    <g clip-path="url(#plateClip)">
+      <path d="M90 420 C250 360 360 430 520 392 C690 352 820 420 940 380 L940 560 L90 560 Z" fill="#1b1e22" opacity=".35"/>
+      <path d="M120 110 C300 60 640 90 870 120 L870 160 C600 130 320 100 120 150 Z" fill="#a5abb2" opacity=".16"/>
+    </g>
+    <rect x="136" y="108" width="728" height="400" rx="30" fill="none" stroke="#2a2d33" stroke-width="2"/>
+    <rect x="142" y="114" width="716" height="388" rx="26" fill="none" stroke="#9298a0" stroke-opacity=".22" stroke-width="1"/>
+
+    <!-- raised boss -->
+    <circle cx="330" cy="240" r="86" fill="#1d2025" opacity=".7" filter="url(#soft)"/>
+    <circle cx="330" cy="240" r="80" fill="url(#boss)" stroke="#9aa1aa" stroke-opacity=".35"/>
+    <circle cx="330" cy="240" r="58" fill="#3a3f46"/>
+    <circle cx="330" cy="240" r="54" fill="#25292f" stroke="#8d949d" stroke-opacity=".3"/>
+    <circle cx="330" cy="240" r="20" fill="#111316" stroke="#8f969e" stroke-opacity=".45"/>
+    <path d="M280 206 A64 64 0 0 1 374 194" fill="none" stroke="#d2d7dc" stroke-opacity=".28" stroke-width="2"/>
+
+    <!-- ribs -->
+    <path d="M420 200 C520 172 640 182 760 206" fill="none" stroke="#262a2f" stroke-width="18" opacity=".8"/>
+    <path d="M420 200 C520 172 640 182 760 206" fill="none" stroke="#9ba2aa" stroke-opacity=".22" stroke-width="2"/>
+    <path d="M410 430 C540 456 660 448 790 420" fill="none" stroke="#262a2f" stroke-width="22" opacity=".8"/>
+    <path d="M410 430 C540 456 660 448 790 420" fill="none" stroke="#9ba2aa" stroke-opacity=".16" stroke-width="2"/>
+    <path d="M620 250 L620 400" stroke="#2b2f35" stroke-width="14"/>
+    <path d="M620 250 L620 400" stroke="#aab0b8" stroke-opacity=".18" stroke-width="2"/>
+
+    <!-- bolt holes -->
+    <g>
+      <circle cx="790" cy="150" r="18" fill="#1a1c20" stroke="#a6adb5" stroke-opacity=".4" stroke-width="2"/>
+      <circle cx="150" cy="490" r="18" fill="#1a1c20" stroke="#a6adb5" stroke-opacity=".4" stroke-width="2"/>
+      <circle cx="850" cy="490" r="18" fill="#1a1c20" stroke="#a6adb5" stroke-opacity=".4" stroke-width="2"/>
+      <path d="M780 142 A14 14 0 0 1 798 136" fill="none" stroke="#e5e9ee" stroke-opacity=".35" stroke-width="1.5"/>
+    </g>
+
+    <!-- surface detail -->
+    <g fill="none" stroke="#c3c9d0" stroke-linecap="round">
+      <path d="M170 380 L270 372" stroke-opacity=".12" stroke-width="1"/>
+      <path d="M520 470 L610 462" stroke-opacity=".1" stroke-width="1"/>
+      <path d="M700 120 L760 116" stroke-opacity=".1" stroke-width="1"/>
+      <path d="M200 160 L240 156" stroke-opacity=".09" stroke-width="1"/>
+      <path d="M600 250 L690 244" stroke-opacity=".08" stroke-width="1"/>
+      <path d="M470 150 C540 140 610 146 670 158" stroke-opacity=".06" stroke-width="1"/>
+    </g>
+
+    <!-- machining ridge (the decoy) -->
+    <path d="M250 392 C282 386 310 382 334 376" fill="none" stroke="#c6ae8c" stroke-opacity=".65" stroke-width="3"/>
+    <path d="M250 394 C282 388 310 384 334 378" fill="none" stroke="#2a2622" stroke-opacity=".55" stroke-width="2"/>
+
+    <!-- crack at the root fillet -->
+    <path d="M356 214 C372 230 366 260 380 282 C390 300 382 316 392 330 C402 348 430 350 456 364" fill="none" stroke="#17140f" stroke-width="5" stroke-linecap="round"/>
+    <path d="M356 214 C372 230 366 260 380 282 C390 300 382 316 392 330 C402 348 430 350 456 364" fill="none" stroke="#e4cba8" stroke-opacity=".55" stroke-width="1.2"/>
+    <path d="M380 282 C360 288 344 306 324 310" fill="none" stroke="#1a1712" stroke-opacity=".7" stroke-width="2"/>
+    <path d="M394 334 C408 344 412 366 432 382" fill="none" stroke="#1a1712" stroke-opacity=".55" stroke-width="1.5"/>
+    <ellipse cx="370" cy="282" rx="18" ry="9" fill="#0f0d0a" opacity=".35" filter="url(#soft)"/>
+
+    <rect x="104" y="76" width="792" height="464" rx="50" fill="url(#grain)" opacity=".6"/>
+    <rect x="104" y="76" width="792" height="464" rx="50" fill="none" stroke="#e9edf1" stroke-opacity=".12" stroke-width="1"/>
+  </g>
+</svg>
