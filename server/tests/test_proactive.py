@@ -6,6 +6,7 @@ from rootcause.demo.build_pack import build_pack
 from rootcause.models import WatchCase
 from rootcause.proactive import brief, containment, notifications, scheduler, signals
 from rootcause.proactive import watch as watch_engine
+from rootcause.proactive.privacy import sanitize_note
 from rootcause.proactive.queue import OfflineQueue
 from rootcause.research import predictive
 
@@ -154,3 +155,19 @@ def test_offline_queue_is_bounded_and_deduplicated():
     assert q.summary()["dropped"] == 1
     assert len(q.drain()) == 2
     assert q.summary()["queued"] == 0
+
+
+def test_privacy_filter_redacts_personal_text():
+    text = sanitize_note("Operator said call 0176 1234567 or mail jo@example.com about the sick note")
+    assert "0176" not in text
+    assert "jo@example.com" not in text
+    assert "personal" in text
+
+
+def test_gradient_boosting_challenger_is_deterministic():
+    y, baseline, _, x = predictive.synthetic_events(n=120, seed=7)
+    first = predictive.gradient_boosting_stumps(x, y, rounds=10)
+    second = predictive.gradient_boosting_stumps(x, y, rounds=10)
+    assert first.shape == y.shape
+    assert (first == second).all()
+    assert predictive.c_index(list(range(1, 121)), list(y), list(first)) >= 0

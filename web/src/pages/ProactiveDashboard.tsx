@@ -87,15 +87,15 @@ export default function ProactiveDashboard() {
             <div className="panel-head"><h3>Calibration</h3><span className="sub">requires engineer sign-off</span></div>
             <div className="panel-body">
               <div className="grid g3" style={{ gap: 9 }}>
-                <div className="field"><label>Mode</label><select className="select" value={s.mode} onChange={(e) => updateSchedule({ mode: e.target.value as "shadow" | "live" })}><option value="shadow">shadow</option><option value="live">live</option></select></div>
-                <div className="field"><label>Interval (min)</label><input className="input" type="number" defaultValue={s.interval_minutes} onBlur={(e) => updateSchedule({ interval_minutes: Number(e.target.value) })} /></div>
-                <div className="field"><label>False-alarm budget</label><input className="input" type="number" step="0.1" defaultValue={s.false_alarm_budget} onBlur={(e) => updateSchedule({ false_alarm_budget: Number(e.target.value) })} /></div>
-                <div className="field"><label>Max alerts / shift</label><input className="input" type="number" defaultValue={s.max_alerts_per_shift} onBlur={(e) => updateSchedule({ max_alerts_per_shift: Number(e.target.value) })} /></div>
-                <div className="field"><label>Quiet hours</label><input className="input" defaultValue={s.quiet_hours} onBlur={(e) => updateSchedule({ quiet_hours: e.target.value })} /></div>
-                <div className="field"><label>Coverage floor</label><input className="input" type="number" step="0.01" defaultValue={s.coverage_floor} onBlur={(e) => updateSchedule({ coverage_floor: Number(e.target.value) })} /></div>
-                <div className="field"><label>Champion</label><input className="input" defaultValue={s.champion} onBlur={(e) => updateSchedule({ champion: e.target.value })} /></div>
-                <div className="field"><label>Challenger</label><input className="input" defaultValue={s.challenger} onBlur={(e) => updateSchedule({ challenger: e.target.value })} /></div>
-                <div className="field"><label>Webhook</label><input className="input" defaultValue={s.webhook_url} onBlur={(e) => updateSchedule({ webhook_url: e.target.value })} /></div>
+                <div className="field"><label>Mode</label><select className="select" aria-label="Scheduler mode" value={s.mode} onChange={(e) => updateSchedule({ mode: e.target.value as "shadow" | "live" })}><option value="shadow">shadow</option><option value="live">live</option></select></div>
+                <div className="field"><label>Interval (min)</label><input className="input" aria-label="Scan interval minutes" type="number" defaultValue={s.interval_minutes} onBlur={(e) => updateSchedule({ interval_minutes: Number(e.target.value) })} /></div>
+                <div className="field"><label>False-alarm budget</label><input className="input" aria-label="False alarm budget" type="number" step="0.1" defaultValue={s.false_alarm_budget} onBlur={(e) => updateSchedule({ false_alarm_budget: Number(e.target.value) })} /></div>
+                <div className="field"><label>Max alerts / shift</label><input className="input" aria-label="Maximum alerts per shift" type="number" defaultValue={s.max_alerts_per_shift} onBlur={(e) => updateSchedule({ max_alerts_per_shift: Number(e.target.value) })} /></div>
+                <div className="field"><label>Quiet hours</label><input className="input" aria-label="Quiet hours" defaultValue={s.quiet_hours} onBlur={(e) => updateSchedule({ quiet_hours: e.target.value })} /></div>
+                <div className="field"><label>Coverage floor</label><input className="input" aria-label="Coverage floor" type="number" step="0.01" defaultValue={s.coverage_floor} onBlur={(e) => updateSchedule({ coverage_floor: Number(e.target.value) })} /></div>
+                <div className="field"><label>Champion</label><input className="input" aria-label="Champion version" defaultValue={s.champion} onBlur={(e) => updateSchedule({ champion: e.target.value })} /></div>
+                <div className="field"><label>Challenger</label><input className="input" aria-label="Challenger version" defaultValue={s.challenger} onBlur={(e) => updateSchedule({ challenger: e.target.value })} /></div>
+                <div className="field"><label>Webhook</label><input className="input" aria-label="Webhook URL" defaultValue={s.webhook_url} onBlur={(e) => updateSchedule({ webhook_url: e.target.value })} /></div>
               </div>
               <div className="divider" />
               <div className="row between">
@@ -131,6 +131,7 @@ export default function ProactiveDashboard() {
                       <td>
                         <input
                           className="input"
+                          aria-label={`Threshold limit for ${r.parameter}`}
                           style={{ width: 76, padding: "3px 6px", fontSize: 10 }}
                           type="number"
                           step="0.01"

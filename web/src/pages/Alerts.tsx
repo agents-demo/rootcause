@@ -120,7 +120,7 @@ export default function Alerts() {
             <div className="panel-body">
               <div className="field">
                 <label>Endpoint</label>
-                <input className="input" placeholder={schedule.webhook_url || "https://…"} value={webhook} onChange={(e) => setWebhook(e.target.value)} />
+                <input className="input" aria-label="Webhook endpoint" placeholder={schedule.webhook_url || "https://…"} value={webhook} onChange={(e) => setWebhook(e.target.value)} />
               </div>
               <button className="btn sm mt8" onClick={() => { updateSchedule({ webhook_url: webhook || schedule.webhook_url }); say("Webhook saved; test delivery is in-app only until the endpoint is reachable"); }}>Save endpoint</button>
               <div className="xsmall soft mt8">Payloads are signed with a shared secret; failed deliveries never block the in-app alert. The demo endpoint is intentionally invalid.</div>
