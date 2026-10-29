@@ -7,8 +7,16 @@ never imports provider details directly.
 from __future__ import annotations
 
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from .. import config
+
+_ROOT = Path(__file__).resolve().parents[3]
+for candidate in (_ROOT / ".env", _ROOT / "server" / ".env"):
+    if candidate.exists():
+        load_dotenv(candidate, override=False)
 
 
 class ConfigError(RuntimeError):

@@ -10,7 +10,10 @@ from rootcause.npu.onnx_backend import OnnxBroker
 from rootcause.npu.service import _backend as npu_backend
 
 
-def test_agent_reports_unconfigured_without_fake_fallback():
+def test_agent_reports_unconfigured_without_fake_fallback(monkeypatch):
+    monkeypatch.delenv("API_KEY", raising=False)
+    monkeypatch.delenv("API_BASE", raising=False)
+    monkeypatch.delenv("MODEL_NAME", raising=False)
     runtime = OpenJiuwenRuntime(build_pack().scenarios)
     status = runtime.status()
     assert status.backend == "openjiuwen"

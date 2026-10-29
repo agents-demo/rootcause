@@ -31,3 +31,29 @@ Thumbs.db
 # Editors
 .idea/
 .vscode/
+
+# openjiuwen runtime scaffold (created on first agent run)
+AGENT.md
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+USER.md
+agents/
+coding_memory/
+context/
+memory/
+messages/
+skills/
+todo/
+server/AGENT.md
+server/HEARTBEAT.md
+server/IDENTITY.md
+server/SOUL.md
+server/USER.md
+server/agents/
+server/coding_memory/
+server/context/
+server/memory/
+server/messages/
+server/skills/
+server/todo/

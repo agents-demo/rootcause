@@ -604,9 +604,11 @@ a deterministic engine. That is not the same as a connected factory. This phase 
 runtime contracts and removes silent demo fallbacks.
 
 **Status.** The code paths are implemented: JiuwenSwarm `DeepAgent`, ONNX/Ascend inference broker,
-real connector adapters and an explicit readiness gate. The remaining checkboxes are **site
-connection and validation**: model credentials, customer endpoints, hardware and a pilot. They cannot
-be completed from a development laptop.
+real connector adapters and an explicit readiness gate. The agent has been live-verified on the
+development host with the coachme DeepSeek model (`deepseek-v4-pro`): `/api/agent/status` reports
+`configured: true` and `/api/agent/ask` returned a cited, non-approving answer. The remaining
+checkboxes are **site connection and validation**: production credentials, customer endpoints,
+hardware and a pilot. They cannot be completed from a development laptop.
 
 **Read first:** [`docs/production-wiring.md`](production-wiring.md).
 
@@ -622,6 +624,7 @@ be completed from a development laptop.
 - [x] Audit every agent answer with question, case and actor **(S)**
 - [x] Include agent status in `/api/health` and `/api/ready` **(S)**
 - [x] Keep the deterministic ranking and human approval as the source of truth **(S)**
+- [x] Configure `.env` model settings (provider, base, key, model) and live-verify a cited answer on the dev host **(S)**
 - [ ] Configure the production model provider, API base, key and model name in the site environment **(S)**
 - [ ] Run an agent eval set: faithfulness, citation coverage, refusal, prompt injection **(M)**
 - [ ] Set latency, token and cost budgets; retain traces per policy **(M)**

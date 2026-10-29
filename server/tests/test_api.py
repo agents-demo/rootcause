@@ -140,6 +140,9 @@ def test_tenant_isolation(tmp_path, monkeypatch):
 
 
 def test_agent_and_integrations_are_explicit(tmp_path, monkeypatch):
+    monkeypatch.delenv("API_KEY", raising=False)
+    monkeypatch.delenv("API_BASE", raising=False)
+    monkeypatch.delenv("MODEL_NAME", raising=False)
     for c in client(tmp_path, monkeypatch):
         health = c.get("/api/health").json()
         assert "agent" in health

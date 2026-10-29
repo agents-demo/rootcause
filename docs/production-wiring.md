@@ -53,6 +53,23 @@ Without credentials, `/api/agent/ask` returns **503** with the missing configura
 silent fake answer. The UI `AskPanel` uses the agent when the on-site API is live; if it receives
 503 it labels the answer as coming from the local evidence engine.
 
+### Live verification
+
+The runtime has been exercised end to end with the DeepSeek model used by the coachme project
+(`MODEL_PROVIDER=OpenAI` OpenAI-compatible endpoint, `MODEL_NAME=deepseek-v4-pro`). `.env` is loaded
+from the repository root or `server/.env` and is gitignored; credentials are never committed.
+
+Observed on the development host:
+
+- `GET /api/agent/status` → `configured: true`, `available: true`, `backend: "openjiuwen"`,
+  `model: "deepseek-v4-pro"`.
+- `POST /api/agent/ask` on `RC-0417` returned a cited answer that named the ranked tool-mark cause,
+  explicitly flagged its disagreement with the ranking as a disagreement, cited `EV-01`, `EV-02`,
+  `EV-03`, `EV-11`, and did not approve a cause or issue a line command.
+
+This proves the agent path works; it does not prove site readiness. Phase 7 still requires the
+production account, approved data-processing basis, eval set, cost budget and pilot validation.
+
 ### Still needed at the site
 
 - A production model account/key and an approved data-processing basis.
