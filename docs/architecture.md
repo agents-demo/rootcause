@@ -114,6 +114,9 @@ GET  /api/export/cases.csv
 
 - Lines are first-class (`line_id`) and every case, sensor window and report is scoped to a line.
 - The dashboard has separate channels per line and cross-line pattern detection.
+- Tenants are isolated at the file level: the `X-RootCause-Tenant` header selects a separate SQLite
+  database (`runtime/tenants/<tenant>.sqlite3`). There is no shared table with a tenant column to
+  forget in a `WHERE` clause. `GET /api/tenants` lists what the site allows.
 - Phase 3 multi-factory deployment is one customer, not a public SaaS. Data isolation is per site;
   cross-factory sharing is opt-in, anonymised and limited to cause labels and factor ranges.
 - Full multi-tenant SaaS with factory data in a shared cloud is explicitly **not planned** — it

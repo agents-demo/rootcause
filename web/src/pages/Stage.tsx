@@ -190,7 +190,7 @@ export default function Stage() {
       .map((id) => scenario.evidence.find((e) => e.id === id))
       .filter((e): e is NonNullable<typeof e> => Boolean(e))
       .slice(0, 3);
-  const shownCauses = inv?.hypotheses.slice(0, 3) ?? [];
+  const shownCauses = inv?.hypotheses.slice(0, 4) ?? [];
 
   return (
     <div className="stage">
@@ -450,9 +450,9 @@ export default function Stage() {
                       <button className="btn danger" onClick={rejectTool}>
                         <Icon name="x" size={13} /> Reject: crack starts below the surface
                       </button>
-                      <button className="btn" onClick={approve}>
-                        Accept this cause
-                      </button>
+                      <Link className="btn ghost" to={`/cases/${scenario.case.id}`}>
+                        Inspect the evidence
+                      </Link>
                     </div>
                   </>
                 ) : (

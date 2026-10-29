@@ -117,3 +117,23 @@ def test_detect_upload(tmp_path, monkeypatch):
             r = c.post("/api/detect", files={"file": ("frame.png", fh, "image/png")})
         assert r.status_code == 200
         assert r.json()["detection"]["confidence"] > 0.5
+
+
+def test_tenant_isolation(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        acme = {"X-RootCause-Tenant": "acme"}
+        r = c.post(
+            "/api/cases/RC-0417/accept",
+            json={"hypothesis_id": "gas_porosity", "actor": "Acme Engineer"},
+            headers=acme,
+        )
+        assert r.status_code == 200
+        assert r.headers["X-RootCause-Tenant"] == "acme"
+
+        acme_inv = c.get("/api/cases/RC-0417", headers=acme).json()["investigation"]
+        assert any(h["status"] == "accepted" for h in acme_inv["hypotheses"])
+
+        default_inv = c.get("/api/cases/RC-0417").json()["investigation"]
+        assert not any(h["status"] == "accepted" for h in default_inv["hypotheses"])
+
+        assert c.get("/api/tenants").json()["header"] == "X-RootCause-Tenant"

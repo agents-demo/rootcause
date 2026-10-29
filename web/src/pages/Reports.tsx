@@ -133,7 +133,7 @@ ${report.status === "approved" ? '<div class="stamp">APPROVED</div>' : ""}
       />
 
       <div className="grid" style={{ gridTemplateColumns: "280px 1fr", alignItems: "start" }}>
-        <div className="panel">
+        <div className="panel noprint">
           <div className="panel-head"><h3>Reports</h3><span className="sub">{rows.length}</span></div>
           <div className="panel-body tight">
             <div className="col gap6">

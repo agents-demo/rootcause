@@ -47,7 +47,7 @@ from ..models import (
     now_iso,
 )
 from ..npu.broker import broker_from_env
-from ..store.db import Store
+from ..tenancy import DEFAULT_TENANT, StoreRouter, current_tenant, set_tenant
 
 
 def load_pack() -> dict[str, Any]:
@@ -68,14 +68,32 @@ def load_pack() -> dict[str, Any]:
 @dataclass
 class State:
     pack: dict[str, Any]
-    store: Store
+    store: StoreRouter
     npu: Any
     rejected: dict[str, list[str]] = field(default_factory=dict)
     accepted: dict[str, str] = field(default_factory=dict)
     manual: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
     actions_done: set[str] = field(default_factory=set)
     alerts_ack: set[str] = field(default_factory=set)
-    sharing: bool = False
+    sharing: dict[str, bool] = field(default_factory=dict)
+    loaded: set[str] = field(default_factory=set)
+
+    def _key(self, case_id: str) -> str:
+        return f"{current_tenant()}::{case_id}"
+
+    def ensure_tenant(self) -> None:
+        tenant = current_tenant()
+        if tenant in self.loaded:
+            return
+        self.loaded.add(tenant)
+        for cid, decision in self.store.for_tenant(tenant).decisions().items():
+            key = f"{tenant}::{cid}"
+            if decision["rejected"]:
+                self.rejected[key] = decision["rejected"]
+            if decision["accepted"]:
+                self.accepted[key] = decision["accepted"]
+            if decision["manual"]:
+                self.manual[key] = decision["manual"]
 
     def scenario(self, sid: str) -> dict[str, Any]:
         for s in self.pack["scenarios"]:
@@ -96,19 +114,21 @@ class State:
         return out
 
     def investigation(self, scenario: dict[str, Any]) -> dict[str, Any]:
+        self.ensure_tenant()
         case_id = scenario["case"]["id"]
+        key = self._key(case_id)
         scenario_obj = _as_scenario(scenario)
         priors = priors_from_corrections(self.store.corrections(), line_id=scenario["case"]["line_id"])
         apply_priors(scenario_obj.hypotheses, priors)
-        result = run_investigation(scenario_obj, rejected=self.rejected.get(case_id, []))
-        accepted = self.accepted.get(case_id)
+        result = run_investigation(scenario_obj, rejected=self.rejected.get(key, []))
+        accepted = self.accepted.get(key)
         if accepted:
             for h in result["hypotheses"]:
                 if h["id"] == accepted:
                     h["status"] = "accepted"
-        for m in self.manual.get(case_id, []):
+        for m in self.manual.get(key, []):
             result["hypotheses"].append(m)
-        result["hypotheses"] = rank_hypotheses([_as_hypothesis(h) for h in result["hypotheses"]], rejected=self.rejected.get(case_id, []))
+        result["hypotheses"] = rank_hypotheses([_as_hypothesis(h) for h in result["hypotheses"]], rejected=self.rejected.get(key, []))
         result["hypotheses"] = [h.model_dump(mode="json") for h in result["hypotheses"]]
         result["factors"] = {h["id"]: explain(_as_hypothesis(h)) for h in result["hypotheses"]}
         result["report"] = self.store.get_report(case_id) or scenario["report"]
@@ -133,16 +153,10 @@ def create_state() -> State:
 
     pack = load_pack()
     db_path = Path(os.getenv("ROOTCAUSE_DB", str(config.DB_PATH)))
-    store = Store(db_path)
-    store.seed(pack)
-    rc = State(pack=pack, store=store, npu=broker_from_env())
-    for case_id, decision in store.decisions().items():
-        if decision["rejected"]:
-            rc.rejected[case_id] = decision["rejected"]
-        if decision["accepted"]:
-            rc.accepted[case_id] = decision["accepted"]
-        if decision["manual"]:
-            rc.manual[case_id] = decision["manual"]
+    router = StoreRouter(db_path, pack)
+    router.for_tenant(DEFAULT_TENANT)
+    rc = State(pack=pack, store=router, npu=broker_from_env())
+    rc.ensure_tenant()
     return rc
 
 
@@ -163,6 +177,19 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def tenant_middleware(request: Request, call_next):
+    token = set_tenant(request.headers.get("X-RootCause-Tenant"))
+    try:
+        response = await call_next(request)
+        response.headers["X-RootCause-Tenant"] = current_tenant()
+        return response
+    finally:
+        from ..tenancy import tenant_var
+
+        tenant_var.reset(token)
+
+
 def state(request: Request) -> State:
     return request.app.state.rc
 
@@ -177,7 +204,23 @@ def health(request: Request) -> dict[str, Any]:
         "scenarios": len(rc.pack["scenarios"]),
         "npu": rc.npu.health(),
         "db": str(config.DB_PATH),
+        "tenant": current_tenant(),
         "at": now_iso(),
+    }
+
+
+@app.get("/api/tenants")
+def tenants() -> dict[str, Any]:
+    """The configured tenants. Each one resolves to a separate SQLite file."""
+    import os
+
+    raw = os.getenv("ROOTCAUSE_TENANTS", DEFAULT_TENANT)
+    entries = [t.strip().lower() for t in raw.split(",") if t.strip()]
+    return {
+        "default": DEFAULT_TENANT,
+        "tenants": entries or [DEFAULT_TENANT],
+        "header": "X-RootCause-Tenant",
+        "note": "Every tenant has its own append-only case store; no shared table to leak across.",
     }
 
 
@@ -187,7 +230,7 @@ def get_pack(request: Request) -> dict[str, Any]:
     pack = dict(rc.pack)
     pack["alerts"] = [{**a, "acknowledged": a["id"] in rc.alerts_ack} for a in pack["alerts"]]
     pack["actions"] = [{**a, "status": "done" if a["id"] in rc.actions_done else a["status"]} for a in pack["actions"]]
-    pack["sharing"] = {**pack["sharing"], "enabled": rc.sharing}
+    pack["sharing"] = {**pack["sharing"], "enabled": rc.sharing.get(current_tenant(), False)}
     pack["audits"] = rc.store.audits(limit=40)
     return pack
 
@@ -229,7 +272,7 @@ async def investigate(sid: str, request: Request) -> dict[str, Any]:
         body = {}
     rejected = body.get("rejected", [])
     s = rc.scenario(sid)
-    rc.rejected[s["case"]["id"]] = list(rejected)
+    rc.rejected[rc._key(s["case"]["id"])] = list(rejected)
     return rc.investigation(s)
 
 
@@ -265,7 +308,7 @@ def case(case_id: str, request: Request) -> dict[str, Any]:
 def reject(case_id: str, body: RejectRequest, request: Request) -> dict[str, Any]:
     rc = state(request)
     s = rc.case_scenario(case_id)
-    rejected = rc.rejected.setdefault(case_id, [])
+    rejected = rc.rejected.setdefault(rc._key(case_id), [])
     if body.hypothesis_id not in rejected:
         rejected.append(body.hypothesis_id)
     rc.store.update_hypotheses(
@@ -286,12 +329,12 @@ def accept(case_id: str, body: AcceptRequest, request: Request) -> dict[str, Any
     s = rc.case_scenario(case_id)
     if not any(h["id"] == body.hypothesis_id for h in s["hypotheses"]):
         raise HTTPException(404, "hypothesis not found")
-    rc.accepted[case_id] = body.hypothesis_id
+    rc.accepted[rc._key(case_id)] = body.hypothesis_id
     label = next(h["label"] for h in s["hypotheses"] if h["id"] == body.hypothesis_id)
     rc.store.set_status(case_id, "awaiting_review", actor=body.actor, detail=f"Accepted cause: {label}. {body.note}".strip())
     rc.store.update_hypotheses(
         case_id,
-        [h.model_dump(mode="json") for h in rank_hypotheses([_as_hypothesis(h) for h in s["hypotheses"]], rejected=rc.rejected.get(case_id, []))],
+        [h.model_dump(mode="json") for h in rank_hypotheses([_as_hypothesis(h) for h in s["hypotheses"]], rejected=rc.rejected.get(rc._key(case_id), []))],
         actor=body.actor,
         action="cause.accepted",
         detail=f"Accepted {label}: {body.note}".strip(),
@@ -307,7 +350,7 @@ def manual_cause(case_id: str, body: ManualCauseRequest, request: Request) -> di
     rc = state(request)
     s = rc.case_scenario(case_id)
     manual = Hypothesis(
-        id=f"manual-{len(rc.manual.get(case_id, [])) + 1}",
+        id=f"manual-{len(rc.manual.get(rc._key(case_id), [])) + 1}",
         label=body.label,
         category="manual",
         summary=body.summary,
@@ -319,7 +362,7 @@ def manual_cause(case_id: str, body: ManualCauseRequest, request: Request) -> di
         evidence_ids=body.evidence_ids,
         note="Added by the engineer during review.",
     )
-    rc.manual.setdefault(case_id, []).append(manual.model_dump(mode="json"))
+    rc.manual.setdefault(rc._key(case_id), []).append(manual.model_dump(mode="json"))
     rc.store.update_hypotheses(
         case_id,
         [manual.model_dump(mode="json")],
@@ -558,15 +601,15 @@ def get_compliance(pack_id: str, request: Request) -> dict[str, Any]:
 @app.get("/api/sharing")
 def get_sharing(request: Request) -> dict[str, Any]:
     rc = state(request)
-    return anonymised_sharing_payload([_as_scenario(s) for s in rc.pack["scenarios"]], enabled=rc.sharing)
+    return anonymised_sharing_payload([_as_scenario(s) for s in rc.pack["scenarios"]], enabled=rc.sharing.get(current_tenant(), False))
 
 
 @app.post("/api/sharing")
 async def set_sharing(request: Request) -> dict[str, Any]:
     rc = state(request)
     body = await request.json()
-    rc.sharing = bool(body.get("enabled", False))
-    return anonymised_sharing_payload([_as_scenario(s) for s in rc.pack["scenarios"]], enabled=rc.sharing)
+    rc.sharing[current_tenant()] = bool(body.get("enabled", False))
+    return anonymised_sharing_payload([_as_scenario(s) for s in rc.pack["scenarios"]], enabled=rc.sharing[current_tenant()])
 
 
 @app.get("/api/export/cases.csv")

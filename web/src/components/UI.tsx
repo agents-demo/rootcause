@@ -203,7 +203,7 @@ export function PageHead({
   actions?: ReactNode;
 }) {
   return (
-    <div className="page-head">
+    <div className="page-head noprint">
       <div>
         {kicker && <div className="xsmall mono amber" style={{ letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 5 }}>{kicker}</div>}
         <h2>{title}</h2>
