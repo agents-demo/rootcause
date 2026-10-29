@@ -248,6 +248,9 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
 - **Production scale** — connector library, multi-line, multi-factory, compliance evidence maps,
   billing/admin and opt-in anonymised sharing are in the product UI and API; legal/compliance
   validation remains a customer-specific exercise.
+- **Proactive quality** — planned, not built. Phase 4 adds risk signals, watch cases,
+  human-approved containment recommendations and shift briefs: proactive about risk before the next
+  defect, never predictive control of the line. See [Phase 4](docs/roadmap.md#phase-4--proactive-quality-planned).
 
 The full checklist, with the evidence for each item, is in [docs/roadmap.md](docs/roadmap.md).
 The original concept and stage plan are in `agentic-desk`; this repository is the implementation.
