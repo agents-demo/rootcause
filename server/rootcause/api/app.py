@@ -683,6 +683,8 @@ def proactive(request: Request) -> dict[str, Any]:
     rc = state(request)
     data = rc.pack["proactive"]
     settings = rc.store.proactive_settings() or data["settings"]
+    reviews = {r.get("pattern_id"): r.get("status") for r in settings.get("pattern_reviews", [])}
+    patterns = [{**p, "status": reviews.get(p["id"], p["status"])} for p in data["patterns"]]
     watches = rc.store.list_watches()
     watch_objs = []
     for w in watches:
@@ -699,7 +701,7 @@ def proactive(request: Request) -> dict[str, Any]:
     return {
         "settings": settings,
         "watches": watches,
-        "patterns": data["patterns"],
+        "patterns": patterns,
         "recommendations": rc.store.list_recommendations(),
         "scan_runs": rc.store.list_scan_runs(),
         "briefs": data["briefs"],
@@ -1201,8 +1203,9 @@ def run_research(request: Request) -> dict[str, Any]:
     result = predictive.run(
         rc.pack["proactive"]["research"]["question"], y, baseline, model, 14, 34, 8.0
     )
-    rc.research_result = result.as_dict()
-    return rc.research_result
+    merged = {**rc.pack["proactive"]["research"], **result.as_dict(), "model_lift": result.lift}
+    rc.research_result = merged
+    return merged
 
 
 @app.post("/api/followups/{followup_id}/verify")
