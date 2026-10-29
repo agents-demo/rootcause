@@ -139,6 +139,22 @@ def test_tenant_isolation(tmp_path, monkeypatch):
         assert c.get("/api/tenants").json()["header"] == "X-RootCause-Tenant"
 
 
+def test_agent_and_integrations_are_explicit(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        health = c.get("/api/health").json()
+        assert "agent" in health
+        assert "npu" in health
+        status = c.get("/api/agent/status").json()
+        assert status["backend"] == "openjiuwen"
+        assert status["configured"] is False
+        ask = c.post("/api/agent/ask", json={"question": "Why hydrogen?", "case_id": "RC-0417"})
+        assert ask.status_code == 503
+        integrations = c.get("/api/integrations").json()
+        assert integrations["connectors"]["total"] >= 10
+        assert integrations["ready"] is False
+        assert integrations["strict"] is False
+
+
 def test_proactive_pack_and_watch_workflow(tmp_path, monkeypatch):
     for c in client(tmp_path, monkeypatch):
         r = c.get("/api/proactive")

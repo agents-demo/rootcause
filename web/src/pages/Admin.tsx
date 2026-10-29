@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { eur, fmtDate } from "../lib/engine";
@@ -6,11 +6,25 @@ import { Icon } from "../components/Icon";
 import { PageHead, StatusBadge } from "../components/UI";
 
 export default function Admin() {
-  const { pack, setSharing, say } = useStore();
+  const { pack, setSharing, say, live } = useStore();
   const [plant, setPlant] = useState("plant-de");
   const [openPack, setOpenPack] = useState<string | null>("iso9001");
   const [npu, setNpu] = useState(true);
   const [sharing, setSharingLocal] = useState(false);
+  const [integrations, setIntegrations] = useState<{
+    ready: boolean;
+    agent: { configured: boolean; backend: string; model?: string; detail: string };
+    npu: { ready: boolean; backend: string; device?: string; error?: string };
+    connectors: { total: number; live: number; simulated: number };
+  } | null>(null);
+
+  useEffect(() => {
+    if (!live) return;
+    fetch(new URL("api/integrations", document.baseURI).toString())
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setIntegrations)
+      .catch(() => setIntegrations(null));
+  }, [live]);
 
   if (!pack) return <div className="empty">Loading site…</div>;
   const lines = pack.lines.filter((l) => l.plant_id === plant);
@@ -169,6 +183,30 @@ export default function Admin() {
         </div>
 
         <div className="col-stack">
+          <div className="panel" style={{ borderColor: integrations?.ready ? "rgba(110,231,168,.32)" : "rgba(255,122,111,.28)" }}>
+            <div className="panel-head"><h3>Production wiring</h3><span className="sub">{live ? "on-site API" : "static reference"}</span></div>
+            <div className="panel-body">
+              <div className="row between">
+                <span className="small muted">Ready</span>
+                <span className={`chip ${integrations?.ready ? "green" : "red"}`} style={{ fontSize: 10 }}>{integrations?.ready ? "yes" : "not yet"}</span>
+              </div>
+              <div className="divider" />
+              <div className="row between"><span className="xsmall muted">Agent runtime</span><span className="xsmall mono">{integrations?.agent?.configured ? `${integrations.agent.backend} · ${integrations.agent.model}` : "unconfigured"}</span></div>
+              <div className="row between mt8"><span className="xsmall muted">NPU / inference</span><span className="xsmall mono">{integrations?.npu?.ready ? `${integrations.npu.backend} · ${integrations.npu.device}` : integrations?.npu?.backend ?? "not attached"}</span></div>
+              <div className="row between mt8"><span className="xsmall muted">Live connectors</span><span className="xsmall mono">{integrations?.connectors?.live ?? 0} / {integrations?.connectors?.total ?? pack.connectors.length}</span></div>
+              <div className="row between mt8"><span className="xsmall muted">Simulated connectors</span><span className="xsmall mono">{integrations?.connectors?.simulated ?? "—"}</span></div>
+              <div className="divider" />
+              <p className="xsmall soft" style={{ lineHeight: 1.5 }}>
+                {live
+                  ? integrations?.ready
+                    ? "The runtime is wired: JiuwenSwarm, an inference backend and live plant connectors are configured."
+                    : "The API is running, but the agent model, inference broker or live plant connectors are not all configured. Set them in the on-site environment; the API stays explicit about what is missing."
+                  : "This static build has no plant API. The production runtime is in the repository; connect it to the on-site API to enable JiuwenSwarm, ONNX/Ascend inference and live connectors."}
+              </p>
+              <Link className="btn sm mt8" to="/connectors">Open connector wiring <Icon name="arrow" size={11} /></Link>
+            </div>
+          </div>
+
           <div className="panel">
             <div className="panel-head"><h3>Subscription</h3><span className="sub">{pack.billing.plan}</span></div>
             <div className="panel-body">

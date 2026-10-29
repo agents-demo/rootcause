@@ -1,25 +1,29 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { HashRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { StoreProvider, useStore } from "./lib/store";
+import { UIProvider } from "./lib/ui";
 import { Shell } from "./components/Shell";
-import About from "./pages/About";
-import Stage from "./pages/Stage";
-import Booth from "./pages/Booth";
-import Cases from "./pages/Cases";
-import CaseWorkspace from "./pages/CaseWorkspace";
-import Review from "./pages/Review";
-import Reports from "./pages/Reports";
-import Dashboard from "./pages/Dashboard";
-import Connectors from "./pages/Connectors";
-import Admin from "./pages/Admin";
-import MobileCapture from "./pages/MobileCapture";
+import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
-import WatchDetail from "./pages/WatchDetail";
-import ShiftBriefPage from "./pages/ShiftBrief";
-import Alerts from "./pages/Alerts";
-import ProactiveDashboard from "./pages/ProactiveDashboard";
-import ProactiveBooth from "./pages/ProactiveBooth";
 import { Icon } from "./components/Icon";
+
+const About = lazy(() => import("./pages/About"));
+const Stage = lazy(() => import("./pages/Stage"));
+const Booth = lazy(() => import("./pages/Booth"));
+const Cases = lazy(() => import("./pages/Cases"));
+const CaseWorkspace = lazy(() => import("./pages/CaseWorkspace"));
+const Review = lazy(() => import("./pages/Review"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Connectors = lazy(() => import("./pages/Connectors"));
+const Admin = lazy(() => import("./pages/Admin"));
+const MobileCapture = lazy(() => import("./pages/MobileCapture"));
+const WatchDetail = lazy(() => import("./pages/WatchDetail"));
+const ShiftBriefPage = lazy(() => import("./pages/ShiftBrief"));
+const Alerts = lazy(() => import("./pages/Alerts"));
+const ProactiveDashboard = lazy(() => import("./pages/ProactiveDashboard"));
+const ProactiveBooth = lazy(() => import("./pages/ProactiveBooth"));
+const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -54,7 +58,7 @@ function Routed() {
 
   useEffect(() => {
     const names: Record<string, string> = {
-      "/": "RootCause — it wasn't fatigue",
+      "/": "Now — RootCause",
       "/about": "About — RootCause",
       "/stage": "The 90-second teardown — RootCause",
       "/booth": "Functional demo — RootCause",
@@ -70,6 +74,7 @@ function Routed() {
       "/connectors": "Connectors — RootCause",
       "/admin": "Site administration — RootCause",
       "/capture": "Mobile capture — RootCause",
+      "/design": "Design system — RootCause",
     };
     document.title = names[location.pathname] ?? "RootCause";
   }, [location.pathname]);
@@ -102,35 +107,40 @@ function Routed() {
 
   if (isStage) {
     return (
-      <Routes>
-        <Route path="/stage" element={<Stage />} />
-      </Routes>
+      <Suspense fallback={<div className="empty">Loading stage…</div>}>
+        <Routes>
+          <Route path="/stage" element={<Stage />} />
+        </Routes>
+      </Suspense>
     );
   }
 
   return (
     <Shell>
-      <Routes>
-        <Route path="/" element={<About />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/booth" element={<Booth />} />
-        <Route path="/booth/run/:sid" element={<BoothRun />} />
-        <Route path="/booth/proactive" element={<ProactiveBooth />} />
-        <Route path="/watchlist" element={<Watchlist />} />
-        <Route path="/watch/:watchId" element={<WatchDetail />} />
-        <Route path="/brief" element={<ShiftBriefPage />} />
-        <Route path="/alerts" element={<Alerts />} />
-        <Route path="/proactive" element={<ProactiveDashboard />} />
-        <Route path="/cases" element={<Cases />} />
-        <Route path="/cases/:caseId" element={<CaseWorkspace />} />
-        <Route path="/review" element={<Review />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/connectors" element={<Connectors />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/capture" element={<MobileCapture />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<div className="empty" style={{ paddingTop: 60 }}>Loading surface…</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/design" element={<DesignSystem />} />
+          <Route path="/booth" element={<Booth />} />
+          <Route path="/booth/run/:sid" element={<BoothRun />} />
+          <Route path="/booth/proactive" element={<ProactiveBooth />} />
+          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/watch/:watchId" element={<WatchDetail />} />
+          <Route path="/brief" element={<ShiftBriefPage />} />
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/proactive" element={<ProactiveDashboard />} />
+          <Route path="/cases" element={<Cases />} />
+          <Route path="/cases/:caseId" element={<CaseWorkspace />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/connectors" element={<Connectors />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/capture" element={<MobileCapture />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </Shell>
   );
 }
@@ -138,10 +148,12 @@ function Routed() {
 export default function App() {
   return (
     <HashRouter>
-      <StoreProvider>
-        <ScrollToTop />
-        <Routed />
-      </StoreProvider>
+      <UIProvider>
+        <StoreProvider>
+          <ScrollToTop />
+          <Routed />
+        </StoreProvider>
+      </UIProvider>
     </HashRouter>
   );
 }

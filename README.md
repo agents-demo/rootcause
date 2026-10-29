@@ -264,6 +264,10 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   command-first, evidence-first instrument: token system, new IA, decision queue, command palette,
   accessible charts, explainable motion, ambient AI and a light desk mode. See
   [Interface 2026](docs/interface-2026.md).
+- **Production wiring** — JiuwenSwarm `DeepAgent` adapter, ONNX/Ascend inference broker, real
+  connector paths and an explicit readiness gate. With `ROOTCAUSE_STRICT_INTEGRATIONS=1`, the API
+  refuses to report ready until the agent, inference backend and a live plant connector are
+  configured. See [production wiring](docs/production-wiring.md).
 
 The full checklist, with the evidence for each item, is in [docs/roadmap.md](docs/roadmap.md).
 The original concept and stage plan are in `agentic-desk`; this repository is the implementation.

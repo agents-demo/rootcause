@@ -444,6 +444,14 @@ input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; bo
 .chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .chart-legend i { width: 12px; height: 2px; border-radius: 2px; display: block; }
 .chart-tip { fill: var(--ink); font: 8px var(--mono); }
+.chart-data { margin-top: 6px; border-top: 1px solid var(--line); padding-top: 6px; }
+.chart-data summary { cursor: pointer; font-size: 10.5px; color: var(--soft); list-style: none; }
+.chart-data summary::-webkit-details-marker { display: none; }
+.chart-data summary::before { content: "▸ "; color: var(--accent); }
+.chart-data[open] summary::before { content: "▾ "; }
+.chart-data table { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 10.5px; }
+.chart-data th, .chart-data td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.chart-data th { color: var(--soft); font-weight: 600; }
 
 /* chain */
 .chain { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; }

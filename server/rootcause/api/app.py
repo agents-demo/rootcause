@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Res
 from fastapi.staticfiles import StaticFiles
 
 from .. import config
+from ..agent.jiuwen_runtime import OpenJiuwenRuntime
 from ..connectors import CmmsConnector, ModbusConnector, OpcUaConnector, connector_catalog, normalise_frame
 from ..demo.build_pack import build_pack
 from ..engine.analytics import (
@@ -91,6 +92,7 @@ class State:
     loaded: set[str] = field(default_factory=set)
     research_result: dict[str, Any] | None = None
     offline: OfflineQueue = field(default_factory=lambda: OfflineQueue(max_items=500))
+    agent: OpenJiuwenRuntime | None = None
 
     def _key(self, case_id: str) -> str:
         return f"{current_tenant()}::{case_id}"
@@ -170,6 +172,7 @@ def create_state() -> State:
     router = StoreRouter(db_path, pack)
     router.for_tenant(DEFAULT_TENANT)
     rc = State(pack=pack, store=router, npu=broker_from_env())
+    rc.agent = OpenJiuwenRuntime([_as_scenario(s) for s in pack["scenarios"]])
     rc.ensure_tenant()
     return rc
 
@@ -250,10 +253,11 @@ def health(request: Request) -> dict[str, Any]:
     rc = state(request)
     return {
         "ok": True,
-        "version": "0.9.0",
+        "version": "1.0.0",
         "model": config.MODEL_VERSION,
         "scenarios": len(rc.pack["scenarios"]),
         "npu": rc.npu.health(),
+        "agent": rc.agent.status().as_dict() if rc.agent else {"configured": False},
         "db": str(config.DB_PATH),
         "tenant": current_tenant(),
         "at": now_iso(),
@@ -273,6 +277,102 @@ def tenants() -> dict[str, Any]:
         "header": "X-RootCause-Tenant",
         "note": "Every tenant has its own append-only case store; no shared table to leak across.",
     }
+
+
+@app.get("/api/agent/status")
+def agent_status(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    return rc.agent.status().as_dict() if rc.agent else {"configured": False, "available": False, "backend": "none", "detail": "no runtime"}
+
+
+@app.post("/api/agent/ask")
+async def agent_ask(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    if not rc.agent or not rc.agent.status().configured:
+        detail = rc.agent.status().detail if rc.agent else "agent runtime not initialised"
+        raise HTTPException(503, f"JiuwenSwarm runtime is not configured: {detail}")
+    body = await request.json()
+    question = str(body.get("question", "")).strip()
+    if not question:
+        raise HTTPException(400, "question is required")
+    try:
+        result = await rc.agent.ask(question, case_id=body.get("case_id"))
+        rc.store._audit("agent", "agent.answer", body.get("case_id") or "case", f"Question: {question[:240]}")
+        rc.store._conn.commit()
+        return result
+    except Exception as exc:
+        raise HTTPException(502, f"agent runtime error: {exc}") from exc
+
+
+@app.post("/api/agent/case/{case_id}")
+async def agent_case(case_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    if not rc.agent or not rc.agent.status().configured:
+        detail = rc.agent.status().detail if rc.agent else "agent runtime not initialised"
+        raise HTTPException(503, f"JiuwenSwarm runtime is not configured: {detail}")
+    rc.case_scenario(case_id)
+    try:
+        return await rc.agent.case_narrative(case_id)
+    except Exception as exc:
+        raise HTTPException(502, f"agent runtime error: {exc}") from exc
+
+
+@app.get("/api/integrations")
+def integrations(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    connectors = rc.pack["connectors"]
+    live_env = {
+        "opcua": bool(os.getenv("ROOTCAUSE_OPCUA_ENDPOINT")),
+        "modbus": bool(os.getenv("ROOTCAUSE_MODBUS_ENDPOINT")),
+        "camera": bool(os.getenv("ROOTCAUSE_CAMERA_HTTP_URL")),
+        "mes": bool(os.getenv("ROOTCAUSE_MES_CSV")),
+    }
+    live_ids = [k for k, v in live_env.items() if v]
+    agent = rc.agent.status().as_dict() if rc.agent else {"configured": False}
+    npu = rc.npu.health()
+    npu_ready = bool(npu.get("ready")) and npu.get("backend") in {"onnx", "ascend"}
+    ready = bool(agent.get("configured")) and npu_ready and bool(live_ids)
+    return {
+        "ready": ready,
+        "strict": os.getenv("ROOTCAUSE_STRICT_INTEGRATIONS", "0") == "1",
+        "agent": agent,
+        "npu": npu,
+        "connectors": {
+            "total": len(connectors),
+            "live": len(live_ids),
+            "live_ids": live_ids,
+            "simulated": len([c for c in connectors if c["status"] == "simulated"]),
+            "available": len([c for c in connectors if c["status"] == "available"]),
+            "reference_live": len([c for c in connectors if c["status"] == "connected"]),
+            "reference_live_ids": [c["id"] for c in connectors if c["status"] == "connected"],
+            "simulated_ids": [c["id"] for c in connectors if c["status"] == "simulated"],
+        },
+        "scheduler": scheduler.health(rc.store.list_scan_runs(), now=_demo_now(rc.pack)),
+        "note": "Production requires the agent model config, a real ONNX/Ascend broker, and at least one configured plant endpoint.",
+    }
+
+
+@app.get("/api/ready")
+def ready(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    agent = rc.agent.status().as_dict() if rc.agent else {"configured": False}
+    npu = rc.npu.health()
+    npu_ready = bool(npu.get("ready")) and npu.get("backend") in {"onnx", "ascend"}
+    live = [k for k in ("ROOTCAUSE_OPCUA_ENDPOINT", "ROOTCAUSE_MODBUS_ENDPOINT", "ROOTCAUSE_CAMERA_HTTP_URL", "ROOTCAUSE_MES_CSV") if os.getenv(k)]
+    strict = os.getenv("ROOTCAUSE_STRICT_INTEGRATIONS", "0") == "1"
+    ok = bool(agent.get("configured")) and npu_ready and bool(live)
+    if strict and not ok:
+        raise HTTPException(
+            503,
+            detail={
+                "ready": False,
+                "agent": agent,
+                "npu": npu,
+                "live_connectors": live,
+                "note": "ROOTCAUSE_STRICT_INTEGRATIONS=1: configure the agent, ONNX/Ascend broker and at least one live plant connector.",
+            },
+        )
+    return {"ready": ok, "strict": strict, "agent": agent, "npu": npu, "live_connectors": live}
 
 
 @app.get("/api/pack")

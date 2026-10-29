@@ -20,6 +20,9 @@ interface LineChartProps {
   decimals?: number;
   refLow?: number | null;
   refHigh?: number | null;
+  labelLast?: boolean;
+  table?: boolean;
+  tableLabel?: string;
 }
 
 export function LineChart({
@@ -34,6 +37,9 @@ export function LineChart({
   decimals = 1,
   refLow = null,
   refHigh = null,
+  labelLast = false,
+  table = true,
+  tableLabel = "Data table",
 }: LineChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<number | null>(null);
@@ -114,6 +120,16 @@ export function LineChart({
               s.values.map((v, i) => (
                 <circle key={i} cx={xOf(i)} cy={yOf(v)} r={1.9} fill={s.color} className="dot" />
               ))}
+            {labelLast && s.values.length > 0 && (
+              <text
+                x={xOf(s.values.length - 1) - 3}
+                y={yOf(s.values[s.values.length - 1]) - 5}
+                textAnchor="end"
+                style={{ fill: s.color, font: "9.5px var(--font-mono)" }}
+              >
+                {s.name}
+              </text>
+            )}
           </g>
         ))}
         {([
@@ -173,6 +189,26 @@ export function LineChart({
             </span>
           ))}
         </div>
+      )}
+      {table && (
+        <details className="chart-data">
+          <summary>{tableLabel}</summary>
+          <div style={{ overflowX: "auto" }}>
+            <table>
+              <thead>
+                <tr><th>Point</th>{series.map((s) => <th key={s.name}>{s.name}</th>)}</tr>
+              </thead>
+              <tbody>
+                {(labels.length ? labels : series[0]?.values.map((_, i) => String(i + 1)) ?? []).map((label, i) => (
+                  <tr key={`${label}-${i}`}>
+                    <td>{label}</td>
+                    {series.map((s) => <td key={s.name}>{(s.values[i] ?? 0).toFixed(decimals)}{unit}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
       )}
     </div>
   );

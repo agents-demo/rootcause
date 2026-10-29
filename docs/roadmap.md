@@ -595,6 +595,106 @@ command-first, evidence-first, calm until needed. AI is ambient and cited, never
 
 ---
 
+## Phase 7 — Production wiring (implemented code, site connection pending)
+
+**Why this phase exists.** The product was visually complete while still using a reference pack and
+a deterministic engine. That is not the same as a connected factory. This phase wires the real
+runtime contracts and removes silent demo fallbacks.
+
+**Status.** The code paths are implemented: JiuwenSwarm `DeepAgent`, ONNX/Ascend inference broker,
+real connector adapters and an explicit readiness gate. The remaining checkboxes are **site
+connection and validation**: model credentials, customer endpoints, hardware and a pilot. They cannot
+be completed from a development laptop.
+
+**Read first:** [`docs/production-wiring.md`](production-wiring.md).
+
+### 7.1 Agent runtime — JiuwenSwarm / openJiuwen
+
+- [x] Build a real `DeepAgent` adapter with a case-scoped tool set **(M)**
+- [x] Tools: machine window, batch/maintenance, similar cases, ranked causes, evidence, coverage **(M)**
+- [x] System prompt: cite evidence, admit missing evidence, never approve or control the line **(S)**
+- [x] `/api/agent/status` reports configured/available/backend/model **(S)**
+- [x] `/api/agent/ask` and `/api/agent/case/{id}` endpoints **(M)**
+- [x] Return 503 with the missing configuration instead of a fake answer **(S)**
+- [x] `AskPanel` calls the runtime when the API is live and labels the local evidence fallback **(M)**
+- [x] Audit every agent answer with question, case and actor **(S)**
+- [x] Include agent status in `/api/health` and `/api/ready` **(S)**
+- [x] Keep the deterministic ranking and human approval as the source of truth **(S)**
+- [ ] Configure the production model provider, API base, key and model name in the site environment **(S)**
+- [ ] Run an agent eval set: faithfulness, citation coverage, refusal, prompt injection **(M)**
+- [ ] Set latency, token and cost budgets; retain traces per policy **(M)**
+- [ ] Red-team data exfiltration and approval-bypass attempts **(M)**
+- [ ] Validate the agent against the pilot's real cases before enabling it for engineers **(M)**
+
+### 7.2 Inference — ONNX and Ascend
+
+- [x] Real ONNX Runtime backend with letterbox, confidence filter and NMS **(L)**
+- [x] Refuse a missing model with an explicit error **(S)**
+- [x] NPU broker reports backend, device, model and readiness **(S)**
+- [x] Bearer-token authentication for `/infer` **(S)**
+- [x] Ascend contract kept; refuses without ACL runtime or OM model **(M)**
+- [x] Local CPU detector is an explicit, labelled fallback only **(S)**
+- [x] `/api/ready` requires a ready inference backend **(S)**
+- [ ] Export the customer ONNX/OM model with checksum and model card **(M)**
+- [ ] Score held-out images and record accuracy by defect type **(M)**
+- [ ] Benchmark latency, throughput and memory on the target edge box **(M)**
+- [ ] Load the real `.om` model behind the Ascend executor on site **(L)**
+- [ ] Add TLS/mTLS if the broker crosses a network boundary **(M)**
+- [ ] Site acceptance: camera → broker → detection → case latency under the agreed budget **(M)**
+
+### 7.3 Live plant connectors
+
+- [x] Real OPC-UA, Modbus, S7, REST, SAP, FactoryTalk and CSV adapter paths **(L)**
+- [x] HTTP JPEG camera snapshot reader **(S)**
+- [x] Normalisation, tag/unit mapping and QC counters **(M)**
+- [x] `simulate` is explicit per adapter, never a hidden default in production code paths **(S)**
+- [x] `/api/integrations` reports live vs simulated connectors **(S)**
+- [x] `/api/ready` requires at least one live connector under strict mode **(S)**
+- [ ] Customer OPC-UA/Modbus/S7 endpoints, credentials and read-only service accounts **(M)**
+- [ ] Agreed tag map and clock-drift measurement **(M)**
+- [ ] 24-hour soak and known-defect replay **(M)**
+- [ ] SAP QM/PM and FactoryTalk live validation **(L)**
+- [ ] Secrets vault and rotation; no credentials in the repository **(M)**
+- [ ] Network diagram and firewall rule review with plant IT **(S)**
+
+### 7.4 Customer data and storage
+
+- [x] Append-only audit, report versions, tenant-isolated SQLite stores **(M)**
+- [x] Reference pack is explicitly synthetic and separate from customer data **(S)**
+- [x] Data provenance, model version and source IDs on evidence **(S)**
+- [ ] Import six months of customer quality history and reconcile batches **(M)**
+- [ ] Replace the reference pack with live MES/quality/camera/NPU data **(L)**
+- [ ] Data-quality report: missing fields, clock drift, duplicate batches **(M)**
+- [ ] Retention and deletion policy agreed; personal-data filter for operator notes **(M)**
+- [ ] Backup and restore drill with a full audit reconstruction **(M)**
+- [ ] No synthetic records in a production case store; enforce with a provenance check **(S)**
+
+### 7.5 Security and operations
+
+- [x] Signed webhook payloads with timestamp and shared secret **(S)**
+- [x] NPU broker bearer token **(S)**
+- [x] Per-tenant database isolation **(M)**
+- [ ] OIDC/SSO at the reverse proxy; server-side role enforcement **(L)**
+- [ ] TLS termination and network segmentation **(M)**
+- [ ] Secrets management and SBOM/dependency scanning **(M)**
+- [ ] Metrics, traces, log retention and alerting **(M)**
+- [ ] Readiness/liveness probes wired to the site supervisor **(S)**
+- [ ] Rollback and incident runbook **(S)**
+- [ ] Security review with the customer's IT/OT team **(M)**
+
+### 7.6 End-to-end production gate
+
+- [ ] One real line, one defect type, one factory running for 90 days **(L)**
+- [ ] Camera → ONNX/Ascend → case → engineer → report → sign-off, with no synthetic records **(L)**
+- [ ] Agent narrative citation coverage ≥ 95% on the pilot set **(M)**
+- [ ] Detector accuracy and false-alarm rate accepted by the quality manager **(M)**
+- [ ] Connector soak: 24 hours without silent gaps **(M)**
+- [ ] `/api/ready` returns 200 with strict integration mode **(S)**
+- [ ] No unlabelled simulated data anywhere in the production UI **(S)**
+- [ ] The public showcase is clearly separated from the customer deployment **(S)**
+
+---
+
 ## Recommended order — followed
 
 1. 0A stage piece → built.
@@ -613,6 +713,8 @@ command-first, evidence-first, calm until needed. AI is ambient and cited, never
 14. Phase 6 baseline, tokens and type scale → start in parallel with the Phase 4 pilot; no visual work before the baseline.
 15. Phase 6 shell and core surfaces → after the five-user task test; one surface at a time behind flags.
 16. Phase 6 stage refresh → only after the desk is stable and before the next public show.
+17. Phase 7 agent/NPU/connector code → done in the repository; no silent fallback.
+18. Phase 7 production gate → only after the customer supplies credentials, model, hardware and network access.
 
 ## Not planned — unchanged
 

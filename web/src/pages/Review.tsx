@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { classNames, fmtDateTime, hours } from "../lib/engine";
@@ -26,6 +26,34 @@ export default function Review() {
   }, [pack, investigation, caseStatus, reportFor]);
 
   const current = rows.find((r) => r.s.case.id === selected) ?? rows[0];
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || !current) return;
+      const index = rows.findIndex((r) => r.s.case.id === current.s.case.id);
+      if (e.key.toLowerCase() === "j" || e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelected(rows[Math.min(rows.length - 1, index + 1)].s.case.id);
+      }
+      if (e.key.toLowerCase() === "k" || e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelected(rows[Math.max(0, index - 1)].s.case.id);
+      }
+      const top = current.inv?.hypotheses.find((h) => h.status !== "rejected");
+      if (e.key.toLowerCase() === "a" && top && !current.inv?.hypotheses.some((h) => h.status === "accepted")) {
+        e.preventDefault();
+        accept(current.s.case.id, top.id);
+      }
+      if (e.key.toLowerCase() === "r" && top && !current.inv?.hypotheses.some((h) => h.status === "accepted")) {
+        e.preventDefault();
+        setRejectTarget(top);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [rows, current, accept]);
+
   if (!pack || !current) return <div className="empty">Loading review queue…</div>;
 
   const inv = current.inv!;
@@ -42,6 +70,7 @@ export default function Review() {
         actions={
           <>
             <span className="chip amber"><Icon name="review" size={11} /> {queue.length} waiting</span>
+            <span className="chip"><Icon name="grid" size={11} /> J/K move · A accept · R reject</span>
             <Link className="btn sm" to={`/cases/${current.s.case.id}`}><Icon name="external" size={11} /> Full case</Link>
           </>
         }

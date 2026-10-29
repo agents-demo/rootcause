@@ -6,6 +6,7 @@ import type { Evidence, Hypothesis, SensorSeries } from "../types";
 import { Icon } from "../components/Icon";
 import { AgentTrace, ChainViz, EvidenceList, Modal, PageHead, ProvenanceBlock, SeverityBadge, StatusBadge } from "../components/UI";
 import { LineChart } from "../components/Charts";
+import { AskPanel } from "../components/AskPanel";
 
 export default function CaseWorkspace() {
   const { caseId = "RC-0417" } = useParams();
@@ -439,6 +440,7 @@ export default function CaseWorkspace() {
 
         {/* ---------------------------------------------------- right: evidence and provenance */}
         <div className="col-stack">
+          <AskPanel scenario={scenario} />
           <div className="panel">
             <div className="panel-head">
               <h3>Evidence</h3>
@@ -577,6 +579,16 @@ export default function CaseWorkspace() {
           <textarea className="textarea" value={manualSummary} onChange={(e) => setManualSummary(e.target.value)} placeholder="What points to this cause?" />
         </div>
       </Modal>
+
+      <div className="decision-dock">
+        <div className="context">
+          <b>{scenario.case.id}</b> · {accepted ? `accepted: ${accepted.label}` : "no cause accepted"} · report v{report.version} {report.status}
+        </div>
+        {!accepted && top && <button className="btn cyan" onClick={() => accept(caseId, top.id)}>Accept top cause</button>}
+        {!accepted && top && <button className="btn danger" onClick={() => setRejectTarget(top)}>Reject</button>}
+        <button className="btn" onClick={() => setManualOpen(true)}>Add cause</button>
+        <Link className="btn primary" to={`/reports?case=${caseId}`}>{report.status === "approved" ? "View report" : "Review report"}</Link>
+      </div>
 
       <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Link className="btn ghost sm" to="/cases"><Icon name="arrow" size={12} style={{ transform: "rotate(180deg)" }} /> Back to cases</Link>

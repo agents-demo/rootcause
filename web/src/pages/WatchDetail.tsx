@@ -4,6 +4,7 @@ import { useStore } from "../lib/store";
 import { classNames, eur, fmtDateTime, pct, timeAgo } from "../lib/engine";
 import { Icon } from "../components/Icon";
 import { AgentTrace, Modal, PageHead, StatusBadge } from "../components/UI";
+import { AskPanel } from "../components/AskPanel";
 import type { Recommendation } from "../types";
 
 const REC_LABELS: Record<string, string> = {
@@ -282,6 +283,7 @@ export default function WatchDetail() {
         </div>
 
         <div className="col-stack">
+          <AskPanel watch={watch} />
           <div className="panel">
             <div className="panel-head"><h3>Decision</h3><span className="sub">human in control</span></div>
             <div className="panel-body">
@@ -356,6 +358,15 @@ export default function WatchDetail() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="decision-dock">
+        <div className="context"><b>Watch {watch.id}</b> · {watch.status} · risk {Math.round(watch.risk_score * 100)} · owner {watch.owner}</div>
+        {["watching", "snoozed"].includes(watch.status) && <button className="btn primary" onClick={() => triageWatch(watch.id)}>Start triage</button>}
+        <button className="btn" onClick={() => snoozeWatch(watch.id, 4)}>Snooze 4 h</button>
+        <button className="btn" onClick={() => trueRiskWatch(watch.id)}>True risk</button>
+        <button className="btn" onClick={() => setConvertOpen(true)}>Convert</button>
+        <button className="btn danger" onClick={() => setDismissOpen(true)}>False alarm</button>
       </div>
 
       <div className="row between mt16">

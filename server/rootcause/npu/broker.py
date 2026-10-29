@@ -120,9 +120,14 @@ class AscendBroker:
         )
 
 
-def broker_from_env() -> LocalBroker | AscendBroker:
+def broker_from_env():
     import os
 
+    backend = os.getenv("ROOTCAUSE_NPU_BACKEND", "").lower()
+    if backend == "onnx":
+        from .onnx_backend import OnnxBroker
+
+        return OnnxBroker(os.getenv("ROOTCAUSE_NPU_MODEL", "models/defect.onnx"), imgsz=int(os.getenv("ROOTCAUSE_NPU_IMGSZ", "640")))
     if os.getenv("ROOTCAUSE_NPU", "").lower() in {"1", "true", "ascend"}:
         return AscendBroker(os.getenv("ROOTCAUSE_NPU_ENDPOINT", "http://127.0.0.1:7788"))
     return LocalBroker()

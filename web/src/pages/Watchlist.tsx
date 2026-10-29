@@ -30,6 +30,7 @@ export default function Watchlist() {
   const [nearMissLine, setNearMissLine] = useState("line-6");
   const [nearMissNote, setNearMissNote] = useState("");
   const [nearMissParameter, setNearMissParameter] = useState("Unusual sound at the press");
+  const [view, setView] = useState<"board" | "table">("board");
 
   const watches = useMemo(() => {
     if (!proactive) return [];
@@ -105,8 +106,36 @@ export default function Watchlist() {
                 <option value="all">All lines</option>
                 {pack?.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
+              <div className="row gap4">
+                <button className={`btn sm ${view === "board" ? "primary" : "ghost"}`} onClick={() => setView("board")}>Board</button>
+                <button className={`btn sm ${view === "table" ? "primary" : "ghost"}`} onClick={() => setView("table")}>Table</button>
+              </div>
             </div>
           </div>
+          {view === "board" ? (
+            <div className="watch-board" style={{ padding: "0 15px" }}>
+              {watches.map((w, i) => {
+                const late = ["watching", "triage"].includes(w.status) && new Date(w.sla_due).getTime() < demoNow;
+                const prev = watches[i - 1];
+                return (
+                  <div key={w.id}>
+                    {(!prev || prev.severity !== w.severity) && <div className="watch-group-label">{w.severity}</div>}
+                    <button className="watch-row" style={{ width: "100%", background: "transparent", border: 0, textAlign: "left" }} onClick={() => navigate(`/watch/${w.id}`)}>
+                      <span className="rank">{String(i + 1).padStart(2, "0")}</span>
+                      <span>
+                        <span className="title">{w.title}</span>
+                        <span className="sub">{w.id} · {w.pattern_name} · {w.signal_count} signals</span>
+                      </span>
+                      <span className="score" style={{ color: w.risk_score >= 0.8 ? "var(--risk)" : w.risk_score >= 0.6 ? "var(--accent)" : "var(--verified)" }}>{Math.round(w.risk_score * 100)}</span>
+                      <span className="owner xsmall muted">{w.owner}</span>
+                      <span className="age xsmall" style={{ color: late ? "var(--risk)" : "var(--soft)" }}>{late ? "SLA overdue" : timeAgo(w.opened_at)}</span>
+                      <span><WatchStatus status={w.status} /></span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
           <div style={{ overflowX: "auto" }}>
             <table className="table">
               <thead><tr><th>Watch</th><th>Risk</th><th>Pattern</th><th>Line</th><th>Owner</th><th>Age / SLA</th><th>Status</th><th /></tr></thead>
@@ -141,6 +170,7 @@ export default function Watchlist() {
               </tbody>
             </table>
           </div>
+          )}
           {watches.length === 0 && <div className="empty">No watches match. Try “All” or clear the search.</div>}
           <div className="row between" style={{ padding: "8px 12px", borderTop: "1px solid var(--line)" }}>
             <span className="xsmall soft">{watches.length} shown · {proactive.settings.schedule.mode} mode</span>

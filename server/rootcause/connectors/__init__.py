@@ -130,6 +130,30 @@ class CameraConnector(Connector):
             return {"mode": "error", "error": str(exc)}
 
 
+class HttpCameraConnector(Connector):
+    """Generic HTTP snapshot pull for cameras that expose a JPEG endpoint."""
+
+    id = "camera-http"
+    protocol = "HTTP snapshot"
+
+    def snapshot(self, out_path: str | Path) -> dict[str, Any]:
+        if self.simulate:
+            return {"mode": "simulated", "note": "Set simulate=False and a real snapshot URL."}
+        try:
+            import urllib.request
+
+            with urllib.request.urlopen(self.endpoint, timeout=5) as response:
+                data = response.read()
+            if not data:
+                raise ValueError("empty snapshot")
+            target = Path(out_path)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+            return {"mode": "live", "bytes": len(data), "path": str(target), "content_type": response.headers.get("Content-Type", "")}
+        except Exception as exc:
+            return {"mode": "error", "error": str(exc)}
+
+
 def read_csv_records(path: str | Path) -> list[dict[str, str]]:
     p = Path(path)
     if not p.exists():
@@ -263,6 +287,7 @@ def registry(endpoints: dict[str, str] | None = None) -> list[Connector]:
         OpcUaConnector(endpoints.get("opcua", "opc.tcp://10.8.4.21:4840"), simulate=True),
         ModbusConnector(endpoints.get("modbus", "10.8.4.39:502"), simulate=True),
         CameraConnector(endpoints.get("camera", "10.8.4.51:9000"), simulate=True),
+        HttpCameraConnector(endpoints.get("camera_http", ""), simulate=True),
         CsvConnector(endpoints.get("mes", ""), kind="mes", simulate=True),
         CsvConnector(endpoints.get("quality", ""), kind="quality", simulate=True),
         RestConnector(endpoints.get("cmms", "https://cmms.local/api"), simulate=True),
@@ -278,6 +303,7 @@ def connector_catalog() -> list[dict[str, Any]]:
         {"id": "opcua", "name": "OPC-UA", "phase": "1.1", "status": "shipped", "extra": "asyncua", "systems": "Kepware, Siemens, Beckhoff"},
         {"id": "modbus", "name": "Modbus TCP/RTU", "phase": "1.1", "status": "shipped", "extra": "pymodbus", "systems": "Legacy PLCs"},
         {"id": "camera", "name": "Inspection camera feed", "phase": "1.1", "status": "shipped", "extra": "", "systems": "Keyence, Cognex, generic TCP/IP"},
+        {"id": "camera-http", "name": "HTTP camera snapshot", "phase": "1.1", "status": "shipped", "extra": "", "systems": "Generic JPEG snapshot URL"},
         {"id": "mes", "name": "MES / ERP batch CSV", "phase": "1.1", "status": "shipped", "extra": "", "systems": "SAP, Oracle, custom"},
         {"id": "quality", "name": "Quality history loader", "phase": "1.1", "status": "shipped", "extra": "", "systems": "6-month case import"},
         {"id": "cmms", "name": "Maintenance CMMS", "phase": "1.1", "status": "shipped", "extra": "", "systems": "REST"},
