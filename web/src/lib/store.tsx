@@ -124,6 +124,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setLoading(false);
 
         // If the on-site API is serving this page, hydrate the human decisions from SQLite.
+        // The public Pages build is static; probing /api there would only add a 404 to the console.
+        const staticHost = location.hostname.endsWith("github.io") || location.protocol === "file:";
+        if (staticHost) return;
         try {
           const health = await fetch(apiUrl("health"));
           if (!health.ok) return;
