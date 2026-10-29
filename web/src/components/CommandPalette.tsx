@@ -164,7 +164,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             <div className="ask-answer">
               <div className="row between mb8">
                 <span className="xsmall" style={{ letterSpacing: ".08em", textTransform: "uppercase", color: "var(--soft)" }}>Ask RootCause</span>
-                {answer.refused && <span className="chip" style={{ fontSize: 10 }}>no evidence / no action</span>}
+                {answer.refused && <span className="chip" style={{ fontSize: 11 }}>no evidence / no action</span>}
               </div>
               {answer.answer}
               <div className="mt8">
@@ -173,7 +173,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             </div>
           )}
         </div>
-        <div className="row between" style={{ padding: "8px 12px", borderTop: "1px solid var(--line)", fontSize: 10.5, color: "var(--soft)" }}>
+        <div className="row between" style={{ padding: "8px 12px", borderTop: "1px solid var(--line)", fontSize: 11.5, color: "var(--soft)" }}>
           <span>↑↓ navigate · ↵ open · esc close</span>
           <span>Answers cite evidence. The engineer decides.</span>
         </div>

@@ -10,8 +10,9 @@ import { AskPanel } from "../components/AskPanel";
 
 export default function CaseWorkspace() {
   const { caseId = "RC-0417" } = useParams();
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const booth = params.get("booth") === "1";
+  const focusMode = params.get("focus") === "1";
   const [boothSeconds, setBoothSeconds] = useState(0);
   const { scenarioFor, investigation, reportFor, caseStatus, accept, reject, addManual, approveReport, audits, say } = useStore();
   const scenario = scenarioFor(caseId);
@@ -19,8 +20,8 @@ export default function CaseWorkspace() {
   const report = reportFor(caseId);
   const status = caseStatus(caseId);
 
-  const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
-  const [imageTab, setImageTab] = useState<"surface" | "xray">("surface");
+  const [selectedEvidence, setSelectedEvidenceState] = useState<string | null>(params.get("evidence"));
+  const [imageTab, setImageTabState] = useState<"surface" | "xray">(params.get("tab") === "xray" ? "xray" : "surface");
   const [depth, setDepth] = useState(0);
   const [showBbox, setShowBbox] = useState(true);
   const [sensorId, setSensorId] = useState<string | null>(null);
@@ -37,6 +38,25 @@ export default function CaseWorkspace() {
     const t = window.setInterval(() => setBoothSeconds((s) => s + 1), 1000);
     return () => window.clearInterval(t);
   }, [booth]);
+
+  const selectEvidence = (id: string) => {
+    setSelectedEvidenceState(id);
+    const next = new URLSearchParams(params);
+    next.set("evidence", id);
+    setParams(next, { replace: true });
+  };
+  const selectTab = (tab: "surface" | "xray") => {
+    setImageTabState(tab);
+    const next = new URLSearchParams(params);
+    next.set("tab", tab);
+    setParams(next, { replace: true });
+  };
+  const toggleFocus = () => {
+    const next = new URLSearchParams(params);
+    if (focusMode) next.delete("focus");
+    else next.set("focus", "1");
+    setParams(next, { replace: true });
+  };
 
   const sensors = scenario?.sensors ?? [];
   const selectedSensor: SensorSeries | undefined = useMemo(
@@ -101,7 +121,7 @@ export default function CaseWorkspace() {
   const savedHours = Math.max(0, scenario.baseline_hours - scenario.current_hours);
 
   return (
-    <div>
+    <div className={focusMode ? "case-focus" : ""}>
       {booth && (
         <div className="panel mb12" style={{ borderColor: "rgba(255,180,84,.32)", background: "rgba(255,180,84,.05)" }}>
           <div className="panel-body" style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
@@ -136,17 +156,18 @@ export default function CaseWorkspace() {
           <span className="chip amber"><Icon name="clock" size={11} /> {hours(scenario.current_hours)} to cause</span>
           <span className="chip green"><Icon name="bolt" size={11} /> {hours(savedHours)} saved</span>
           <button className="btn sm" onClick={exportCase}><Icon name="download" size={12} /> Case JSON</button>
+          <button className="btn sm" onClick={toggleFocus}><Icon name="zoom" size={12} /> {focusMode ? "Exit focus" : "Focus"}</button>
           <Link className="btn primary sm" to={`/reports?case=${caseId}`}>
             <Icon name="report" size={12} /> {report.status === "approved" ? "View report" : "Review report"}
           </Link>
         </div>
       </div>
 
-      <div className="workspace">
+      <div className="workspace case-workspace-2026">
         <h2 className="sr-only">Case evidence, causes and decision</h2>
         {/* ---------------------------------------------------- left: evidence on the part */}
         <div className="col-stack">
-          <div className="viewer">
+          <div className="viewer evidence-canvas">
             <div className="canvas" style={{ "--depth": depth } as CSSProperties}>
               <img src={`${import.meta.env.BASE_URL}assets/${imageKey}.svg`} alt={`${scenario.part} inspection image`} />
               {hasXray && (depth > 0 || imageTab === "xray") && (
@@ -183,8 +204,8 @@ export default function CaseWorkspace() {
             </div>
             <div className="viewer-bar">
               <div className="seg">
-                <button className={imageTab === "surface" ? "on" : ""} onClick={() => setImageTab("surface")}>Optical</button>
-                {hasXray && <button className={imageTab === "xray" ? "on" : ""} onClick={() => setImageTab("xray")}>X-ray</button>}
+                <button className={imageTab === "surface" ? "on" : ""} onClick={() => selectTab("surface")}>Optical</button>
+                {hasXray && <button className={imageTab === "xray" ? "on" : ""} onClick={() => selectTab("xray")}>X-ray</button>}
                 <button className={showBbox ? "on" : ""} onClick={() => setShowBbox((v) => !v)}>Box</button>
               </div>
               <span className="xsmall mono soft">{imageKey} · {(scenario.case.detection_confidence * 100).toFixed(0)}%</span>
@@ -258,9 +279,9 @@ export default function CaseWorkspace() {
               <h3>Material batch</h3>
               <span className="sub">
                 {scenario.batch.notes.toLowerCase().includes("exception") || (scenario.batch.moisture_pct ?? 0) > 0.12 ? (
-                  <span className="chip red" style={{ fontSize: 8 }}>exception</span>
+                  <span className="chip red" style={{ fontSize: 11 }}>exception</span>
                 ) : (
-                  <span className="chip green" style={{ fontSize: 8 }}>in spec</span>
+                  <span className="chip green" style={{ fontSize: 11 }}>in spec</span>
                 )}
               </span>
             </div>
@@ -308,7 +329,7 @@ export default function CaseWorkspace() {
               </span>
             </div>
             <div className="panel-body">
-              <div className="cause-list">
+              <div className="cause-list cause-stack">
                 {inv.hypotheses.map((h) => (
                   <div
                     key={h.id}
@@ -327,9 +348,9 @@ export default function CaseWorkspace() {
                           <h4>{h.label}</h4>
                           <div className="row gap4 mt8">
                             <span className="tag">{h.category}</span>
-                            {h.status === "accepted" && <span className="chip green" style={{ fontSize: 8 }}>approved cause</span>}
-                            {h.status === "rejected" && <span className="chip red" style={{ fontSize: 8 }}>rejected</span>}
-                            {h.status === "manual" && <span className="chip amber" style={{ fontSize: 8 }}>engineer</span>}
+                            {h.status === "accepted" && <span className="chip green" style={{ fontSize: 11 }}>approved cause</span>}
+                            {h.status === "rejected" && <span className="chip red" style={{ fontSize: 11 }}>rejected</span>}
+                            {h.status === "manual" && <span className="chip amber" style={{ fontSize: 11 }}>engineer</span>}
                           </div>
                         </div>
                       </div>
@@ -344,7 +365,7 @@ export default function CaseWorkspace() {
                     <p className="summary">{h.summary}</p>
                     <div className="chips">
                       {h.evidence_ids.map((id) => (
-                        <button key={id} className="tag" style={{ background: "transparent", cursor: "pointer" }} onClick={() => setSelectedEvidence(id)}>
+                        <button key={id} className="tag" style={{ background: "transparent", cursor: "pointer" }} onClick={() => selectEvidence(id)}>
                           {id}
                         </button>
                       ))}
@@ -419,7 +440,7 @@ export default function CaseWorkspace() {
               <span className="sub">every tool call is citable</span>
             </div>
             <div className="panel-body">
-              <AgentTrace steps={inv.trace} onEvidence={(id) => setSelectedEvidence(id)} />
+              <AgentTrace steps={inv.trace} onEvidence={(id) => selectEvidence(id)} />
             </div>
           </div>
 
@@ -450,7 +471,7 @@ export default function CaseWorkspace() {
               <EvidenceList
                 evidence={evidence}
                 selected={selectedEvidence ?? activeEvidence?.id}
-                onSelect={setSelectedEvidence}
+                onSelect={selectEvidence}
                 highlight={highlighted}
               />
             </div>
@@ -492,7 +513,7 @@ export default function CaseWorkspace() {
                   <div key={h.id} className="ev-card">
                     <div className="row between">
                       <span className="eid">{h.id}</span>
-                      <span className="chip cyan" style={{ fontSize: 8 }}>{(h.similarity * 100).toFixed(0)}% match</span>
+                      <span className="chip cyan" style={{ fontSize: 11 }}>{(h.similarity * 100).toFixed(0)}% match</span>
                     </div>
                     <h4>{h.cause}</h4>
                     <p>{h.notes}</p>

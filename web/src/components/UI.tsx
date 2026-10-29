@@ -71,7 +71,7 @@ export function AgentTrace({ steps, onEvidence }: { steps: TraceStep[]; onEviden
                 <button
                   key={id}
                   className="chip amber"
-                  style={{ padding: "1px 5px", fontSize: 8 }}
+                  style={{ padding: "1px 5px", fontSize: 11 }}
                   onClick={() => onEvidence?.(id)}
                 >
                   {id}
@@ -156,7 +156,7 @@ export function AuditTrail({ events, limit = 8 }: { events: AuditEvent[]; limit?
             <b style={{ fontWeight: 600 }}>{e.actor}</b> · {e.action} <span className="soft">· {e.object}</span>
             <span className="xsmall soft" style={{ display: "block", marginTop: 1 }}>{e.detail}</span>
           </span>
-          <span className="chip" style={{ fontSize: 7.5 }}>{e.model_version}</span>
+          <span className="chip" style={{ fontSize: 11 }}>{e.model_version}</span>
         </div>
       ))}
     </div>

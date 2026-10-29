@@ -260,10 +260,10 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   defect, never predictive control of the line. See [Phase 4](docs/roadmap.md#phase-4--proactive-quality-implemented).
 - **Predictive research** — gated and currently stopped. The harness is in `server/rootcause/research`
   and the result is recorded in the app. See [predictive research](docs/predictive-research.md).
-- **Interface 2026** — planned. Phase 6 replaces the 2019-era admin shell with a type-led, box-light,
-  command-first, evidence-first instrument: token system, new IA, decision queue, command palette,
-  accessible charts, explainable motion, ambient AI and a light desk mode. See
-  [Interface 2026](docs/interface-2026.md).
+- **Interface 2026** — implemented. New instrument shell, command palette, decision-queue Now,
+  watch board, evidence docks, light desk mode, density, type/token system, chart data tables,
+  focus mode, URL-addressable case panes and a living design catalogue. Validation harness is in
+  [Interface 2026](docs/interface-2026.md); live usability sessions belong to the pilot.
 - **Production wiring** — JiuwenSwarm `DeepAgent` adapter, ONNX/Ascend inference broker, real
   connector paths and an explicit readiness gate. With `ROOTCAUSE_STRICT_INTEGRATIONS=1`, the API
   refuses to report ready until the agent, inference backend and a live plant connector are

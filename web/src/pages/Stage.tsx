@@ -537,7 +537,7 @@ export default function Stage() {
                 <button className="ghost">Quality dashboard</button>
               </Link>
             </div>
-            <div className="row between" style={{ marginTop: 14, fontSize: 9, color: "#8a7f6c", fontFamily: "var(--mono)" }}>
+            <div className="row between" style={{ marginTop: 14, fontSize: 11, color: "#8a7f6c", fontFamily: "var(--mono)" }}>
               <span>RUN TIME {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")} · 3 findings · 1 correction</span>
               <span>SCAN THE ROOM · SCAN THE PART</span>
             </div>

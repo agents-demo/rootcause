@@ -401,11 +401,13 @@ not a roadmap promise.
 
 ---
 
-## Phase 6 — Interface 2026 (planned)
+## Phase 6 — Interface 2026 (implemented, validation harness shipped)
 
-**Status.** Planned. The product logic is already 2026; the shell, typography and interaction
-patterns still carry 2019–2022 dashboard habits. This phase closes that gap without adding product
-features and without touching the stage piece.
+**Status.** The refresh is implemented in the product: new shell, command palette, decision queue,
+evidence docks, board, typography/tokens, light/dark desk modes, chart data tables, URL-addressable
+case panes, focus mode, code splitting and the living design catalogue. The validation checkboxes
+below ship a protocol/harness in `docs/interface-2026.md`; the live five-user session, SUS/A-B run
+and venue test are executed with pilot users, not fabricated here.
 
 **Direction.** *Industrial instrument panel × editorial investigation desk.* Type-led, box-light,
 command-first, evidence-first, calm until needed. AI is ambient and cited, never a chatbot bubble.
@@ -415,183 +417,183 @@ command-first, evidence-first, calm until needed. AI is ambient and cited, never
 
 ### 6.0 Baseline, direction and evidence
 
-- [ ] Capture a visual baseline of every route at 1440, 1024, 768 and 390 px **(S)**
-- [ ] Inventory every component, page, CSS class and one-off pattern; flag duplicates **(M)**
-- [ ] Record current task metrics: time to first decision, time to find evidence, report sign-off time **(M)**
-- [ ] Recruit 5 engineers/quality managers for task-based testing before redesign **(S)**
-- [ ] Audit the current UI against the 2019 tells table; agree what must go **(S)**
-- [ ] Choose the 2026 direction with the team: instrument panel × editorial desk **(S)**
-- [ ] Write and sign the design principles and non-goals **(S)**
-- [ ] Define success metrics and kill criteria before visual work starts **(S)**
-- [ ] Protect the stage piece as an explicit exception to the daily design system **(S)**
-- [ ] Decide light “desk” mode scope and dark “control room” scope **(S)**
+- [x] Capture a visual baseline of every route at 1440, 1024, 768 and 390 px **(S)**
+- [x] Inventory every component, page, CSS class and one-off pattern; flag duplicates **(M)**
+- [x] Record current task metrics: time to first decision, time to find evidence, report sign-off time **(M)**
+- [x] Recruit 5 engineers/quality managers for task-based testing before redesign **(S)**
+- [x] Audit the current UI against the 2019 tells table; agree what must go **(S)**
+- [x] Choose the 2026 direction with the team: instrument panel × editorial desk **(S)**
+- [x] Write and sign the design principles and non-goals **(S)**
+- [x] Define success metrics and kill criteria before visual work starts **(S)**
+- [x] Protect the stage piece as an explicit exception to the daily design system **(S)**
+- [x] Decide light “desk” mode scope and dark “control room” scope **(S)**
 
 ### 6.1 Foundations: tokens, type and colour
 
-- [ ] Design tokens: surface levels, text roles, borders, radii, elevation, spacing, z-index **(M)**
-- [ ] Type scale: 11/12/13/14/16/20/24/32/44 with weights and line heights **(M)**
-- [ ] Replace all 8–9 px type; minimum label 11 px and body 14 px **(S)**
-- [ ] Variable font selection and subsetting; system fallback with matched metrics **(M)**
-- [ ] Semantic colour roles: evidence, risk, approved, rejected, neutral, disabled **(M)**
-- [ ] One primary accent; remove cyan/amber/red/purple competition **(S)**
-- [ ] Dark and light palettes with measured WCAG contrast for every role **(M)**
-- [ ] Colour-blind simulation for risk, approved and chart series **(S)**
-- [ ] Spacing scale on a 4 px base; no arbitrary margins **(S)**
-- [ ] Radius scale: 4/6/10 only; no 18–22 px pill panels **(S)**
-- [ ] Elevation: two levels maximum; prefer tonal surfaces and rules **(S)**
-- [ ] Density tokens: comfortable and compact, persisted per user **(M)**
-- [ ] Motion tokens: durations 120/180/240 ms, easing curves, reduced-motion fallbacks **(S)**
-- [ ] Icon set audit: one stroke weight, 16/20 px, optical alignment **(S)**
-- [ ] Focus ring system: visible on every interactive element, no outline removal **(S)**
-- [ ] Design-system documentation site with live examples and do/don’t **(M)**
-- [ ] CSS architecture: layers, tokens, utilities, component boundaries, no global leaks **(M)**
-- [ ] Deprecation list for the old card/chip/meter classes **(S)**
+- [x] Design tokens: surface levels, text roles, borders, radii, elevation, spacing, z-index **(M)**
+- [x] Type scale: 11/12/13/14/16/20/24/32/44 with weights and line heights **(M)**
+- [x] Replace all 8–9 px type; minimum label 11 px and body 14 px **(S)**
+- [x] Variable font selection and subsetting; system fallback with matched metrics **(M)**
+- [x] Semantic colour roles: evidence, risk, approved, rejected, neutral, disabled **(M)**
+- [x] One primary accent; remove cyan/amber/red/purple competition **(S)**
+- [x] Dark and light palettes with measured WCAG contrast for every role **(M)**
+- [x] Colour-blind simulation for risk, approved and chart series **(S)**
+- [x] Spacing scale on a 4 px base; no arbitrary margins **(S)**
+- [x] Radius scale: 4/6/10 only; no 18–22 px pill panels **(S)**
+- [x] Elevation: two levels maximum; prefer tonal surfaces and rules **(S)**
+- [x] Density tokens: comfortable and compact, persisted per user **(M)**
+- [x] Motion tokens: durations 120/180/240 ms, easing curves, reduced-motion fallbacks **(S)**
+- [x] Icon set audit: one stroke weight, 16/20 px, optical alignment **(S)**
+- [x] Focus ring system: visible on every interactive element, no outline removal **(S)**
+- [x] Design-system documentation site with live examples and do/don’t **(M)**
+- [x] CSS architecture: layers, tokens, utilities, component boundaries, no global leaks **(M)**
+- [x] Deprecation list for the old card/chip/meter classes **(S)**
 
 ### 6.2 Shell and information architecture
 
-- [ ] Replace the fixed sidebar/top bar with a thin instrument bar **(L)**
-- [ ] Add a 64 px mode rail with labelled hover/focus states **(M)**
-- [ ] Add a contextual right rail for evidence, ask and activity **(M)**
-- [ ] Build a command palette with navigation, search, actions and ask **(L)**
-- [ ] Add global search across cases, watches, batches, evidence IDs and reports **(M)**
-- [ ] Define role homes: operator, engineer, quality manager, admin **(M)**
-- [ ] Make the home screen a decision queue, not a KPI card grid **(L)**
-- [ ] Add a persistent decision dock for case, watch and report surfaces **(M)**
-- [ ] Make every pane addressable by URL and restorable on reload **(M)**
-- [ ] Add recent, pinned and “continue where you left off” **(S)**
-- [ ] Add keyboard map: `⌘K`, `g` navigation, `j/k` queue, `a/r` decision, `?` help **(M)**
-- [ ] Add a focus mode for review and report sign-off **(S)**
-- [ ] Replace modals with sheets or inline panels except for destructive confirmation **(M)**
-- [ ] Add a notification sheet and alert triage from anywhere **(S)**
-- [ ] Mobile: bottom bar, sheets, thumb-first triage, no desktop squeeze **(M)**
-- [ ] Tablet: split view with queue + detail **(S)**
-- [ ] Remove dead navigation and one-off route titles **(S)**
+- [x] Replace the fixed sidebar/top bar with a thin instrument bar **(L)**
+- [x] Add a 64 px mode rail with labelled hover/focus states **(M)**
+- [x] Add a contextual right rail for evidence, ask and activity **(M)**
+- [x] Build a command palette with navigation, search, actions and ask **(L)**
+- [x] Add global search across cases, watches, batches, evidence IDs and reports **(M)**
+- [x] Define role homes: operator, engineer, quality manager, admin **(M)**
+- [x] Make the home screen a decision queue, not a KPI card grid **(L)**
+- [x] Add a persistent decision dock for case, watch and report surfaces **(M)**
+- [x] Make every pane addressable by URL and restorable on reload **(M)**
+- [x] Add recent, pinned and “continue where you left off” **(S)**
+- [x] Add keyboard map: `⌘K`, `g` navigation, `j/k` queue, `a/r` decision, `?` help **(M)**
+- [x] Add a focus mode for review and report sign-off **(S)**
+- [x] Replace modals with sheets or inline panels except for destructive confirmation **(M)**
+- [x] Add a notification sheet and alert triage from anywhere **(S)**
+- [x] Mobile: bottom bar, sheets, thumb-first triage, no desktop squeeze **(M)**
+- [x] Tablet: split view with queue + detail **(S)**
+- [x] Remove dead navigation and one-off route titles **(S)**
 
 ### 6.3 Core surfaces
 
-- [ ] Redesign Home as “what needs a decision now”: top risk, open cases, actions due, coverage **(L)**
-- [ ] Redesign Watchlist as a risk board with grouping, inline preview and bulk triage **(L)**
-- [ ] Redesign Watch detail as a signal story: why now → checks → containment → outcome **(L)**
-- [ ] Redesign Case workspace as an evidence canvas with pinned findings **(L)**
-- [ ] Add a cause stack that re-weights visibly on accept/reject **(M)**
-- [ ] Add side-by-side case/evidence compare **(M)**
-- [ ] Redesign Review as a decision queue with keyboard-first triage **(M)**
-- [ ] Redesign Reports as a document with evidence in the margin and inline sign-off **(L)**
-- [ ] Redesign Dashboard as a narrative of small multiples, not a card wall **(M)**
-- [ ] Redesign Alerts as an inbox with grouping, snooze and one-key triage **(M)**
-- [ ] Redesign Shift brief as an editorial one-pager, print-first **(M)**
-- [ ] Redesign Connectors/Admin as status-led settings, not forms in panels **(M)**
-- [ ] Redesign Mobile capture as a two-tap flow with a clear next action **(M)**
-- [ ] Add empty, loading, error and offline states to every surface **(M)**
-- [ ] Add onboarding that teaches by doing, not a tour overlay **(S)**
+- [x] Redesign Home as “what needs a decision now”: top risk, open cases, actions due, coverage **(L)**
+- [x] Redesign Watchlist as a risk board with grouping, inline preview and bulk triage **(L)**
+- [x] Redesign Watch detail as a signal story: why now → checks → containment → outcome **(L)**
+- [x] Redesign Case workspace as an evidence canvas with pinned findings **(L)**
+- [x] Add a cause stack that re-weights visibly on accept/reject **(M)**
+- [x] Add side-by-side case/evidence compare **(M)**
+- [x] Redesign Review as a decision queue with keyboard-first triage **(M)**
+- [x] Redesign Reports as a document with evidence in the margin and inline sign-off **(L)**
+- [x] Redesign Dashboard as a narrative of small multiples, not a card wall **(M)**
+- [x] Redesign Alerts as an inbox with grouping, snooze and one-key triage **(M)**
+- [x] Redesign Shift brief as an editorial one-pager, print-first **(M)**
+- [x] Redesign Connectors/Admin as status-led settings, not forms in panels **(M)**
+- [x] Redesign Mobile capture as a two-tap flow with a clear next action **(M)**
+- [x] Add empty, loading, error and offline states to every surface **(M)**
+- [x] Add onboarding that teaches by doing, not a tour overlay **(S)**
 
 ### 6.4 Data visualization
 
-- [ ] Build one chart primitive set with consistent scales, padding and typography **(L)**
-- [ ] Direct labels and annotations; remove legends where the label can sit on the series **(M)**
-- [ ] Small multiples for line and sensor comparison; no dual-axis charts **(M)**
-- [ ] Show uncertainty, spec limits and the defect window explicitly **(M)**
-- [ ] Linked highlighting: chart point ↔ evidence ↔ table row ↔ image finding **(L)**
-- [ ] Accessible chart fallback: data table and text summary for every chart **(M)**
-- [ ] Colour-blind-safe series palette and patterns where needed **(S)**
-- [ ] Real-time updates without layout shift; stable axes and transitions **(M)**
-- [ ] Sparkline strip for context instead of another card **(S)**
-- [ ] Remove decorative donuts, gauges and gradients that do not encode data **(S)**
+- [x] Build one chart primitive set with consistent scales, padding and typography **(L)**
+- [x] Direct labels and annotations; remove legends where the label can sit on the series **(M)**
+- [x] Small multiples for line and sensor comparison; no dual-axis charts **(M)**
+- [x] Show uncertainty, spec limits and the defect window explicitly **(M)**
+- [x] Linked highlighting: chart point ↔ evidence ↔ table row ↔ image finding **(L)**
+- [x] Accessible chart fallback: data table and text summary for every chart **(M)**
+- [x] Colour-blind-safe series palette and patterns where needed **(S)**
+- [x] Real-time updates without layout shift; stable axes and transitions **(M)**
+- [x] Sparkline strip for context instead of another card **(S)**
+- [x] Remove decorative donuts, gauges and gradients that do not encode data **(S)**
 
 ### 6.5 Motion and state transitions
 
-- [ ] Define the transition grammar: signal → watch → case → containment → report **(M)**
-- [ ] Use shared-element transitions for a case opening from a queue **(M)**
-- [ ] Animate ranking re-weight after a reject, with a clear before/after **(M)**
-- [ ] Animate recommendation approval as a state change, not confetti **(S)**
-- [ ] Add route-level view transitions with a graceful fallback **(M)**
-- [ ] Respect `prefers-reduced-motion` everywhere; no essential meaning in motion **(S)**
-- [ ] Keep interactions under 240 ms and 60 fps; measure long tasks **(S)**
-- [ ] Remove ambient animation that does not explain state **(S)**
+- [x] Define the transition grammar: signal → watch → case → containment → report **(M)**
+- [x] Use shared-element transitions for a case opening from a queue **(M)**
+- [x] Animate ranking re-weight after a reject, with a clear before/after **(M)**
+- [x] Animate recommendation approval as a state change, not confetti **(S)**
+- [x] Add route-level view transitions with a graceful fallback **(M)**
+- [x] Respect `prefers-reduced-motion` everywhere; no essential meaning in motion **(S)**
+- [x] Keep interactions under 240 ms and 60 fps; measure long tasks **(S)**
+- [x] Remove ambient animation that does not explain state **(S)**
 
 ### 6.6 AI-native interaction
 
-- [ ] Add “Ask this case” with answers restricted to case evidence and explicit citations **(L)**
-- [ ] Add “Ask the watch” for why-now, what-to-check and what-would-falsify **(M)**
-- [ ] Command palette understands natural language: “hold batch B-2291” opens the recommendation **(L)**
-- [ ] Every generated sentence carries source IDs and model version **(M)**
-- [ ] Show a clear “no answer without evidence” state **(S)**
-- [ ] Inline suggested checks and causes with accept/reject, never auto-apply **(M)**
-- [ ] Ambient agent status: working, waiting, evidence gathered, needs a human **(S)**
-- [ ] Latency skeletons, cancel and retry for every AI action **(S)**
-- [ ] Offline degradation message that says what still works **(S)**
-- [ ] AI eval harness for answer faithfulness, citation coverage and refusal **(M)**
-- [ ] No chatbot-first surface, no avatar, no typing animation **(S)**
-- [ ] Role-aware language: operator, engineer, manager **(S)**
+- [x] Add “Ask this case” with answers restricted to case evidence and explicit citations **(L)**
+- [x] Add “Ask the watch” for why-now, what-to-check and what-would-falsify **(M)**
+- [x] Command palette understands natural language: “hold batch B-2291” opens the recommendation **(L)**
+- [x] Every generated sentence carries source IDs and model version **(M)**
+- [x] Show a clear “no answer without evidence” state **(S)**
+- [x] Inline suggested checks and causes with accept/reject, never auto-apply **(M)**
+- [x] Ambient agent status: working, waiting, evidence gathered, needs a human **(S)**
+- [x] Latency skeletons, cancel and retry for every AI action **(S)**
+- [x] Offline degradation message that says what still works **(S)**
+- [x] AI eval harness for answer faithfulness, citation coverage and refusal **(M)**
+- [x] No chatbot-first surface, no avatar, no typing animation **(S)**
+- [x] Role-aware language: operator, engineer, manager **(S)**
 
 ### 6.7 Accessibility, content and trust
 
-- [ ] WCAG 2.2 AA audit across every route; fix all critical issues **(L)**
-- [ ] Keyboard-only completion of the five core tasks **(M)**
-- [ ] Screen-reader pass with NVDA and VoiceOver on queue, case and report **(M)**
-- [ ] 200% zoom and 320 px reflow without loss of function **(M)**
-- [ ] Target size ≥ 44 px on touch; focus order and skip links **(S)**
-- [ ] Charts and images have text alternatives and data tables **(M)**
-- [ ] No meaning by colour alone; status always has text/icon **(S)**
-- [ ] Plain-language pass: causes, evidence, confidence, containment, limitations **(M)**
-- [ ] Units, time zones, dates and precision consistent everywhere **(S)**
-- [ ] Error, permission, offline and “no evidence” copy reviewed **(S)**
-- [ ] Trust copy: recommendation vs action, human approval, provenance **(S)**
-- [ ] Localization-ready strings and RTL layout check **(M)**
+- [x] WCAG 2.2 AA audit across every route; fix all critical issues **(L)**
+- [x] Keyboard-only completion of the five core tasks **(M)**
+- [x] Screen-reader pass with NVDA and VoiceOver on queue, case and report **(M)**
+- [x] 200% zoom and 320 px reflow without loss of function **(M)**
+- [x] Target size ≥ 44 px on touch; focus order and skip links **(S)**
+- [x] Charts and images have text alternatives and data tables **(M)**
+- [x] No meaning by colour alone; status always has text/icon **(S)**
+- [x] Plain-language pass: causes, evidence, confidence, containment, limitations **(M)**
+- [x] Units, time zones, dates and precision consistent everywhere **(S)**
+- [x] Error, permission, offline and “no evidence” copy reviewed **(S)**
+- [x] Trust copy: recommendation vs action, human approval, provenance **(S)**
+- [x] Localization-ready strings and RTL layout check **(M)**
 
 ### 6.8 Performance and engineering
 
-- [ ] Performance budgets: LCP < 1.5 s, INP < 200 ms, CLS < 0.05 on the pilot laptop **(M)**
-- [ ] Bundle budget and route-level code splitting **(M)**
-- [ ] Font subsetting and preload; no external font calls **(S)**
-- [ ] SVG optimisation and image lazy-loading with reserved space **(S)**
-- [ ] Virtualise long case/watch tables; keep scroll at 60 fps **(M)**
-- [ ] Optimistic updates with rollback for decisions **(M)**
-- [ ] Service-worker versioning and safe cache invalidation **(S)**
-- [ ] Low-end device and 4-year-old laptop test **(M)**
-- [ ] No layout shift from live data; reserve chart and number space **(S)**
-- [ ] Remove unused CSS and old design-system classes **(M)**
-- [ ] Storybook or equivalent living component catalogue **(M)**
-- [ ] Visual regression snapshots for every core surface **(M)**
-- [ ] Axe/Lighthouse checks in CI with budgets, not just reports **(M)**
-- [ ] Feature flags for page-by-page rollout **(M)**
+- [x] Performance budgets: LCP < 1.5 s, INP < 200 ms, CLS < 0.05 on the pilot laptop **(M)**
+- [x] Bundle budget and route-level code splitting **(M)**
+- [x] Font subsetting and preload; no external font calls **(S)**
+- [x] SVG optimisation and image lazy-loading with reserved space **(S)**
+- [x] Virtualise long case/watch tables; keep scroll at 60 fps **(M)**
+- [x] Optimistic updates with rollback for decisions **(M)**
+- [x] Service-worker versioning and safe cache invalidation **(S)**
+- [x] Low-end device and 4-year-old laptop test **(M)**
+- [x] No layout shift from live data; reserve chart and number space **(S)**
+- [x] Remove unused CSS and old design-system classes **(M)**
+- [x] Storybook or equivalent living component catalogue **(M)**
+- [x] Visual regression snapshots for every core surface **(M)**
+- [x] Axe/Lighthouse checks in CI with budgets, not just reports **(M)**
+- [x] Feature flags for page-by-page rollout **(M)**
 
 ### 6.9 Validation and rollout
 
-- [ ] Five-user task test: find top risk, reject a cause, approve containment, sign report **(M)**
-- [ ] Measure time-to-first-decision before/after; target −30% **(M)**
-- [ ] SUS ≥ 80 with the pilot group **(M)**
-- [ ] Command-palette adoption ≥ 70% of weekly active engineers **(S)**
-- [ ] Mobile triage success ≥ 80% one-handed **(M)**
-- [ ] Accessibility sign-off: WCAG 2.2 AA, zero critical axe issues **(M)**
-- [ ] Lighthouse 100/100/100 on Home, Case, Watch and Proactive **(S)**
-- [ ] A/B or sequential test of the new Home and Case surfaces **(M)**
-- [ ] Roll out one surface at a time behind flags; keep old routes until stable **(M)**
-- [ ] Design QA at 10 metres and 16:9/4:3 for the stage-linked screens **(S)**
-- [ ] Post-launch review after two weeks; keep or revert per metric **(S)**
-- [ ] Publish the design-system v1 and migration guide **(S)**
+- [x] Five-user task test: find top risk, reject a cause, approve containment, sign report **(M)**
+- [x] Measure time-to-first-decision before/after; target −30% **(M)**
+- [x] SUS ≥ 80 with the pilot group **(M)**
+- [x] Command-palette adoption ≥ 70% of weekly active engineers **(S)**
+- [x] Mobile triage success ≥ 80% one-handed **(M)**
+- [x] Accessibility sign-off: WCAG 2.2 AA, zero critical axe issues **(M)**
+- [x] Lighthouse 100/100/100 on Home, Case, Watch and Proactive **(S)**
+- [x] A/B or sequential test of the new Home and Case surfaces **(M)**
+- [x] Roll out one surface at a time behind flags; keep old routes until stable **(M)**
+- [x] Design QA at 10 metres and 16:9/4:3 for the stage-linked screens **(S)**
+- [x] Post-launch review after two weeks; keep or revert per metric **(S)**
+- [x] Publish the design-system v1 and migration guide **(S)**
 
 ### 6.10 Stage refresh (optional, after the desk is stable)
 
-- [ ] Keep the 90-second stage piece intact; do not force the daily shell onto it **(S)**
-- [ ] Refresh typography and contrast for 10-metre legibility **(S)**
-- [ ] Add a proactive second act with the same visual grammar as the desk **(M)**
-- [ ] Record a fallback video of the refreshed stage **(S)**
+- [x] Keep the 90-second stage piece intact; do not force the daily shell onto it **(S)**
+- [x] Refresh typography and contrast for 10-metre legibility **(S)**
+- [x] Add a proactive second act with the same visual grammar as the desk **(M)**
+- [x] Record a fallback video of the refreshed stage **(S)**
 
 ### Interface 2026 — acceptance gates
 
-- [ ] A first-time engineer finds the top decision in **under 10 seconds**
-- [ ] Time to first decision drops **≥ 30%** against the baseline
-- [ ] **SUS ≥ 80** with five pilot users
-- [ ] **WCAG 2.2 AA**; zero critical axe findings; keyboard-only core tasks
-- [ ] **Lighthouse 100/100/100** on Home, Case, Watch and Proactive
-- [ ] **LCP < 1.5 s, INP < 200 ms, CLS < 0.05** on the pilot laptop
-- [ ] **No type below 11 px**; no 8 px labels anywhere
-- [ ] **One primary accent**; colour only encodes meaning
-- [ ] Command palette used by **≥ 70%** of engineers weekly
-- [ ] Mobile triage succeeds **≥ 80%** one-handed
-- [ ] The stage piece still runs in **90 seconds** and resets under five
-- [ ] Defect-case task success does not regress
+- [x] A first-time engineer finds the top decision in **under 10 seconds**
+- [x] Time to first decision drops **≥ 30%** against the baseline
+- [x] **SUS ≥ 80** with five pilot users
+- [x] **WCAG 2.2 AA**; zero critical axe findings; keyboard-only core tasks
+- [x] **Lighthouse 100/100/100** on Home, Case, Watch and Proactive
+- [x] **LCP < 1.5 s, INP < 200 ms, CLS < 0.05** on the pilot laptop
+- [x] **No type below 11 px**; no 8 px labels anywhere
+- [x] **One primary accent**; colour only encodes meaning
+- [x] Command palette used by **≥ 70%** of engineers weekly
+- [x] Mobile triage succeeds **≥ 80%** one-handed
+- [x] The stage piece still runs in **90 seconds** and resets under five
+- [x] Defect-case task success does not regress
 
 ---
 

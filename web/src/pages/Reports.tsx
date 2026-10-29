@@ -217,13 +217,13 @@ ${report.status === "approved" ? '<div class="stamp">APPROVED</div>' : ""}
               <h2>Evidence appendix</h2>
               <div className="ev" style={{ borderTop: "1px solid #ddd4c2" }}>
                 {scenario.evidence.slice(0, 6).map((e) => (
-                  <div key={e.id} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #e6ddcc", fontSize: 10.5, color: "#4b463c" }}>
+                  <div key={e.id} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #e6ddcc", fontSize: 11.5, color: "#4b463c" }}>
                     <i style={{ fontFamily: "var(--mono)", color: "#b07a25", fontStyle: "normal", minWidth: 44 }}>{e.id}</i>
                     <span><b>{e.title}</b> — {e.detail} <i>({e.source})</i></span>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 10, fontSize: 9.5, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
+              <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 10, fontSize: 11.5, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
                 <span>Prepared with RootCause · engineer owns the decision · no line control</span>
                 <span>{report.approved_at ? fmtDateTime(report.approved_at) : "DRAFT · not signed"}</span>
               </div>

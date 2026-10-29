@@ -89,7 +89,7 @@ export default function ShiftBriefPage() {
               <div className="col gap6">
                 {briefs.map((b) => (
                   <button key={b.id} className={`ev-card ${current?.id === b.id ? "sel" : ""}`} style={{ textAlign: "left", font: "inherit" }} onClick={() => setSelectedId(b.id)}>
-                    <div className="row between"><span className="eid">{b.id}</span><span className="chip" style={{ fontSize: 8 }}>shift {b.shift}</span></div>
+                    <div className="row between"><span className="eid">{b.id}</span><span className="chip" style={{ fontSize: 11 }}>shift {b.shift}</span></div>
                     <h4>{b.title}</h4>
                     <p>{fmtDateTime(b.at)} · {b.top_risks.length} risks</p>
                   </button>
@@ -141,11 +141,11 @@ export default function ShiftBriefPage() {
               <div key={r.watch_id} className="row between" style={{ padding: "7px 0", borderBottom: "1px solid #e6ddcc", gap: 10, alignItems: "flex-start" }}>
                 <div>
                   <b style={{ fontSize: 12 }}>{r.title}</b>
-                  <div style={{ fontSize: 10, color: "#6d6558" }}>{r.action}</div>
+                  <div style={{ fontSize: 11, color: "#6d6558" }}>{r.action}</div>
                 </div>
                 <div className="row gap6">
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 8, color: "#b07a25" }}>{r.watch_id}</span>
-                  <span style={{ fontSize: 8, border: "1px solid #d8cfbd", borderRadius: 4, padding: "2px 5px", textTransform: "uppercase" }}>{r.severity}</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "#b07a25" }}>{r.watch_id}</span>
+                  <span style={{ fontSize: 11, border: "1px solid #d8cfbd", borderRadius: 4, padding: "2px 5px", textTransform: "uppercase" }}>{r.severity}</span>
                 </div>
               </div>
             )) : <p style={{ fontSize: 11 }}>No active watch.</p>}
@@ -174,7 +174,7 @@ export default function ShiftBriefPage() {
             <h2>Coverage</h2>
             <p style={{ fontSize: 11 }}>{current.coverage_note}</p>
 
-            <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 9, fontSize: 9, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
+            <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 9, fontSize: 11, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
               <span>{current.generated_by}</span>
               <span>Recommendations only · no line control</span>
             </div>

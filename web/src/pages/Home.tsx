@@ -197,7 +197,7 @@ export default function Home() {
           </div>
           <div className="rail-card">
             <h3>Last scan</h3>
-            <div className="row between"><span className="xsmall muted">Scheduler</span><span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 10 }}>{proactive.health?.status ?? "unknown"}</span></div>
+            <div className="row between"><span className="xsmall muted">Scheduler</span><span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 11 }}>{proactive.health?.status ?? "unknown"}</span></div>
             <div className="row between mt8"><span className="xsmall soft">Last scan</span><span className="xsmall mono">{proactive.health?.last_scan ? timeAgo(proactive.health.last_scan) : "—"}</span></div>
           </div>
         </aside>

@@ -55,7 +55,7 @@ export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: Wat
     <div className="ask-panel">
       <div className="row between">
         <h3>Ask {watch ? "this watch" : "this case"}</h3>
-        <span className="chip" style={{ fontSize: 10 }}>{backend}</span>
+        <span className="chip" style={{ fontSize: 11 }}>{backend}</span>
       </div>
       <div className="ask-input">
         <input
@@ -78,7 +78,7 @@ export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: Wat
           {answer.answer}
           <div className="mt8">
             {answer.citations.map((c) => <span key={c} className="ask-cite">{c}</span>)}
-            {answer.refused && <span className="chip" style={{ fontSize: 10, marginLeft: 6 }}>no evidence / no action</span>}
+            {answer.refused && <span className="chip" style={{ fontSize: 11, marginLeft: 6 }}>no evidence / no action</span>}
           </div>
         </div>
       )}

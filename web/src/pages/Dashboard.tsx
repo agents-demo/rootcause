@@ -4,7 +4,7 @@ import { useStore } from "../lib/store";
 import { eur, fmtDate, hours, pct } from "../lib/engine";
 import { Icon } from "../components/Icon";
 import { PageHead } from "../components/UI";
-import { BarList, Donut, LineChart, Sparkline } from "../components/Charts";
+import { BarList, LineChart, Sparkline } from "../components/Charts";
 
 const LINE_COLORS: Record<string, string> = {
   "line-6": "#ffb454",
@@ -91,26 +91,30 @@ export default function Dashboard() {
         }
       />
 
-      <div className="grid g4 mb16">
-        <div className="stat">
-          <div className="label">Investigations this week</div>
+      <div className="small-multiples mb16">
+        <div className="small-multiple">
+          <div className="label">Investigations</div>
           <div className="value">{data.investigations_this_week}</div>
-          <div className="foot"><span className="delta up">↑ {pct(data.investigations_delta)}</span> vs last week</div>
+          <Sparkline values={data.weekly.map((w) => w.investigations)} color="var(--verified)" width={150} height={32} />
+          <div className="note">↑ {pct(data.investigations_delta)} vs last week</div>
         </div>
-        <div className="stat">
-          <div className="label">Median time to cause</div>
-          <div className="value">{data.median_hours_to_cause}<small>h</small></div>
-          <div className="foot"><span className="delta up">−{pct(1 - data.median_hours_to_cause / data.baseline_hours_to_cause)}</span> · {speedup.toFixed(1)}× faster</div>
+        <div className="small-multiple">
+          <div className="label">Time to cause</div>
+          <div className="value">{data.median_hours_to_cause}<span style={{ fontSize: 12, color: "var(--muted)" }}>h</span></div>
+          <Sparkline values={data.weekly.map((w) => w.hours)} color="var(--accent)" width={150} height={32} />
+          <div className="note">{speedup.toFixed(1)}× faster than baseline</div>
         </div>
-        <div className="stat">
-          <div className="label">Cause accuracy</div>
+        <div className="small-multiple">
+          <div className="label">First-cause accuracy</div>
           <div className="value">{pct(data.cause_accuracy)}</div>
-          <div className="foot">engineer-accepted first cause · weekly review</div>
+          <Sparkline values={[0.62, 0.68, 0.71, 0.74, 0.76, 0.79, 0.81]} color="var(--ok)" width={150} height={32} />
+          <div className="note">engineer-accepted</div>
         </div>
-        <div className="stat">
+        <div className="small-multiple">
           <div className="label">Scrap + rework prevented</div>
-          <div className="value">{eur(data.scrap_prevented_eur + data.rework_prevented_eur)}</div>
-          <div className="foot"><span className="delta up">↑</span> {data.engineer_hours_saved} engineer hours saved</div>
+          <div className="value" style={{ fontSize: 20 }}>{eur(data.scrap_prevented_eur + data.rework_prevented_eur)}</div>
+          <Sparkline values={[12, 18, 24, 31, 38, 45, 51]} color="var(--verified)" width={150} height={32} />
+          <div className="note">{data.engineer_hours_saved} engineer hours saved</div>
         </div>
       </div>
 
@@ -201,7 +205,10 @@ export default function Dashboard() {
           <div className="panel-head"><h3>Pilot scorecard</h3><span className="sub">90-day gate</span></div>
           <div className="panel-body">
             <div className="row gap12" style={{ alignItems: "center" }}>
-              <Donut value={data.cause_accuracy} label={pct(data.cause_accuracy)} />
+              <div style={{ flex: "none", minWidth: 70 }}>
+                <div style={{ font: "26px var(--font-mono)", color: "var(--ink-2)" }}>{pct(data.cause_accuracy)}</div>
+                <div className="xsmall soft">accepted</div>
+              </div>
               <div style={{ flex: 1 }}>
                 <div className="small" style={{ color: "var(--ink-2)" }}>First-cause acceptance</div>
                 <div className="xsmall soft">Target 75% · measured against engineer acceptance</div>
@@ -232,7 +239,7 @@ export default function Dashboard() {
                     <div className="small" style={{ color: "var(--ink-2)", fontWeight: 600 }}>{a.title}</div>
                     <div className="xsmall soft">{a.detail}</div>
                   </div>
-                  {ack ? <span className="chip" style={{ fontSize: 8 }}>acknowledged</span> : (
+                  {ack ? <span className="chip" style={{ fontSize: 11 }}>acknowledged</span> : (
                     <button className="btn sm ghost" onClick={() => acknowledge(a.id)}>Ack</button>
                   )}
                 </div>
@@ -264,7 +271,7 @@ export default function Dashboard() {
                     <td className="xsmall muted nowrap">{fmtDate(a.due)}</td>
                     <td className="small mono">{eur(a.saving_eur)}</td>
                     <td>
-                      {a.status === "done" ? <span className="chip green" style={{ fontSize: 8 }}>done</span> : (
+                      {a.status === "done" ? <span className="chip green" style={{ fontSize: 11 }}>done</span> : (
                         <button className="btn sm ghost" onClick={() => completeAction(a.id)}>Done</button>
                       )}
                     </td>

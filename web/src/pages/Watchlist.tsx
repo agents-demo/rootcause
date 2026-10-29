@@ -17,7 +17,7 @@ function WatchStatus({ status }: { status: string }) {
     dismissed: "red",
     converted: "green",
   };
-  return <span className={`chip ${map[status] ?? ""}`} style={{ fontSize: 8 }}>{status}</span>;
+  return <span className={`chip ${map[status] ?? ""}`} style={{ fontSize: 11 }}>{status}</span>;
 }
 
 export default function Watchlist() {
@@ -91,9 +91,9 @@ export default function Watchlist() {
             <div className="row gap6" style={{ flexWrap: "wrap" }}>
               <div className="search">
                 <Icon name="search" size={12} />
-                <input className="input" style={{ width: 170, padding: "5px 8px 5px 27px", fontSize: 10 }} placeholder="Search watch, pattern…" value={query} onChange={(e) => setQuery(e.target.value)} />
+                <input className="input" style={{ width: 170, padding: "5px 8px 5px 27px", fontSize: 11 }} placeholder="Search watch, pattern…" value={query} onChange={(e) => setQuery(e.target.value)} />
               </div>
-              <select className="select" style={{ width: 120, padding: "5px 7px", fontSize: 10 }} value={status} onChange={(e) => setStatus(e.target.value)}>
+              <select className="select" style={{ width: 120, padding: "5px 7px", fontSize: 11 }} value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="open">Open</option>
                 <option value="all">All</option>
                 <option value="watching">Watching</option>
@@ -102,7 +102,7 @@ export default function Watchlist() {
                 <option value="converted">Converted</option>
                 <option value="dismissed">Dismissed</option>
               </select>
-              <select className="select" style={{ width: 110, padding: "5px 7px", fontSize: 10 }} value={line} onChange={(e) => setLine(e.target.value)}>
+              <select className="select" style={{ width: 110, padding: "5px 7px", fontSize: 11 }} value={line} onChange={(e) => setLine(e.target.value)}>
                 <option value="all">All lines</option>
                 {pack?.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
@@ -197,7 +197,7 @@ export default function Watchlist() {
             <div className="panel-body">
               <div className="row between">
                 <span className="small muted">Status</span>
-                <span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 8 }}>{proactive.health?.status ?? "unknown"}</span>
+                <span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 11 }}>{proactive.health?.status ?? "unknown"}</span>
               </div>
               <div className="row between mt8"><span className="xsmall muted">Last scan</span><span className="xsmall mono">{proactive.health?.last_scan ? timeAgo(proactive.health.last_scan) : "—"}</span></div>
               <div className="row between mt8"><span className="xsmall muted">Interval</span><span className="xsmall mono">{proactive.settings.schedule.interval_minutes} min</span></div>

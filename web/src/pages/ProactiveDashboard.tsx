@@ -133,7 +133,7 @@ export default function ProactiveDashboard() {
                         <input
                           className="input"
                           aria-label={`Threshold limit for ${r.parameter}`}
-                          style={{ width: 76, padding: "3px 6px", fontSize: 10 }}
+                          style={{ width: 76, padding: "3px 6px", fontSize: 11 }}
                           type="number"
                           step="0.01"
                           defaultValue={r.limit}
@@ -169,7 +169,7 @@ export default function ProactiveDashboard() {
                 {(proactive.replay?.rows ?? []).map((r) => (
                   <div key={r.scenario} className="row between">
                     <span className="xsmall muted">{r.scenario} · {r.signals} signals</span>
-                    <span className={`chip ${r.opened === r.expected_risk ? "green" : "amber"}`} style={{ fontSize: 8 }}>{r.opened ? "opened" : "quiet"} / expected {r.expected_risk ? "risk" : "none"}</span>
+                    <span className={`chip ${r.opened === r.expected_risk ? "green" : "amber"}`} style={{ fontSize: 11 }}>{r.opened ? "opened" : "quiet"} / expected {r.expected_risk ? "risk" : "none"}</span>
                   </div>
                 ))}
               </div>
@@ -193,7 +193,7 @@ export default function ProactiveDashboard() {
                       <td className="xsmall mono">{c.fresh_sources}/{c.expected_sources}</td>
                       <td className="mono small">{pct(c.pct, 0)}</td>
                       <td className="xsmall muted">{c.stale[0] ?? "—"}</td>
-                      <td><span className={`chip ${c.status === "ok" ? "green" : c.status === "degraded" ? "amber" : "red"}`} style={{ fontSize: 8 }}>{c.status}</span></td>
+                      <td><span className={`chip ${c.status === "ok" ? "green" : c.status === "degraded" ? "amber" : "red"}`} style={{ fontSize: 11 }}>{c.status}</span></td>
                     </tr>
                   ))}
                 </tbody>
@@ -210,7 +210,7 @@ export default function ProactiveDashboard() {
                 <div key={f.id} style={{ borderBottom: "1px solid rgba(255,255,255,.05)", paddingBottom: 8 }}>
                   <div className="row between">
                     <span className="small" style={{ color: "var(--ink-2)" }}>{f.title}</span>
-                    <span className={`chip ${f.status === "verified" ? "green" : f.status === "reopened" ? "red" : "amber"}`} style={{ fontSize: 8 }}>{f.status}</span>
+                    <span className={`chip ${f.status === "verified" ? "green" : f.status === "reopened" ? "red" : "amber"}`} style={{ fontSize: 11 }}>{f.status}</span>
                   </div>
                   <div className="xsmall soft mt8">{f.case_id} · {f.note}</div>
                   <div className="row between mt8">
@@ -237,7 +237,7 @@ export default function ProactiveDashboard() {
                       <td className="xsmall" style={{ color: "var(--ink-2)" }}>{p.name}</td>
                       <td className="xsmall mono">{p.version}</td>
                       <td className="xsmall mono">{pct(p.historical_precision, 0)}</td>
-                      <td><span className={`chip ${p.status === "active" ? "green" : p.status === "shadow" ? "amber" : ""}`} style={{ fontSize: 8 }}>{p.status}</span></td>
+                      <td><span className={`chip ${p.status === "active" ? "green" : p.status === "shadow" ? "amber" : ""}`} style={{ fontSize: 11 }}>{p.status}</span></td>
                       <td>
                         <div className="row gap4">
                           <button className="btn sm ghost" onClick={() => reviewPattern(p.id, "active")} disabled={p.status === "active"}>Promote</button>
@@ -259,7 +259,7 @@ export default function ProactiveDashboard() {
                 <div key={c.id}>
                   <div className="row between">
                     <span className="small" style={{ color: "var(--ink-2)" }}>{c.name}</span>
-                    <span className={`chip ${c.status === "champion" ? "green" : c.status === "challenger" ? "amber" : ""}`} style={{ fontSize: 8 }}>{c.status}</span>
+                    <span className={`chip ${c.status === "champion" ? "green" : c.status === "challenger" ? "amber" : ""}`} style={{ fontSize: 11 }}>{c.status}</span>
                   </div>
                   <div className="xsmall soft">{c.version} · {c.kind} · {c.owner} · validated {fmtDate(c.last_validated)}</div>
                   <div className="xsmall soft">Limits: {c.limits.join("; ")} · Failure modes: {c.failure_modes.join("; ")}</div>
@@ -298,7 +298,7 @@ export default function ProactiveDashboard() {
           <div className="panel">
             <div className="panel-head"><h3>Scheduler</h3><span className="sub">observability</span></div>
             <div className="panel-body">
-              <div className="row between"><span className="small muted">Status</span><span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 8 }}>{proactive.health?.status}</span></div>
+              <div className="row between"><span className="small muted">Status</span><span className={`chip ${proactive.health?.status === "ok" ? "green" : "red"}`} style={{ fontSize: 11 }}>{proactive.health?.status}</span></div>
               <div className="row between mt8"><span className="small muted">Lag</span><span className="mono small">{proactive.health?.lag_seconds ?? 0} s</span></div>
               <div className="row between mt8"><span className="small muted">Next run</span><span className="mono small">in {s.interval_minutes} min</span></div>
               <div className="row between mt8"><span className="small muted">Offline buffer</span><span className="mono small">{proactive.queue?.queued ?? 0} / {proactive.queue?.max_items ?? 500}</span></div>

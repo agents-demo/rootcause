@@ -144,7 +144,7 @@ drop: TAG_02 (not numeric)  quality=partial`}
             <div key={c.id} className="feature">
               <div className="row between">
                 <span className="num">{c.phase}</span>
-                <span className={`chip ${c.status === "shipped" ? "green" : c.status === "beta" ? "amber" : ""}`} style={{ fontSize: 8 }}>{c.status}</span>
+                <span className={`chip ${c.status === "shipped" ? "green" : c.status === "beta" ? "amber" : ""}`} style={{ fontSize: 11 }}>{c.status}</span>
               </div>
               <h3>{c.name}</h3>
               <p>{c.systems}</p>

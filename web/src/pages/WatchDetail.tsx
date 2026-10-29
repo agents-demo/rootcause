@@ -125,13 +125,13 @@ export default function WatchDetail() {
                     <div>
                       <div className="tt">
                         {s.parameter}
-                        <span className={`chip ${s.severity === "critical" ? "red" : s.severity === "high" ? "amber" : ""}`} style={{ fontSize: 8, marginLeft: 7 }}>{s.severity}</span>
+                        <span className={`chip ${s.severity === "critical" ? "red" : s.severity === "high" ? "amber" : ""}`} style={{ fontSize: 11, marginLeft: 7 }}>{s.severity}</span>
                       </div>
                       <div className="td">{s.detail}</div>
                       <div className="tm">
                         <span className="tool">{s.kind}</span>
                         {s.z !== null && s.z !== undefined && <span className="ms">{s.z > 0 ? "+" : ""}{s.z}σ</span>}
-                        {s.evidence_id && <span className="chip amber" style={{ fontSize: 8, padding: "1px 5px" }}>{s.evidence_id}</span>}
+                        {s.evidence_id && <span className="chip amber" style={{ fontSize: 11, padding: "1px 5px" }}>{s.evidence_id}</span>}
                         <span className="ms">{fmtDateTime(s.at)}</span>
                       </div>
                     </div>
@@ -171,7 +171,7 @@ export default function WatchDetail() {
               <div className="panel-body" style={{ padding: 0 }}>
                 <div className="row between" style={{ padding: "8px 12px", borderBottom: "1px solid var(--line)" }}>
                   <span className="xsmall muted">{exposure.parts.length} parts · {exposure.customers} customers</span>
-                  <span className="chip amber" style={{ fontSize: 8 }}>{exposure.status}</span>
+                  <span className="chip amber" style={{ fontSize: 11 }}>{exposure.status}</span>
                   <span className="small mono">{eur(exposure.estimated_eur)}</span>
                 </div>
                 <div className="row gap4" style={{ padding: "7px 12px", borderBottom: "1px solid var(--line)" }}>
@@ -202,7 +202,7 @@ export default function WatchDetail() {
                         <td className="mono xsmall">{p.serial}</td>
                         <td className="xsmall muted">{p.customer}</td>
                         <td><span className="xsmall">{p.status.replace("_", " ")}</span></td>
-                        <td><span className={`chip ${p.containment === "hold" ? "amber" : p.containment === "inspect" ? "cyan" : "green"}`} style={{ fontSize: 8 }}>{p.containment}</span></td>
+                        <td><span className={`chip ${p.containment === "hold" ? "amber" : p.containment === "inspect" ? "cyan" : "green"}`} style={{ fontSize: 11 }}>{p.containment}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -224,7 +224,7 @@ export default function WatchDetail() {
                       <div className="xsmall soft mono">{r.id} · {REC_LABELS[r.kind] ?? r.kind}</div>
                       <h4 style={{ fontSize: 12.5, marginTop: 4 }}>{r.title}</h4>
                     </div>
-                    <span className={`chip ${r.status === "approved" ? "amber" : r.status === "executed" ? "cyan" : r.status === "verified" ? "green" : r.status === "rejected" ? "red" : ""}`} style={{ fontSize: 8 }}>{r.status}</span>
+                    <span className={`chip ${r.status === "approved" ? "amber" : r.status === "executed" ? "cyan" : r.status === "verified" ? "green" : r.status === "rejected" ? "red" : ""}`} style={{ fontSize: 11 }}>{r.status}</span>
                   </div>
                   <p className="summary">{r.detail}</p>
                   <div className="row gap12 mt8" style={{ flexWrap: "wrap" }}>
@@ -254,7 +254,7 @@ export default function WatchDetail() {
           <div className="panel">
             <div className="panel-head"><h3>Pattern card</h3><span className="sub">{pattern?.version}</span></div>
             <div className="panel-body">
-              <div className="row between"><span className="small strong">{pattern?.name}</span><span className="chip" style={{ fontSize: 8 }}>{pattern?.status}</span></div>
+              <div className="row between"><span className="small strong">{pattern?.name}</span><span className="chip" style={{ fontSize: 11 }}>{pattern?.status}</span></div>
               <p className="xsmall muted mt8" style={{ lineHeight: 1.5 }}>{pattern?.description}</p>
               <div className="divider" />
               <div className="row between"><span className="xsmall muted">Historical precision</span><span className="small mono">{pct(pattern?.historical_precision ?? 0, 0)}</span></div>
@@ -287,7 +287,7 @@ export default function WatchDetail() {
           <div className="panel">
             <div className="panel-head"><h3>Decision</h3><span className="sub">human in control</span></div>
             <div className="panel-body">
-              <div className="trust-note" style={{ fontSize: 10 }}>
+              <div className="trust-note" style={{ fontSize: 11 }}>
                 A watch is a hypothesis. The system never changes a setpoint, rejects a part or holds a batch by itself.
               </div>
               <div className="col gap6 mt12">

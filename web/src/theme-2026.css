@@ -323,6 +323,19 @@ p { letter-spacing: -0.003em; }
 .watch-group-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
 /* ------------------------------------------------------------------ case canvas */
+.case-focus .case-banner { display: none; }
+.case-focus .case-workspace-2026 { grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr); }
+.case-focus .case-workspace-2026 > .col-stack:nth-child(3) { display: none; }
+.case-workspace-2026 .evidence-canvas { position: sticky; top: calc(var(--bar) + 16px); }
+.case-workspace-2026 .viewer .canvas { aspect-ratio: 16 / 10.5; }
+.case-workspace-2026 .evidence-canvas .finding-pin { width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+.case-workspace-2026 .cause-stack .cause { border-radius: var(--radius-sm); }
+.case-workspace-2026 .col-stack:nth-child(2) { gap: 14px; }
+@media (max-width: 1180px) {
+  .case-workspace-2026 .evidence-canvas { position: static; }
+  .case-focus .case-workspace-2026 { grid-template-columns: 1fr; }
+}
+
 .case-2026 { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr); gap: 26px; align-items: start; }
 .evidence-canvas { position: relative; background: #0a0a09; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .evidence-canvas .stage-img { position: relative; aspect-ratio: 16 / 10.5; overflow: hidden; }

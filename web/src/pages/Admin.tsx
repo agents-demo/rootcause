@@ -109,7 +109,7 @@ export default function Admin() {
                       <td className="xsmall muted">{l.part}</td>
                       <td className="mono small">{l.cameras}</td>
                       <td className="mono small">{l.machines}</td>
-                      <td><span className="chip green" style={{ fontSize: 8 }}>production</span></td>
+                      <td><span className="chip green" style={{ fontSize: 11 }}>production</span></td>
                       <td><Icon name="chevron" size={12} /></td>
                     </tr>
                   ))}
@@ -132,7 +132,7 @@ export default function Admin() {
                     <tr key={u.id}>
                       <td>
                         <div className="row gap8">
-                          <span className="avatar" style={{ width: 26, height: 26, fontSize: 9 }}>{u.initials}</span>
+                          <span className="avatar" style={{ width: 26, height: 26, fontSize: 11 }}>{u.initials}</span>
                           <span className="small" style={{ color: "var(--ink-2)" }}>{u.name}</span>
                         </div>
                       </td>
@@ -169,7 +169,7 @@ export default function Admin() {
                         {["Electronic signature", "Immutable audit trail", "Reason for change", "Access control", "Record retention"].map((ctrl) => (
                           <div key={ctrl} className="row between">
                             <span className="xsmall muted">{ctrl}</span>
-                            <span className="chip green" style={{ fontSize: 8 }}>covered</span>
+                            <span className="chip green" style={{ fontSize: 11 }}>covered</span>
                           </div>
                         ))}
                       </div>
@@ -188,7 +188,7 @@ export default function Admin() {
             <div className="panel-body">
               <div className="row between">
                 <span className="small muted">Ready</span>
-                <span className={`chip ${integrations?.ready ? "green" : "red"}`} style={{ fontSize: 10 }}>{integrations?.ready ? "yes" : "not yet"}</span>
+                <span className={`chip ${integrations?.ready ? "green" : "red"}`} style={{ fontSize: 11 }}>{integrations?.ready ? "yes" : "not yet"}</span>
               </div>
               <div className="divider" />
               <div className="row between"><span className="xsmall muted">Agent runtime</span><span className="xsmall mono">{integrations?.agent?.configured ? `${integrations.agent.backend} · ${integrations.agent.model}` : "unconfigured"}</span></div>
@@ -234,7 +234,7 @@ export default function Admin() {
                     <span className="xsmall mono muted">{inv.id}</span>
                     <span className="xsmall soft">{fmtDate(inv.date)}</span>
                     <span className="xsmall mono">{eur(inv.amount)}</span>
-                    <span className="chip green" style={{ fontSize: 8 }}>{inv.status}</span>
+                    <span className="chip green" style={{ fontSize: 11 }}>{inv.status}</span>
                   </div>
                 ))}
               </div>
@@ -279,11 +279,11 @@ export default function Admin() {
           <div className="panel">
             <div className="panel-head"><h3>Phase 3 controls</h3><span className="sub">architecture, not a promise</span></div>
             <div className="panel-body col gap8">
-              <div className="row between"><span className="small muted">Multi-factory deployment</span><span className="chip amber" style={{ fontSize: 8 }}>ready for 2nd site</span></div>
-              <div className="row between"><span className="small muted">Managed NPU server</span><span className="chip amber" style={{ fontSize: 8 }}>available</span></div>
-              <div className="row between"><span className="small muted">Multi-tenant isolation</span><span className="chip" style={{ fontSize: 8 }}>phase 3</span></div>
-              <div className="row between"><span className="small muted">IATF 16949 pack</span><span className="chip amber" style={{ fontSize: 8 }}>in progress</span></div>
-              <div className="row between"><span className="small muted">FDA 21 CFR Part 11</span><span className="chip" style={{ fontSize: 8 }}>planned</span></div>
+              <div className="row between"><span className="small muted">Multi-factory deployment</span><span className="chip amber" style={{ fontSize: 11 }}>ready for 2nd site</span></div>
+              <div className="row between"><span className="small muted">Managed NPU server</span><span className="chip amber" style={{ fontSize: 11 }}>available</span></div>
+              <div className="row between"><span className="small muted">Multi-tenant isolation</span><span className="chip" style={{ fontSize: 11 }}>phase 3</span></div>
+              <div className="row between"><span className="small muted">IATF 16949 pack</span><span className="chip amber" style={{ fontSize: 11 }}>in progress</span></div>
+              <div className="row between"><span className="small muted">FDA 21 CFR Part 11</span><span className="chip" style={{ fontSize: 11 }}>planned</span></div>
             </div>
           </div>
 

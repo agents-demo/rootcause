@@ -257,7 +257,7 @@ export function BarList({
     <div className="col gap8">
       {items.map((item) => (
         <div key={item.label}>
-          <div className="row between" style={{ fontSize: 10.5 }}>
+          <div className="row between" style={{ fontSize: 11.5 }}>
             <span style={{ color: "var(--ink-2)" }}>{item.label}</span>
             <span className="mono muted">
               {item.value}
@@ -293,7 +293,7 @@ export function Donut({ value, size = 56, color = "#ffb454", label }: { value: n
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
-      <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 10, fontFamily: "var(--mono)", color: "var(--ink-2)" }}>
+      <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 11, fontFamily: "var(--mono)", color: "var(--ink-2)" }}>
         {label ?? `${Math.round(value * 100)}%`}
       </div>
     </div>
