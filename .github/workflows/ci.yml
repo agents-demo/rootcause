@@ -16,7 +16,7 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install "./server[dev,pdf,docx]"
+          pip install "./server[dev,pdf,docx,npu]"
       - name: Lint
         run: ruff check server
       - name: Tests

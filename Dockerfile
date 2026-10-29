@@ -14,7 +14,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libjpeg62-turbo zlib1g \
     && rm -rf /var/lib/apt/lists/*
 COPY server/ /app/server/
-RUN pip install --no-cache-dir "./server[pdf,docx]"
+RUN pip install --no-cache-dir "./server[pdf,docx,npu]"
 COPY --from=web /build/web/dist /app/web/dist
 RUN mkdir -p /data && useradd -m -u 10001 rootcause && chown -R rootcause:rootcause /app /data
 USER rootcause
