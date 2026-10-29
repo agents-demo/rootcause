@@ -37,6 +37,45 @@ export default function Dashboard() {
     corrections: pack.audits.filter((a) => a.action.includes("reject")).length,
   };
 
+  function downloadWeekly() {
+    const lines = [
+      "# RootCause weekly accuracy report",
+      "",
+      `Site: Werk Süd · Week 43 · generated ${new Date().toISOString().slice(0, 10)}`,
+      "",
+      "## Pilot scorecard",
+      "",
+      `- Investigations: ${data!.investigations_this_week} (${pct(data!.investigations_delta)} vs last week)`,
+      `- Median time to cause: ${data!.median_hours_to_cause} h (baseline ${data!.baseline_hours_to_cause} h, ${speedup.toFixed(1)}x)`,
+      `- First-cause acceptance: ${pct(data!.cause_accuracy)}`,
+      `- Scrap prevented: ${eur(data!.scrap_prevented_eur)}`,
+      `- Rework prevented: ${eur(data!.rework_prevented_eur)}`,
+      `- Engineer hours saved: ${data!.engineer_hours_saved}`,
+      "",
+      "## Top causes",
+      "",
+      ...data!.top_causes.map((c) => `- ${c.cause}: ${c.count} cases (${pct(c.share)})`),
+      "",
+      "## Corrective actions",
+      "",
+      ...actions.map((a) => `- [${a.status === "done" ? "x" : " "}] ${a.title} — ${a.owner}, due ${fmtDate(a.due)}, ${eur(a.saving_eur)}`),
+      "",
+      "## Notes",
+      "",
+      "Metrics are measured against the day-one baseline. Rejections are recorded with a reason and feed the next ranking iteration.",
+      "",
+      "Prepared with RootCause. The engineer owns the approved cause; no automatic line control is performed.",
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "rootcause-weekly-report-W43.md";
+    a.click();
+    URL.revokeObjectURL(url);
+    say("Weekly accuracy report downloaded");
+  }
+
   return (
     <div>
       <PageHead
@@ -47,7 +86,7 @@ export default function Dashboard() {
           <>
             <span className="chip"><Icon name="calendar" size={11} /> Week 43 · 2026</span>
             <span className="chip green"><span className="dot live" /> Live on 4 lines</span>
-            <button className="btn sm" onClick={() => say("Pilot report queued for PDF export")}><Icon name="download" size={12} /> Weekly report</button>
+            <button className="btn sm" onClick={downloadWeekly}><Icon name="download" size={12} /> Weekly report</button>
           </>
         }
       />
