@@ -484,6 +484,7 @@ export interface ScheduleSettings {
   triage_sla_min: number;
   reconstruction_target_min: number;
   webhook_url: string;
+  webhook_secret?: string;
   notification_roles: string[];
   champion: string;
   challenger: string;

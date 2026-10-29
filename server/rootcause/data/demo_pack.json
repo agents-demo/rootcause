@@ -5895,6 +5895,7 @@
         "triage_sla_min": 15,
         "reconstruction_target_min": 5,
         "webhook_url": "https://hooks.example.invalid/rootcause",
+        "webhook_secret": "",
         "notification_roles": [
           "quality_manager",
           "engineer"

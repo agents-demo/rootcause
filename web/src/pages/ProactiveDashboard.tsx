@@ -96,6 +96,7 @@ export default function ProactiveDashboard() {
                 <div className="field"><label>Champion</label><input className="input" aria-label="Champion version" defaultValue={s.champion} onBlur={(e) => updateSchedule({ champion: e.target.value })} /></div>
                 <div className="field"><label>Challenger</label><input className="input" aria-label="Challenger version" defaultValue={s.challenger} onBlur={(e) => updateSchedule({ challenger: e.target.value })} /></div>
                 <div className="field"><label>Webhook</label><input className="input" aria-label="Webhook URL" defaultValue={s.webhook_url} onBlur={(e) => updateSchedule({ webhook_url: e.target.value })} /></div>
+                <div className="field"><label>Webhook secret</label><input className="input" aria-label="Webhook secret" type="password" defaultValue={s.webhook_secret ?? ""} onBlur={(e) => updateSchedule({ webhook_secret: e.target.value })} /></div>
               </div>
               <div className="divider" />
               <div className="row between">

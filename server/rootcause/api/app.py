@@ -830,7 +830,11 @@ async def proactive_scan(request: Request) -> dict[str, Any]:
                 (notification.id, notification.at, json.dumps(notification.model_dump(mode="json"))),
             )
             rc.store._conn.commit()
-            notify.deliver_webhook(settings.get("schedule", {}).get("webhook_url", ""), notification.model_dump(mode="json"))
+            notify.deliver_webhook(
+                settings.get("schedule", {}).get("webhook_url", ""),
+                notification.model_dump(mode="json"),
+                secret=settings.get("schedule", {}).get("webhook_secret", ""),
+            )
     reopened = containment.recurrence_guard(
         [_as_followup(f) for f in rc.store.list_followups()],
         [_as_watch(w) for w in rc.store.list_watches()],

@@ -441,6 +441,7 @@ class ScheduleSettings(BaseModel):
     triage_sla_min: int = 15
     reconstruction_target_min: int = 5
     webhook_url: str = ""
+    webhook_secret: str = ""
     notification_roles: list[str] = Field(default_factory=list)
     champion: str = "v1.4"
     challenger: str = "v1.5-shadow"
