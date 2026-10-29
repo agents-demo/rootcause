@@ -259,7 +259,7 @@ export default function Dashboard() {
           <div className="panel-head"><h3>Corrective actions</h3><span className="sub">{actions.filter((a) => a.status !== "done").length} open</span></div>
           <div className="panel-body" style={{ padding: 0 }}>
             <table className="table">
-              <thead><tr><th>Action</th><th>Owner</th><th>Due</th><th>Saving</th><th /></tr></thead>
+              <thead><tr><th>Action</th><th>Owner</th><th>Due</th><th>Saving</th><th>Status</th></tr></thead>
               <tbody>
                 {actions.map((a) => (
                   <tr key={a.id}>
@@ -290,13 +290,13 @@ export default function Dashboard() {
             <p className="small muted">The pilot starts by measuring the existing investigation time. No baseline, no claim.</p>
             <div className="field mt12">
               <label>Line</label>
-              <select className="select" value={baselineLine} onChange={(e) => setBaselineLine(e.target.value)}>
+              <select className="select" aria-label="Baseline line" value={baselineLine} onChange={(e) => setBaselineLine(e.target.value)}>
                 {pack.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
             </div>
             <div className="field mt8">
               <label>Current median hours per case</label>
-              <input className="input" type="number" min={1} value={baselineValue} onChange={(e) => setBaselineValue(e.target.value)} />
+              <input className="input" aria-label="Baseline median hours" type="number" min={1} value={baselineValue} onChange={(e) => setBaselineValue(e.target.value)} />
             </div>
             <button className="btn primary sm mt12" onClick={() => setBaseline(baselineLine, Number(baselineValue) || 1)}>
               <Icon name="check" size={11} /> Record baseline
