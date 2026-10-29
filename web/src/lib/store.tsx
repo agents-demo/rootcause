@@ -146,7 +146,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       try {
         const packRes = await fetch(`${import.meta.env.BASE_URL}demo-pack.json`);
         if (!packRes.ok) throw new Error(`demo pack returned ${packRes.status}`);
-        const data = (await packRes.json()) as Pack;
+        let data = (await packRes.json()) as Pack;
+        if (!data.proactive) {
+          // A stale service-worker cache may still hold the pre-proactive pack. Fetch around it.
+          const fresh = await fetch(`${import.meta.env.BASE_URL}demo-pack.json?refresh=${Date.now()}`);
+          if (fresh.ok) data = (await fresh.json()) as Pack;
+        }
         if (cancelled) return;
         setPack(data);
         setState((prev) => ({ ...prev, proactive: prev.proactive ?? data.proactive }));

@@ -1,6 +1,6 @@
 /* RootCause offline shell. The demo pack and the app are cached after the first visit, so the
    booth run keeps working with the network cable unplugged. */
-const CACHE = "rootcause-v1";
+const CACHE = "rootcause-v2";
 const CORE = ["./", "./index.html", "./demo-pack.json", "./manifest.webmanifest", "./favicon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -28,6 +28,22 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.includes("/api/")) return;
+
+  // The demo pack changes with every deploy; always prefer the network and fall back to cache.
+  if (url.pathname.endsWith("/demo-pack.json")) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request).then((hit) => hit || Response.error())),
+    );
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
