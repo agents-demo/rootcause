@@ -7,6 +7,7 @@ Start here:
 - [Proactive pilot](proactive-pilot.md) — contract, false-alarm budget, roles, training and change management.
 - [Proactive engineer guide](proactive-training.md) — one page for the floor.
 - [Predictive research gate](predictive-research.md) — the gated, stopped-by-default prediction harness.
+- [Interface 2026](interface-2026.md) — the design brief for the 2026 refresh (Phase 6).
 - [Stage script](stage-script.md) — the 90-second teardown, word for word.
 - [Stage acceptance](stage-acceptance.md) — test sheets, hostile Q&A, offline checklist.
 - [Props](props.md) — bracket, crack, tool mark, lights and sound.

@@ -260,6 +260,10 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   defect, never predictive control of the line. See [Phase 4](docs/roadmap.md#phase-4--proactive-quality-implemented).
 - **Predictive research** — gated and currently stopped. The harness is in `server/rootcause/research`
   and the result is recorded in the app. See [predictive research](docs/predictive-research.md).
+- **Interface 2026** — planned. Phase 6 replaces the 2019-era admin shell with a type-led, box-light,
+  command-first, evidence-first instrument: token system, new IA, decision queue, command palette,
+  accessible charts, explainable motion, ambient AI and a light desk mode. See
+  [Interface 2026](docs/interface-2026.md).
 
 The full checklist, with the evidence for each item, is in [docs/roadmap.md](docs/roadmap.md).
 The original concept and stage plan are in `agentic-desk`; this repository is the implementation.
