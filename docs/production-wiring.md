@@ -68,14 +68,21 @@ Observed on the development host:
   `EV-03`, `EV-11`, and did not approve a cause or issue a line command.
 
 This proves the agent path works; it does not prove site readiness. Phase 7 still requires the
-production account, approved data-processing basis, eval set, cost budget and pilot validation.
+production account, approved data-processing basis, cost budget, pilot validation and a rerun on
+the customer's real cases.
+
+The guardrail and red-team run is recorded in [Agent evaluation](agent-evaluation.md): 6/6 cases
+pass, citation coverage 1.0, refusal rate 1.0, zero approval/line/secret violations, p50 latency
+28.2 s. That run is on the synthetic pack and one case, not a pilot.
 
 ### Still needed at the site
 
 - A production model account/key and an approved data-processing basis.
-- An agent eval set: faithfulness, citation coverage, refusal on missing evidence, prompt injection.
-- A latency/cost budget and trace retention.
-- Red-team the agent against attempts to exfiltrate data or bypass the approval guard.
+- Rerun the eval and red-team set on the customer's real cases and defect types; the current run is
+  on the synthetic pack only. See [Agent evaluation](agent-evaluation.md).
+- A latency/cost budget and trace retention. Measured p50 latency is ~28 s on the reference case;
+  token/cost accounting is not exposed by the runtime and must be added at the site.
+- Re-run the red team after any model, prompt or tool-schema change.
 
 ## 2. Inference — ONNX / Ascend
 

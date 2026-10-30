@@ -23,7 +23,7 @@ export default function About() {
             <a className="btn lg ghost" href="https://github.com/jiuwendemos/rootcause" target="_blank" rel="noreferrer">Repository <Icon name="external" size={12} /></a>
           </div>
           <div className="row gap6 mt16" style={{ flexWrap: "wrap" }}>
-            <span className="chip green"><span className="dot live" /> On-site · offline</span>
+            <span className="chip"><span className="dot" /> Runs offline · no outbound network</span>
             <span className="chip">Evidence first</span>
             <span className="chip">Human-approved</span>
             <span className="chip">Synthetic public data</span>

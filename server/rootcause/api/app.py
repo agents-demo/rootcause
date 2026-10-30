@@ -297,7 +297,11 @@ async def agent_ask(request: Request) -> dict[str, Any]:
         raise HTTPException(400, "question is required")
     try:
         result = await rc.agent.ask(question, case_id=body.get("case_id"))
-        rc.store._audit("agent", "agent.answer", body.get("case_id") or "case", f"Question: {question[:240]}")
+        detail = (
+            f"Question: {question[:200]} | model={result.get('model', '')} "
+            f"| latency_ms={result.get('latency_ms', '')} | citations={','.join(result.get('citations', []))[:120]}"
+        )
+        rc.store._audit("agent", "agent.answer", body.get("case_id") or "case", detail)
         rc.store._conn.commit()
         return result
     except Exception as exc:
@@ -312,7 +316,14 @@ async def agent_case(case_id: str, request: Request) -> dict[str, Any]:
         raise HTTPException(503, f"JiuwenSwarm runtime is not configured: {detail}")
     rc.case_scenario(case_id)
     try:
-        return await rc.agent.case_narrative(case_id)
+        result = await rc.agent.case_narrative(case_id)
+        detail = (
+            f"Case narrative | model={result.get('model', '')} "
+            f"| latency_ms={result.get('latency_ms', '')} | citations={','.join(result.get('citations', []))[:120]}"
+        )
+        rc.store._audit("agent", "agent.narrative", case_id, detail)
+        rc.store._conn.commit()
+        return result
     except Exception as exc:
         raise HTTPException(502, f"agent runtime error: {exc}") from exc
 

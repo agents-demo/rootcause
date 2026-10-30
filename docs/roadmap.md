@@ -606,9 +606,10 @@ runtime contracts and removes silent demo fallbacks.
 **Status.** The code paths are implemented: JiuwenSwarm `DeepAgent`, ONNX/Ascend inference broker,
 real connector adapters and an explicit readiness gate. The agent has been live-verified on the
 development host with the coachme DeepSeek model (`deepseek-v4-pro`): `/api/agent/status` reports
-`configured: true` and `/api/agent/ask` returned a cited, non-approving answer. The remaining
+`configured: true` and `/api/agent/ask` returned a cited, non-approving answer. A guardrail and
+red-team eval (6/6 on the synthetic pack) and a backup/restore drill are now recorded. The remaining
 checkboxes are **site connection and validation**: production credentials, customer endpoints,
-hardware and a pilot. They cannot be completed from a development laptop.
+hardware, cost budget and a pilot. They cannot be completed from a development laptop.
 
 **Read first:** [`docs/production-wiring.md`](production-wiring.md).
 
@@ -626,9 +627,9 @@ hardware and a pilot. They cannot be completed from a development laptop.
 - [x] Keep the deterministic ranking and human approval as the source of truth **(S)**
 - [x] Configure `.env` model settings (provider, base, key, model) and live-verify a cited answer on the dev host **(S)**
 - [ ] Configure the production model provider, API base, key and model name in the site environment **(S)**
-- [ ] Run an agent eval set: faithfulness, citation coverage, refusal, prompt injection **(M)**
+- [x] Run an agent eval set: faithfulness, citation coverage, refusal, prompt injection **(M)** — harness shipped; 6/6 on the synthetic pack, citations 1.0, refusals 1.0 ([report](agent-evaluation.md))
 - [ ] Set latency, token and cost budgets; retain traces per policy **(M)**
-- [ ] Red-team data exfiltration and approval-bypass attempts **(M)**
+- [x] Red-team data exfiltration and approval-bypass attempts **(M)** — first pass: approval bypass, line control, prompt exfiltration, PII probe all refused; rerun on customer cases
 - [ ] Validate the agent against the pilot's real cases before enabling it for engineers **(M)**
 
 ### 7.2 Inference — ONNX and Ascend
@@ -671,7 +672,7 @@ hardware and a pilot. They cannot be completed from a development laptop.
 - [ ] Replace the reference pack with live MES/quality/camera/NPU data **(L)**
 - [ ] Data-quality report: missing fields, clock drift, duplicate batches **(M)**
 - [ ] Retention and deletion policy agreed; personal-data filter for operator notes **(M)**
-- [ ] Backup and restore drill with a full audit reconstruction **(M)**
+- [x] Backup and restore drill with a full audit reconstruction **(M)** — `scripts/backup_restore_drill.py`, passes with the append-only guard intact
 - [ ] No synthetic records in a production case store; enforce with a provenance check **(S)**
 
 ### 7.5 Security and operations
@@ -695,8 +696,8 @@ hardware and a pilot. They cannot be completed from a development laptop.
 - [ ] Detector accuracy and false-alarm rate accepted by the quality manager **(M)**
 - [ ] Connector soak: 24 hours without silent gaps **(M)**
 - [ ] `/api/ready` returns 200 with strict integration mode **(S)**
-- [ ] No unlabelled simulated data anywhere in the production UI **(S)**
-- [ ] The public showcase is clearly separated from the customer deployment **(S)**
+- [x] No unlabelled simulated data anywhere in the production UI **(S)** — persistent reference-data notice on every page; false "on-site"/"live" labels removed
+- [x] The public showcase is clearly separated from the customer deployment **(S)** — static build is labelled offline; the connected runtime is the repository
 
 ---
 

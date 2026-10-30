@@ -4,7 +4,6 @@ import { useStore } from "../lib/store";
 import { useUI, navigateWithTransition } from "../lib/ui";
 import { fmtDateTime, pct, timeAgo } from "../lib/engine";
 import { Icon } from "../components/Icon";
-import { DataSourceNote } from "../components/UI";
 
 interface Decision {
   id: string;
@@ -18,7 +17,7 @@ interface Decision {
 }
 
 export default function Home() {
-  const { pack, proactive, caseStatus, reportFor, actionsDone, live } = useStore();
+  const { pack, proactive, caseStatus, reportFor, actionsDone } = useStore();
   const ui = useUI();
   const navigate = useNavigate();
   const [onboarding, setOnboarding] = useState(() => localStorage.getItem("rootcause.onboarded") !== "1");
@@ -107,8 +106,6 @@ export default function Home() {
           <button className="btn primary" onClick={() => setCmdOpenHint()}><Icon name="search" size={13} /> Ask or jump <span className="kbd">⌘K</span></button>
         </div>
       </div>
-
-      {ui.showDataSource && <DataSourceNote seed={pack.meta.seed} live={live} />}
 
       <div className="now-grid">
         <div>

@@ -202,7 +202,7 @@ export default function Review() {
                 )}
                 <div className="divider" />
                 <ProvenanceBlock
-                  items={{ model: "rootcause-0.9.0", data: "on-site", approver: "M. Weber" }}
+                  items={{ model: "rootcause-0.9.0", data: "synthetic reference pack", approver: "M. Weber" }}
                   compact
                 />
               </div>

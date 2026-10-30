@@ -9,6 +9,7 @@ answer.
 from __future__ import annotations
 
 import re
+import time
 from typing import Any
 
 from ..models import Scenario
@@ -48,6 +49,7 @@ class OpenJiuwenRuntime:
         settings.validate()
         scenario = self._scenario(case_id)
         built = builder.build(scenario)
+        started = time.perf_counter()
         prompt = (
             f"Case {scenario.case.id}: {scenario.case.defect_type}. Part {scenario.case.part}. "
             f"Question: {question}\n"
@@ -55,6 +57,7 @@ class OpenJiuwenRuntime:
             "Do not approve a cause and do not recommend line control."
         )
         result = await runner.run_agent(built.agent, prompt)
+        elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
         answer = runner.output_text(result)
         return {
             "answer": answer,
@@ -63,6 +66,8 @@ class OpenJiuwenRuntime:
             "model": settings.text_model_name(),
             "case_id": scenario.case.id,
             "usage": runner.usage(result),
+            "latency_ms": elapsed_ms,
+            "answer_chars": len(answer),
         }
 
     async def case_narrative(self, case_id: str) -> dict[str, Any]:

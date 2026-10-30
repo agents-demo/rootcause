@@ -73,7 +73,7 @@ export default function Admin() {
         subtitle="The pilot is deliberately single-site. Users, lines, billing, the NPU option and the compliance evidence map live here. Sharing with other factories is opt-in and anonymised."
         actions={
           <>
-            <span className="chip green"><span className="dot live" /> Pilot · day 34</span>
+            <span className="chip amber"><span className="dot warn" /> Reference pilot · day 34</span>
             <Link className="btn sm" to="/proactive">Proactive controls <Icon name="gauge" size={12} /></Link>
             <button className="btn sm" onClick={() => say("Site settings saved")}><Icon name="check" size={12} /> Save</button>
           </>

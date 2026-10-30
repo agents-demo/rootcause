@@ -4,6 +4,7 @@ import { useStore } from "../lib/store";
 import { useUI, type Role } from "../lib/ui";
 import { Icon } from "./Icon";
 import { CommandPalette } from "./CommandPalette";
+import { DataSourceNote } from "./UI";
 
 const modes = [
   { to: "/", label: "Now", icon: "target", end: true },
@@ -234,6 +235,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <div className="main-2026">
         <main className="content-2026" id="main-content" aria-label={title}>
+          {ui.showDataSource && pack && <DataSourceNote seed={pack.meta.seed} live={live} />}
           {children}
         </main>
       </div>
