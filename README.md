@@ -281,6 +281,8 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   [production wiring](docs/production-wiring.md).
 
 The full checklist, with the evidence for each item, is in [docs/roadmap.md](docs/roadmap.md).
+The service-by-service integration status — coded, wired, running and why each exists — is in
+[docs/integration-status.md](docs/integration-status.md).
 The original concept and stage plan are in `agentic-desk`; this repository is the implementation.
 
 ---
