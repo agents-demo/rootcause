@@ -1,0 +1,1 @@
+Admin switches between your workspace and the synthetic reference workspace. Both are clearly labelled. Your case is still here when you come back.

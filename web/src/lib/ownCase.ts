@@ -1,3 +1,4 @@
+import { analyseCase } from "./analyze";
 import type {
   CaseAttachment,
   CausalChain,
@@ -65,6 +66,8 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
     payload: { name: a.name, mime: a.mime, size: a.size },
   }));
 
+  const analysisResult = analyseCase({ attachments, description: input.description, workingCause: causeLabel });
+
   const evidence: Evidence = {
     id: "EV-01",
     kind: "finding",
@@ -88,7 +91,7 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
     rank: 1,
     status: "proposed",
     factors: { frequency: 0.1, deviation: 0.1, batch_match: 0.05, similarity: 0.05, recurrence: 0.05 },
-    evidence_ids: ["EV-01", ...attachmentEvidence.map((e) => e.id)],
+    evidence_ids: ["EV-01", ...attachmentEvidence.map((e) => e.id), ...analysisResult.findings.map((e) => e.id)],
     note: "User-entered case",
   };
 
@@ -170,9 +173,10 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
     },
     maintenance: [],
     history: [],
-    hypotheses: [hypothesis],
-    evidence: [evidence, ...attachmentEvidence],
+    hypotheses: [hypothesis, ...analysisResult.hypotheses],
+    evidence: [evidence, ...attachmentEvidence, ...analysisResult.findings],
     attachments,
+    analysis: analysisResult.analysis,
     chain,
     trace: [],
     report,

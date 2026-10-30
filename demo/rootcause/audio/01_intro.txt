@@ -1,0 +1,1 @@
+This is RootCause. It is not a case log. It reads the evidence you attach, challenges your first guess, and names what to fix next. It opens blank, on your own cases, in this browser.

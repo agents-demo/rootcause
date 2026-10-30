@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:04,127
+Admin switches between your workspace and the synthetic reference workspace.
+
+2
+00:00:04,127 --> 00:00:05,530
+Both are clearly labelled.
+
+3
+00:00:05,530 --> 00:00:07,594
+Your case is still here when you come back.
+

@@ -1,0 +1,8 @@
+1
+00:00:00,050 --> 00:00:03,974
+The signed report carries the evidence, the signals and the files.
+
+2
+00:00:03,974 --> 00:00:06,709
+This is the deliverable the quality system keeps.
+

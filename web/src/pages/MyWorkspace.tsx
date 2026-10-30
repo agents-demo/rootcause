@@ -85,6 +85,15 @@ export default function MyWorkspace() {
           >
             What is in the example? <Icon name="external" size={10} />
           </a>
+          <a
+            className="xsmall soft"
+            href={`${import.meta.env.BASE_URL}demo/rootcause-walkthrough.mp4`}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: "inline-block", marginTop: 6, marginLeft: 12 }}
+          >
+            Watch the 1:40 walkthrough <Icon name="play" size={10} />
+          </a>
           <div className="own-empty-limits">
             <span><Icon name="lock" size={11} /> Stored in this browser</span>
             <span><Icon name="connectors" size={11} /> No plant connection</span>
@@ -137,7 +146,7 @@ export default function MyWorkspace() {
         <div className="panel-head"><h3>What this workspace does and does not do</h3><span className="sub">honest limits</span></div>
         <div className="panel-body">
           <ul className="proof-list">
-            <li><b>Does:</b> store your cases, rank the causes you enter, record rejections, draft a report and keep an audit trail.</li>
+            <li><b>Does:</b> read the CSV sensor and batch files you attach, rank causes on the evidence, record decisions, draft a report and keep an audit trail.</li>
             <li><b>Does not:</b> read a machine, pull a batch record or run the defect detector. Those need a connected line.</li>
             <li><b>Does not:</b> leave this browser. Clearing site data deletes it; export the case JSON if you need a copy.</li>
             <li><b>Reference data stays available:</b> switch to it from the command palette, the More sheet, or the button above.</li>

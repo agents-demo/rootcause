@@ -1,0 +1,8 @@
+1
+00:00:00,050 --> 00:00:04,870
+Attach what you already have: the loupe image, the sensor window, and the batch record.
+
+2
+00:00:04,870 --> 00:00:07,653
+The app reads the numbers, not just the text.
+

@@ -730,6 +730,8 @@ still open.
 - [ ] Prove one live connector path (OPC-UA or camera + batch record) and run a 90-day pilot with the engineer in the loop
 - [x] Blank first run and own-data flow — My workspace opens empty, /cases/new creates a case, annotate/review/sign works; reference data is one switch away (Admin, palette, More, Home)
 - [x] A sample case inside My workspace and a repeatable first-run script — web/public/examples/pump-housing + [example case](example-case.md)
+- [x] Evidence analysis for own cases — CSV sensor/batch parsing, computed signals, evidence-weighted cause ranking, prevention checks and falsifiers; image/ONNX ingestion and live connectors remain open
+- [ ] Prevention loop for own cases — a persisted follow-up/watch created from the analysis, not only advice on the case
 - [x] Interface 2026 for the daily shell — shipped in Phase 6, Lighthouse 100/100/100 across routes
 - [ ] Adoption instrumentation: task families per user, time-to-first-decision, queue clearance, sign-off time
 - [ ] Weekly demo cadence: one visible capability, one proof point, one trust feature, one next per cycle

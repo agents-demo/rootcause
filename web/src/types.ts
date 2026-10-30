@@ -68,6 +68,27 @@ export interface HistoricalCase {
   notes: string;
 }
 
+export interface SignalFinding {
+  id: string;
+  label: string;
+  unit: string;
+  from: number;
+  to: number;
+  change_pct: number;
+  direction: "up" | "down" | "stable";
+  monotonic: number;
+  z: number;
+  verdict: string;
+}
+
+export interface CaseAnalysis {
+  summary: string;
+  signals: SignalFinding[];
+  prevention: string[];
+  falsifiers: string[];
+  csv_count: number;
+}
+
 export interface CaseAttachment {
   id: string;
   name: string;
@@ -211,6 +232,7 @@ export interface Scenario {
   operator_note: string;
   provenance: Record<string, string>;
   attachments?: CaseAttachment[];
+  analysis?: CaseAnalysis;
   baseline_hours: number;
   current_hours: number;
 }

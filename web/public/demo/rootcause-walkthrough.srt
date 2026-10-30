@@ -1,0 +1,103 @@
+1
+00:00:01,050 --> 00:00:02,273
+This is RootCause.
+
+2
+00:00:02,273 --> 00:00:03,606
+It is not a case log.
+
+3
+00:00:03,606 --> 00:00:08,830
+It reads the evidence you attach, challenges your first guess, and names what to fix next.
+
+4
+00:00:08,830 --> 00:00:12,308
+It opens blank, on your own cases, in this browser.
+
+5
+00:00:14,000 --> 00:00:18,961
+Start with what happened: a porosity cluster at the bearing boss of a die-cast pump housing.
+
+6
+00:00:18,961 --> 00:00:22,558
+Line four, batch B-7781.
+
+7
+00:00:22,558 --> 00:00:25,494
+Your first guess is ejector-pin over-travel.
+
+8
+00:00:27,190 --> 00:00:32,010
+Attach what you already have: the loupe image, the sensor window, and the batch record.
+
+9
+00:00:32,010 --> 00:00:34,793
+The app reads the numbers, not just the text.
+
+10
+00:00:36,490 --> 00:00:39,977
+Cavity vacuum rose fifty-seven percent across the shift.
+
+11
+00:00:39,977 --> 00:00:43,975
+Hydrogen is 1.9 ppm against a 1.4 limit.
+
+12
+00:00:43,975 --> 00:00:49,588
+RootCause ranks gas porosity at eighty-six percent, and puts your ejector-pin guess below it.
+
+13
+00:00:51,290 --> 00:00:52,584
+That is the disagreement.
+
+14
+00:00:52,584 --> 00:00:57,218
+The crack starts below the surface; the ejector marks are on the opposite face.
+
+15
+00:00:57,218 --> 00:01:00,791
+The app shows why the first guess is weak and what would prove it wrong.
+
+16
+00:01:02,490 --> 00:01:05,800
+Accept the evidence-backed cause, then sign the report.
+
+17
+00:01:05,800 --> 00:01:09,008
+The ranking, the reason and the sign-off are recorded.
+
+18
+00:01:09,008 --> 00:01:14,727
+The app also names the prevention checks: die venting, the door seal, and the rest of the batch.
+
+19
+00:01:16,430 --> 00:01:20,354
+The signed report carries the evidence, the signals and the files.
+
+20
+00:01:20,354 --> 00:01:23,089
+This is the deliverable the quality system keeps.
+
+21
+00:01:24,800 --> 00:01:28,877
+Admin switches between your workspace and the synthetic reference workspace.
+
+22
+00:01:28,877 --> 00:01:30,280
+Both are clearly labelled.
+
+23
+00:01:30,280 --> 00:01:32,344
+Your case is still here when you come back.
+
+24
+00:01:34,060 --> 00:01:35,201
+Evidence first.
+
+25
+00:01:35,201 --> 00:01:36,686
+The engineer decides.
+
+26
+00:01:36,686 --> 00:01:37,877
+That's RootCause.

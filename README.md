@@ -269,8 +269,11 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   Home empty state. Reference-only pages (watchlist, alerts, proactive, brief, dashboard, capture) show an
   explicit guard while you are in My workspace. See [the demo runbook](docs/demo-runbook.md).
 - **Example own case** — a filled-in pump-housing case with a loupe image, a sensor window and a batch
-  record in web/public/examples/pump-housing. Load it from **My cases**, or recreate it by hand. See
-  [the example case](docs/example-case.md).
+  record in web/public/examples/pump-housing. Load it from **My cases**, or recreate it by hand. The app
+  parses the CSVs, reports the vacuum rise and the hydrogen exception, and ranks gas porosity above the
+  engineer's initial ejector-pin guess, with prevention checks and a falsifier. See
+  [the example case](docs/example-case.md) and the
+  [1:40 walkthrough](web/public/demo/rootcause-walkthrough.mp4).
 - **Manager proof and demo cut** — `/proof` packages the manager's numbers with honest labels and a
   print view; `/cut` is the 10-minute guided run with a clock, links and proof points. Scripts,
   props, reset and fallback are in [the demo runbook](docs/demo-runbook.md).

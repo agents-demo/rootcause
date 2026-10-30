@@ -40,20 +40,46 @@ The same case can be created by hand with **New case** and the values below.
 | What did you observe? | See `case.json` | The evidence that lets the engineer reject the first cause |
 | Evidence files | The JPG and two CSVs | Real files, stored in this browser |
 
+## What the app computes
+
+When you create the case with the image and the two CSVs attached, the app parses the files — not
+the prose — and shows the analysis above the workspace:
+
+| Signal | Value | Verdict |
+|---|---|---|
+| Cavity vacuum | 135.25 → 211.88 mbar | +56.7%, sustained rise |
+| Hydrogen | 1.9 ppm vs 1.4 limit | batch exception |
+
+It then ranks the causes on the evidence factors:
+
+| Cause | Confidence | Why |
+|---|---|---|
+| **Gas porosity from insufficient die venting** | **86%** | hydrogen over limit, vacuum rise, subsurface voids |
+| Ejector pin over-travel (your first guess) | 2% | a surface feature cannot initiate a crack 0.4 mm below the surface |
+
+It also names the **prevention checks** (die venting below 180 mbar, revalidate the door seal,
+hold the rest of the batch) and what would **falsify** the answer (a CT with no voids, or hydrogen
+below the limit). That is the smart part: the app argues with your first guess using the files you
+attached.
+
 ## The trust beat to run
 
-1. **Open the case.** The canvas shows the pores and the crack; the working cause is *Ejector pin
-   over-travel*.
-2. **Read the note.** The crack starts 0.4 mm below the surface and does not follow the ejector-pin
-   witness marks; vacuum drifted from 118 to 221 mbar; the batch was accepted at 1.9 ppm hydrogen
-   against 1.4.
-3. **Reject the cause.** In Review, reject *Ejector pin over-travel* with:
-   *"Crack starts below the surface; the ejector marks are on the opposite face."*
-4. **Add the real cause.** Add *Gas porosity from insufficient die venting* with the vacuum and
-   hydrogen reasoning.
-5. **Accept and sign.** Approve the report and check the audit trail and the report version.
+1. **Open the case.** The image shows the pores and the crack; the analysis strip reports the two
+   signals; the ranked causes put gas porosity first and your ejector-pin guess second.
+2. **Read the disagreement.** The crack starts 0.4 mm below the surface; the ejector marks are on
+   the opposite face. The app shows the evidence IDs and the falsifier.
+3. **Accept the evidence-backed cause.** In Review, accept *Gas porosity from insufficient die
+   venting*. If you disagree, reject it with the reason; the ranking stores the correction.
+4. **Sign the report.** Approve it and check the audit trail, the report version and the attached
+   files.
+5. **Read the prevention checks.** The app names what to fix before the next batch, not just what
+   happened.
 
-This is the same shape as the reference trust beat, but with your own case and your own files.
+## Watch the walkthrough
+
+A 1:39 narrated walkthrough of this flow, built from real app states:
+[`web/public/demo/rootcause-walkthrough.mp4`](../web/public/demo/rootcause-walkthrough.mp4)
+(or https://jiuwendemos.github.io/rootcause/demo/rootcause-walkthrough.mp4).
 
 ## How attachments behave
 

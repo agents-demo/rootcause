@@ -1,0 +1,1 @@
+Attach what you already have: the loupe image, the sensor window, and the batch record. The app reads the numbers, not just the text.

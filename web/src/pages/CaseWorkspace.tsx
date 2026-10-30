@@ -164,6 +164,29 @@ export default function CaseWorkspace() {
         </div>
       </div>
 
+      {scenario.analysis && (
+        <div className="analysis-strip">
+          <div className="analysis-top">
+            <span className="chip amber"><Icon name="activity" size={11} /> Data analysis</span>
+            <span className="analysis-summary">{scenario.analysis.summary}</span>
+          </div>
+          {scenario.analysis.signals.length > 0 && (
+            <div className="analysis-signals">
+              {scenario.analysis.signals.slice(0, 4).map((signal) => (
+                <span key={signal.id} className="analysis-signal">
+                  <b>{signal.label}</b> {signal.from}{signal.unit} → {signal.to}{signal.unit}
+                  <em>{signal.change_pct > 0 ? "+" : ""}{signal.change_pct}% · {signal.verdict}</em>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="analysis-actions">
+            <span><Icon name="shield" size={11} /> {scenario.analysis.prevention[0]}</span>
+            <span><Icon name="target" size={11} /> {scenario.analysis.falsifiers[0]}</span>
+          </div>
+        </div>
+      )}
+
       <div className="workspace case-workspace-2026">
         <h2 className="sr-only">Case evidence, causes and decision</h2>
         {/* ---------------------------------------------------- left: evidence on the part */}
@@ -472,6 +495,40 @@ export default function CaseWorkspace() {
         {/* ---------------------------------------------------- right: evidence and provenance */}
         <div className="col-stack">
           <AskPanel scenario={scenario} />
+          {scenario.analysis && (
+            <div className="panel">
+              <div className="panel-head">
+                <h3>Evidence analysis</h3>
+                <span className="sub">{scenario.analysis.csv_count} CSV · {scenario.analysis.signals.length} signals</span>
+              </div>
+              <div className="panel-body">
+                {scenario.analysis.signals.length > 0 ? (
+                  <div className="col gap6">
+                    {scenario.analysis.signals.map((signal) => (
+                      <div key={signal.id} className="row between analysis-row">
+                        <span className="small" style={{ color: "var(--ink-2)" }}>{signal.label}</span>
+                        <span className="xsmall mono soft">
+                          {signal.from} → {signal.to} {signal.unit} · {signal.verdict}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="small muted">No numeric signal found. Attach a sensor window or batch record to compare.</p>
+                )}
+                <div className="divider" />
+                <b className="small" style={{ color: "var(--ink-2)" }}>Prevent the next one</b>
+                <ul className="proof-list mt8">
+                  {scenario.analysis.prevention.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+                <div className="divider" />
+                <b className="small" style={{ color: "var(--ink-2)" }}>What would change the answer</b>
+                <ul className="proof-list mt8">
+                  {scenario.analysis.falsifiers.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+          )}
           <div className="panel">
             <div className="panel-head">
               <h3>Evidence</h3>

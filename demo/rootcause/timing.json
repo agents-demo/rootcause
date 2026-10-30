@@ -1,0 +1,82 @@
+[
+  {
+    "name": "01_intro",
+    "label": "My workspace, blank",
+    "audio": 8.98,
+    "duration": 10.58,
+    "start": 1.0,
+    "end": 11.58
+  },
+  {
+    "name": "02_case",
+    "label": "Create a real case",
+    "audio": 12.6,
+    "duration": 14.2,
+    "start": 11.58,
+    "end": 25.78
+  },
+  {
+    "name": "03_evidence",
+    "label": "Attach the evidence",
+    "audio": 7.32,
+    "duration": 8.92,
+    "start": 25.78,
+    "end": 34.7
+  },
+  {
+    "name": "04_workspace",
+    "label": "The case workspace",
+    "audio": 7.1,
+    "duration": 8.7,
+    "start": 34.7,
+    "end": 43.4
+  },
+  {
+    "name": "05_reject",
+    "label": "Reject the wrong cause",
+    "audio": 10.46,
+    "duration": 12.06,
+    "start": 43.4,
+    "end": 55.46
+  },
+  {
+    "name": "06_add",
+    "label": "Add the evidence-backed cause",
+    "audio": 14.16,
+    "duration": 15.76,
+    "start": 55.46,
+    "end": 71.22
+  },
+  {
+    "name": "07_sign",
+    "label": "Accept and sign",
+    "audio": 6.82,
+    "duration": 8.42,
+    "start": 71.22,
+    "end": 79.64
+  },
+  {
+    "name": "08_report",
+    "label": "The signed report",
+    "audio": 6.22,
+    "duration": 7.82,
+    "start": 79.64,
+    "end": 87.46
+  },
+  {
+    "name": "09_settings",
+    "label": "Switch workspaces",
+    "audio": 7.66,
+    "duration": 9.26,
+    "start": 87.46,
+    "end": 96.72
+  },
+  {
+    "name": "10_close",
+    "label": "Close",
+    "audio": 3.94,
+    "duration": 5.54,
+    "start": 96.72,
+    "end": 102.26
+  }
+]

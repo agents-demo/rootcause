@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:03,537
+Cavity vacuum rose fifty-seven percent across the shift.
+
+2
+00:00:03,537 --> 00:00:07,535
+Hydrogen is 1.9 ppm against a 1.4 limit.
+
+3
+00:00:07,535 --> 00:00:13,148
+RootCause ranks gas porosity at eighty-six percent, and puts your ejector-pin guess below it.
+

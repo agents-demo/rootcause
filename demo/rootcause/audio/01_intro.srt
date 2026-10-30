@@ -1,0 +1,16 @@
+1
+00:00:00,050 --> 00:00:01,273
+This is RootCause.
+
+2
+00:00:01,273 --> 00:00:02,606
+It is not a case log.
+
+3
+00:00:02,606 --> 00:00:07,830
+It reads the evidence you attach, challenges your first guess, and names what to fix next.
+
+4
+00:00:07,830 --> 00:00:11,308
+It opens blank, on your own cases, in this browser.
+

@@ -1,0 +1,12 @@
+1
+00:00:00,050 --> 00:00:05,011
+Start with what happened: a porosity cluster at the bearing boss of a die-cast pump housing.
+
+2
+00:00:05,011 --> 00:00:08,608
+Line four, batch B-7781.
+
+3
+00:00:08,608 --> 00:00:11,544
+Your first guess is ejector-pin over-travel.
+
