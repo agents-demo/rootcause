@@ -3,6 +3,19 @@ import type { AuditEvent, CausalChain, Evidence, TraceStep } from "../types";
 import { classNames } from "../lib/engine";
 import { Icon } from "./Icon";
 
+export function DataSourceNote({ seed, live = false }: { seed: number; live?: boolean }) {
+  return (
+    <div className="data-source-note" role="note" aria-label="Data source">
+      <span className="chip amber"><i className="dot warn" /> Reference data</span>
+      <span>
+        {live
+          ? <>The on-site API is serving a synthetic pack (fixed seed {seed}). Cases stay reference data until live connectors are configured.</>
+          : <>Synthetic, generated in-house with a fixed seed ({seed}). No plant connection — these are example decisions, not factory events.</>}
+      </span>
+    </div>
+  );
+}
+
 export function SeverityBadge({ severity }: { severity: string }) {
   const cls = severity === "critical" || severity === "high" ? "red" : severity === "medium" ? "amber" : "cyan";
   return <span className={`chip ${cls}`}>{severity}</span>;

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { eur, fmtDate, hours, pct } from "../lib/engine";
 import { Icon } from "../components/Icon";
-import { PageHead } from "../components/UI";
+import { PageHead, DataSourceNote } from "../components/UI";
 import { BarList, LineChart, Sparkline } from "../components/Charts";
 
 const LINE_COLORS: Record<string, string> = {
@@ -14,7 +14,7 @@ const LINE_COLORS: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const { pack, actionsDone, completeAction, acknowledge, alertsAck, setBaseline, audits, say, baselines } = useStore();
+  const { pack, actionsDone, completeAction, acknowledge, alertsAck, setBaseline, audits, say, baselines, live } = useStore();
   const [baselineLine, setBaselineLine] = useState("line-6");
   const [baselineValue, setBaselineValue] = useState("62");
 
@@ -85,11 +85,13 @@ export default function Dashboard() {
         actions={
           <>
             <span className="chip"><Icon name="calendar" size={11} /> Week 43 · 2026</span>
-            <span className="chip green"><span className="dot live" /> Live on 4 lines</span>
+            <span className="chip amber"><span className="dot warn" /> Reference lines</span>
             <button className="btn sm" onClick={downloadWeekly}><Icon name="download" size={12} /> Weekly report</button>
           </>
         }
       />
+
+      <DataSourceNote seed={pack?.meta.seed ?? 417} live={live} />
 
       <div className="small-multiples mb16">
         <div className="small-multiple">
