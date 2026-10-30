@@ -64,6 +64,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [updateReady, setUpdateReady] = useState(false);
   const unread = proactive?.notifications.filter((n) => !n.read).length ?? 0;
   const base = location.pathname === "/" ? "/" : `/${location.pathname.split("/")[1] || "about"}`;
   const title = titles[base] ?? "RootCause";
@@ -71,6 +72,12 @@ export function Shell({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMoreOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const onUpdate = () => setUpdateReady(true);
+    window.addEventListener("rootcause:update-ready", onUpdate);
+    return () => window.removeEventListener("rootcause:update-ready", onUpdate);
+  }, []);
 
   useEffect(() => {
     let gPressed = false;
@@ -241,6 +248,16 @@ export function Shell({ children }: { children: ReactNode }) {
       </div>
 
       <div className={`toast${toast ? " show" : ""}`}>{toast}</div>
+
+      {updateReady && (
+        <div className="update-banner" role="status">
+          <span>A new version of RootCause is ready.</span>
+          <button className="btn sm primary" onClick={() => window.location.reload()}>Reload</button>
+          <button className="icon-btn" aria-label="Dismiss update notice" onClick={() => setUpdateReady(false)}>
+            <Icon name="x" size={12} />
+          </button>
+        </div>
+      )}
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 

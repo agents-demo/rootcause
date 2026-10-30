@@ -247,6 +247,22 @@ class Store:
         ).fetchall()
         return [json.loads(r["payload"]) for r in rows]
 
+    def synthetic_case_count(self) -> int:
+        """Cases whose provenance says the data is synthetic.
+
+        A production store must contain zero. The readiness gate uses this so a site cannot import
+        a reference pack and later claim it is running on factory records.
+        """
+        count = 0
+        for row in self._conn.execute("SELECT payload FROM cases"):
+            try:
+                provenance = json.loads(row["payload"]).get("provenance", {})
+            except (ValueError, TypeError):
+                continue
+            if "synthetic" in str(provenance.get("data", "")).lower():
+                count += 1
+        return count
+
     def audits(self, object_id: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
         if object_id:
             rows = self._conn.execute(

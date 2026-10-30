@@ -371,7 +371,10 @@ def ready(request: Request) -> dict[str, Any]:
     npu_ready = bool(npu.get("ready")) and npu.get("backend") in {"onnx", "ascend"}
     live = [k for k in ("ROOTCAUSE_OPCUA_ENDPOINT", "ROOTCAUSE_MODBUS_ENDPOINT", "ROOTCAUSE_CAMERA_HTTP_URL", "ROOTCAUSE_MES_CSV") if os.getenv(k)]
     strict = os.getenv("ROOTCAUSE_STRICT_INTEGRATIONS", "0") == "1"
-    ok = bool(agent.get("configured")) and npu_ready and bool(live)
+    data_mode = config.data_mode()
+    synthetic_cases = rc.store.synthetic_case_count()
+    provenance_ok = not (config.production_data_mode() and synthetic_cases > 0)
+    ok = bool(agent.get("configured")) and npu_ready and bool(live) and provenance_ok
     if strict and not ok:
         raise HTTPException(
             503,
@@ -380,10 +383,25 @@ def ready(request: Request) -> dict[str, Any]:
                 "agent": agent,
                 "npu": npu,
                 "live_connectors": live,
-                "note": "ROOTCAUSE_STRICT_INTEGRATIONS=1: configure the agent, ONNX/Ascend broker and at least one live plant connector.",
+                "data_mode": data_mode,
+                "synthetic_cases": synthetic_cases,
+                "provenance_ok": provenance_ok,
+                "note": (
+                    "ROOTCAUSE_STRICT_INTEGRATIONS=1: configure the agent, ONNX/Ascend broker and at least one live "
+                    "plant connector. A production data mode also requires zero synthetic cases."
+                ),
             },
         )
-    return {"ready": ok, "strict": strict, "agent": agent, "npu": npu, "live_connectors": live}
+    return {
+        "ready": ok,
+        "strict": strict,
+        "agent": agent,
+        "npu": npu,
+        "live_connectors": live,
+        "data_mode": data_mode,
+        "synthetic_cases": synthetic_cases,
+        "provenance_ok": provenance_ok,
+    }
 
 
 @app.get("/api/pack")

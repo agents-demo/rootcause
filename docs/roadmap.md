@@ -673,7 +673,7 @@ hardware, cost budget and a pilot. They cannot be completed from a development l
 - [ ] Data-quality report: missing fields, clock drift, duplicate batches **(M)**
 - [ ] Retention and deletion policy agreed; personal-data filter for operator notes **(M)**
 - [x] Backup and restore drill with a full audit reconstruction **(M)** — `scripts/backup_restore_drill.py`, passes with the append-only guard intact
-- [ ] No synthetic records in a production case store; enforce with a provenance check **(S)**
+- [x] No synthetic records in a production case store; enforce with a provenance check **(S)** — `/api/ready` counts synthetic cases and refuses production mode with any present
 
 ### 7.5 Security and operations
 

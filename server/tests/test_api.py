@@ -25,6 +25,26 @@ def test_health_and_pack(tmp_path, monkeypatch):
         assert len(pack["connectors"]) >= 10
 
 
+def test_ready_reports_reference_provenance(tmp_path, monkeypatch):
+    monkeypatch.delenv("ROOTCAUSE_DATA_MODE", raising=False)
+    for c in client(tmp_path, monkeypatch):
+        body = c.get("/api/ready").json()
+        assert body["data_mode"] == "reference"
+        assert body["synthetic_cases"] == 4
+        assert body["provenance_ok"] is True
+
+
+def test_ready_refuses_synthetic_records_in_production(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROOTCAUSE_DATA_MODE", "production")
+    monkeypatch.setenv("ROOTCAUSE_STRICT_INTEGRATIONS", "1")
+    for c in client(tmp_path, monkeypatch):
+        r = c.get("/api/ready")
+        assert r.status_code == 503
+        detail = r.json()["detail"]
+        assert detail["provenance_ok"] is False
+        assert detail["synthetic_cases"] == 4
+
+
 def test_investigation_and_reject_flow(tmp_path, monkeypatch):
     for c in client(tmp_path, monkeypatch):
         inv = c.get("/api/cases/RC-0417").json()["investigation"]

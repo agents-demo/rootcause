@@ -171,7 +171,7 @@ configure a real endpoint and set `simulate=False` in the site config. The readi
 
 - Six-month historical import and a data-quality report.
 - Customer data-processing agreement and retention schedule.
-- Backup/restore drill and an evidence export test.
+- Backup/restore drill and an evidence export test. Drill: `scripts/backup_restore_drill.py` (passes; an evidence export test is still open).
 
 ## 5. Security and operations
 
@@ -201,6 +201,10 @@ With `ROOTCAUSE_STRICT_INTEGRATIONS=1`, it returns **503** until:
 
 1. the agent runtime is configured,
 2. the NPU/ONNX broker reports ready,
-3. at least one plant connector is live.
+3. at least one plant connector is live,
+4. `ROOTCAUSE_DATA_MODE=production` holds **zero** synthetic cases.
 
-This is deliberate. A green UI on synthetic data is not a connected factory.
+That last check is the provenance gate: the store counts cases whose `provenance.data` says synthetic.
+If a site starts in production mode on the reference pack, `/api/ready` stays red and reports
+`provenance_ok: false` with `synthetic_cases`. This is deliberate. A green UI on synthetic data is
+not a connected factory.

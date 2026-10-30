@@ -1,7 +1,11 @@
 /* RootCause offline shell. The demo pack and the app are cached after the first visit, so the
    booth run keeps working with the network cable unplugged. */
-const CACHE = "rootcause-v2";
+const CACHE = "rootcause-v3";
 const CORE = ["./", "./index.html", "./demo-pack.json", "./manifest.webmanifest", "./favicon.svg"];
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+});
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -45,9 +49,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (request.mode === "navigate") {
+  if (request.mode === "navigate" || url.pathname.endsWith("/index.html")) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then((response) => {
           const copy = response.clone();
           caches.open(CACHE).then((cache) => cache.put("./index.html", copy));
