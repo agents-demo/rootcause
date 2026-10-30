@@ -57,3 +57,9 @@ server/memory/
 server/messages/
 server/skills/
 server/todo/
+# generated demo build artefacts
+demo/rootcause/shots/
+demo/rootcause/clips/
+demo/rootcause/voice.wav
+demo/rootcause/callouts.json
+demo/rootcause/audio/*.wav
