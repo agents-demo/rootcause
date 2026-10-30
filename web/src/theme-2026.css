@@ -339,6 +339,17 @@ p { letter-spacing: -0.003em; }
   line-height: 1.45;
 }
 
+/* ------------------------------------------------------------------ review */
+.review-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.review-main { min-width: 0; }
+.review-picker { display: none; }
+.review-picker .select { flex: 1; min-width: 0; }
+
 /* ------------------------------------------------------------------ case canvas */
 .case-focus .case-banner { display: none; }
 .case-focus .case-workspace-2026 { grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr); }
@@ -525,6 +536,15 @@ p { letter-spacing: -0.003em; }
     background: var(--risk); color: #fff;
     border-radius: 999px; font-size: 9px; font-weight: 600; line-height: 1;
   }
+  .review-layout { grid-template-columns: 1fr; }
+  .review-queue { display: none; }
+  .review-picker { display: block; margin-bottom: 12px; }
+  .review-keys { display: none; }
+  .review-panels { grid-template-columns: 1fr; }
+  .review-decision { order: -1; }
+  .review-actions { flex-direction: column; }
+  .review-actions .btn { width: 100%; justify-content: center; }
+  .review-main .case-banner { padding: 13px; }
   .more-grid {
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
   }

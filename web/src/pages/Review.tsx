@@ -70,14 +70,25 @@ export default function Review() {
         actions={
           <>
             <span className="chip amber"><Icon name="review" size={11} /> {queue.length} waiting</span>
-            <span className="chip"><Icon name="grid" size={11} /> J/K move · A accept · R reject</span>
+            <span className="chip review-keys"><Icon name="grid" size={11} /> J/K move · A accept · R reject</span>
             <Link className="btn sm" to={`/cases/${current.s.case.id}`}><Icon name="external" size={11} /> Full case</Link>
           </>
         }
       />
 
-      <div className="grid" style={{ gridTemplateColumns: "300px 1fr", alignItems: "start", gap: 12 }}>
-        <div className="panel">
+      <div className="review-picker panel">
+        <div className="panel-body" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <select aria-label="Select case" className="select" value={current.s.case.id} onChange={(e) => setSelected(e.target.value)}>
+            {rows.map((r) => (
+              <option key={r.s.case.id} value={r.s.case.id}>{r.s.case.id} · {r.s.case.defect_type}</option>
+            ))}
+          </select>
+          <StatusBadge status={current.status} />
+        </div>
+      </div>
+
+      <div className="review-layout">
+        <div className="panel review-queue">
           <div className="panel-head"><h3>Queue</h3><span className="sub">{queue.length} open</span></div>
           <div className="panel-body tight">
             <div className="col gap6">
@@ -104,11 +115,11 @@ export default function Review() {
           </div>
         </div>
 
-        <div className="col-stack">
+        <div className="col-stack review-main">
           <div className="case-banner" style={{ margin: 0 }}>
             <div>
               <div className="kicker">{current.s.case.id} · {current.s.case.line_id.replace("line-", "Line ")} · shift {current.s.case.shift}</div>
-              <h1 style={{ fontSize: 20 }}>{current.s.case.defect_type}</h1>
+              <h2 style={{ fontSize: 20 }}>{current.s.case.defect_type}</h2>
               <div className="meta">
                 <span><SeverityBadge severity={current.s.case.severity} /></span>
                 <span>{current.s.case.part}</span>
@@ -121,7 +132,7 @@ export default function Review() {
             </div>
           </div>
 
-          <div className="grid g2" style={{ alignItems: "start" }}>
+          <div className="grid g2 review-panels" style={{ alignItems: "start" }}>
             <div className="panel">
               <div className="panel-head"><h3>Top cause</h3><span className="sub">{inv.unknown.toFixed(0)}% “none of these”</span></div>
               <div className="panel-body">
@@ -153,7 +164,7 @@ export default function Review() {
               </div>
             </div>
 
-            <div className="panel">
+            <div className="panel review-decision">
               <div className="panel-head"><h3>Decision</h3><span className="sub">saved to the audit trail</span></div>
               <div className="panel-body">
                 {accepted ? (
@@ -167,7 +178,7 @@ export default function Review() {
                   </>
                 ) : (
                   <>
-                    <div className="row gap6" style={{ flexWrap: "wrap" }}>
+                    <div className="row gap6 review-actions" style={{ flexWrap: "wrap" }}>
                       <button className="btn cyan" onClick={() => accept(current.s.case.id, inv.hypotheses[0].id)}>
                         <Icon name="check" size={12} /> Accept top cause
                       </button>
