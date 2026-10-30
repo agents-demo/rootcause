@@ -62,6 +62,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: "act-scan", label: "Run a proactive scan", group: "Actions", icon: "refresh", run: () => { scanProactive(); onClose(); } },
       { id: "act-theme", label: ui.theme === "dark" ? "Switch to light desk mode" : "Switch to dark control room", group: "Actions", icon: "spark", run: () => { ui.toggleTheme(); onClose(); } },
       { id: "act-density", label: ui.density === "comfortable" ? "Use compact density" : "Use comfortable density", group: "Actions", icon: "grid", run: () => { ui.setDensity(ui.density === "comfortable" ? "compact" : "comfortable"); onClose(); } },
+      { id: "act-datasource", label: ui.showDataSource ? "Hide the reference-data notice" : "Show the reference-data notice", group: "Actions", icon: "shield", run: () => { ui.setShowDataSource(!ui.showDataSource); onClose(); } },
       { id: "act-help", label: "Keyboard shortcuts", group: "Actions", icon: "about", hint: "?", run: () => { onClose(); window.dispatchEvent(new CustomEvent("rootcause:shortcuts")); } },
       { id: "act-capture", label: "Start from a photo", group: "Actions", icon: "camera", run: () => go("/capture") },
     ];

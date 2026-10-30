@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
+import { useUI } from "../lib/ui";
 import { eur, fmtDate, hours, pct } from "../lib/engine";
 import { Icon } from "../components/Icon";
 import { PageHead, DataSourceNote } from "../components/UI";
@@ -15,6 +16,7 @@ const LINE_COLORS: Record<string, string> = {
 
 export default function Dashboard() {
   const { pack, actionsDone, completeAction, acknowledge, alertsAck, setBaseline, audits, say, baselines, live } = useStore();
+  const ui = useUI();
   const [baselineLine, setBaselineLine] = useState("line-6");
   const [baselineValue, setBaselineValue] = useState("62");
 
@@ -91,7 +93,7 @@ export default function Dashboard() {
         }
       />
 
-      <DataSourceNote seed={pack?.meta.seed ?? 417} live={live} />
+      {ui.showDataSource && <DataSourceNote seed={pack?.meta.seed ?? 417} live={live} />}
 
       <div className="small-multiples mb16">
         <div className="small-multiple">

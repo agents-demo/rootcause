@@ -16,11 +16,22 @@ const modes = [
 ];
 
 const bottomModes = [
-  { to: "/", label: "Now", icon: "target", end: true },
-  { to: "/watchlist", label: "Watch", icon: "activity" },
-  { to: "/cases", label: "Cases", icon: "cases" },
-  { to: "/review", label: "Decide", icon: "review" },
-  { to: "/alerts", label: "Alerts", icon: "alert" },
+  { to: "/", label: "Now", icon: "target", match: [""] },
+  { to: "/watchlist", label: "Watch", icon: "activity", match: ["/watchlist", "/watch"] },
+  { to: "/cases", label: "Cases", icon: "cases", match: ["/cases"] },
+  { to: "/review", label: "Decide", icon: "review", match: ["/review"] },
+  { to: "/alerts", label: "Alerts", icon: "alert", match: ["/alerts"] },
+];
+
+const moreModes = [
+  { to: "/brief", label: "Shift brief", icon: "calendar" },
+  { to: "/reports", label: "Reports", icon: "report" },
+  { to: "/dashboard", label: "Quality dashboard", icon: "dashboard" },
+  { to: "/proactive", label: "Proactive room", icon: "gauge" },
+  { to: "/capture", label: "Photo capture", icon: "camera" },
+  { to: "/connectors", label: "Connectors", icon: "connectors" },
+  { to: "/admin", label: "Site administration", icon: "admin" },
+  { to: "/about", label: "About RootCause", icon: "about" },
 ];
 
 const titles: Record<string, string> = {
@@ -50,10 +61,15 @@ export function Shell({ children }: { children: ReactNode }) {
   const ui = useUI();
   const [cmdOpen, setCmdOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const unread = proactive?.notifications.filter((n) => !n.read).length ?? 0;
   const base = location.pathname === "/" ? "/" : `/${location.pathname.split("/")[1] || "about"}`;
   const title = titles[base] ?? "RootCause";
+
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     let gPressed = false;
@@ -158,17 +174,63 @@ export function Shell({ children }: { children: ReactNode }) {
       </nav>
 
       <nav className="bottom-nav-2026" aria-label="Primary mobile">
-        {bottomModes.map((m) => (
-          <NavLink key={m.to} to={m.to} end={m.end} className={({ isActive }) => `rail-item${isActive ? " active" : ""}`}>
-            <Icon name={m.icon} size={18} />
-            <span>{m.label}</span>
-          </NavLink>
-        ))}
-        <button className="rail-item" onClick={() => setCmdOpen(true)}>
-          <Icon name="grid" size={18} />
-          <span>More</span>
+        {bottomModes.map((m) => {
+          const active = m.match.includes(base);
+          return (
+            <NavLink
+              key={m.to}
+              to={m.to}
+              end={m.to === "/"}
+              className={`bottom-item${active ? " active" : ""}`}
+              aria-current={active ? "page" : undefined}
+            >
+              <span className="bottom-icon">
+                <Icon name={m.icon} size={20} />
+                {m.to === "/alerts" && unread > 0 && <span className="bottom-badge">{unread > 9 ? "9+" : unread}</span>}
+              </span>
+              <span className="bottom-label">{m.label}</span>
+            </NavLink>
+          );
+        })}
+        <button
+          type="button"
+          className={`bottom-item${moreOpen ? " active" : ""}`}
+          onClick={() => setMoreOpen((v) => !v)}
+          aria-haspopup="dialog"
+          aria-expanded={moreOpen}
+        >
+          <span className="bottom-icon"><Icon name="grid" size={20} /></span>
+          <span className="bottom-label">More</span>
         </button>
       </nav>
+
+      {moreOpen && (
+        <div className="modal-back more-back" onClick={() => setMoreOpen(false)}>
+          <div className="modal more-sheet" role="dialog" aria-modal="true" aria-label="More destinations" onClick={(e) => e.stopPropagation()}>
+            <div className="row between mb12">
+              <div>
+                <div className="page-kicker">Navigate</div>
+                <h3 style={{ fontSize: 19 }}>More of RootCause</h3>
+              </div>
+              <button className="btn ghost sm" onClick={() => setMoreOpen(false)} aria-label="Close"><Icon name="x" size={13} /></button>
+            </div>
+            <div className="more-grid">
+              {moreModes.map((m) => (
+                <button key={m.to} type="button" className="more-item" onClick={() => navigate(m.to)}>
+                  <Icon name={m.icon} size={18} />
+                  <span>{m.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="row gap8" style={{ marginTop: 14 }}>
+              <button className="btn sm" onClick={() => { setMoreOpen(false); setCmdOpen(true); }}>
+                <Icon name="search" size={13} /> Ask or jump
+              </button>
+              <button className="btn sm ghost" onClick={reset}><Icon name="reset" size={13} /> Reset reference data</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="main-2026">
         <main className="content-2026" id="main-content" aria-label={title}>

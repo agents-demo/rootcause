@@ -108,7 +108,7 @@ export default function Home() {
         </div>
       </div>
 
-      <DataSourceNote seed={pack.meta.seed} live={live} />
+      {ui.showDataSource && <DataSourceNote seed={pack.meta.seed} live={live} />}
 
       <div className="now-grid">
         <div>

@@ -8,16 +8,18 @@ interface UISettings {
   theme: Theme;
   density: Density;
   role: Role;
+  showDataSource: boolean;
   setTheme: (t: Theme) => void;
   setDensity: (d: Density) => void;
   setRole: (r: Role) => void;
+  setShowDataSource: (show: boolean) => void;
   toggleTheme: () => void;
 }
 
 const KEY = "rootcause.ui.v1";
 const UI = createContext<UISettings | null>(null);
 
-function load(): { theme: Theme; density: Density; role: Role } {
+function load(): { theme: Theme; density: Density; role: Role; showDataSource: boolean } {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
@@ -28,12 +30,13 @@ function load(): { theme: Theme; density: Density; role: Role } {
         role: (["quality_manager", "engineer", "operator", "admin"] as Role[]).includes(parsed.role as Role)
           ? (parsed.role as Role)
           : "quality_manager",
+        showDataSource: parsed.showDataSource !== false,
       };
     }
   } catch {
     /* ignore */
   }
-  return { theme: "dark", density: "comfortable", role: "quality_manager" };
+  return { theme: "dark", density: "comfortable", role: "quality_manager", showDataSource: true };
 }
 
 export function UIProvider({ children }: { children: ReactNode }) {
@@ -54,11 +57,12 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((theme: Theme) => setSettings((s) => ({ ...s, theme })), []);
   const setDensity = useCallback((density: Density) => setSettings((s) => ({ ...s, density })), []);
   const setRole = useCallback((role: Role) => setSettings((s) => ({ ...s, role })), []);
+  const setShowDataSource = useCallback((showDataSource: boolean) => setSettings((s) => ({ ...s, showDataSource })), []);
   const toggleTheme = useCallback(() => setSettings((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" })), []);
 
   const value = useMemo(
-    () => ({ ...settings, setTheme, setDensity, setRole, toggleTheme }),
-    [settings, setTheme, setDensity, setRole, toggleTheme],
+    () => ({ ...settings, setTheme, setDensity, setRole, setShowDataSource, toggleTheme }),
+    [settings, setTheme, setDensity, setRole, setShowDataSource, toggleTheme],
   );
   return <UI.Provider value={value}>{children}</UI.Provider>;
 }
