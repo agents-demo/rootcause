@@ -93,7 +93,7 @@ export default function Watchlist() {
                 <Icon name="search" size={12} />
                 <input className="input" style={{ width: 170, padding: "5px 8px 5px 27px", fontSize: 11 }} placeholder="Search watch, pattern…" value={query} onChange={(e) => setQuery(e.target.value)} />
               </div>
-              <select className="select" style={{ width: 120, padding: "5px 7px", fontSize: 11 }} value={status} onChange={(e) => setStatus(e.target.value)}>
+              <select aria-label="Watch status filter" className="select" style={{ width: 120, padding: "5px 7px", fontSize: 11 }} value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="open">Open</option>
                 <option value="all">All</option>
                 <option value="watching">Watching</option>
@@ -102,7 +102,7 @@ export default function Watchlist() {
                 <option value="converted">Converted</option>
                 <option value="dismissed">Dismissed</option>
               </select>
-              <select className="select" style={{ width: 110, padding: "5px 7px", fontSize: 11 }} value={line} onChange={(e) => setLine(e.target.value)}>
+              <select aria-label="Watch line filter" className="select" style={{ width: 110, padding: "5px 7px", fontSize: 11 }} value={line} onChange={(e) => setLine(e.target.value)}>
                 <option value="all">All lines</option>
                 {pack?.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
@@ -276,7 +276,7 @@ export default function Watchlist() {
         <p>A near-miss has no defective part yet. The observation becomes a watch with a reason, an owner and an SLA — not a forgotten notebook line.</p>
         <div className="field mb12">
           <label>Line</label>
-          <select className="select" value={nearMissLine} onChange={(e) => setNearMissLine(e.target.value)}>
+          <select aria-label="Near-miss line" className="select" value={nearMissLine} onChange={(e) => setNearMissLine(e.target.value)}>
             {pack?.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         </div>

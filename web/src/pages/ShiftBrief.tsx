@@ -103,7 +103,7 @@ export default function ShiftBriefPage() {
             <div className="panel-body">
               <div className="field">
                 <label>Shift</label>
-                <select className="select" value={shift} onChange={(e) => setShift(e.target.value)}>
+                <select aria-label="Shift" className="select" value={shift} onChange={(e) => setShift(e.target.value)}>
                   <option value="A">Shift A</option>
                   <option value="B">Shift B</option>
                   <option value="C">Shift C</option>

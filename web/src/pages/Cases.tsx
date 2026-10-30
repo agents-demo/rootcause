@@ -90,11 +90,11 @@ export default function Cases() {
                 <Icon name="search" size={12} />
                 <input className="input" style={{ width: 190, padding: "5px 8px 5px 27px", fontSize: 11 }} placeholder="Search case, part, batch…" value={query} onChange={(e) => setQuery(e.target.value)} />
               </div>
-              <select className="select" style={{ width: 110, padding: "5px 7px", fontSize: 11 }} value={line} onChange={(e) => setLine(e.target.value)}>
+              <select aria-label="Case line filter" className="select" style={{ width: 110, padding: "5px 7px", fontSize: 11 }} value={line} onChange={(e) => setLine(e.target.value)}>
                 <option value="all">All lines</option>
                 {pack?.lines.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
-              <select className="select" style={{ width: 120, padding: "5px 7px", fontSize: 11 }} value={status} onChange={(e) => setStatus(e.target.value)}>
+              <select aria-label="Case status filter" className="select" style={{ width: 120, padding: "5px 7px", fontSize: 11 }} value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="all">Any status</option>
                 <option value="investigating">Investigating</option>
                 <option value="awaiting_review">Awaiting review</option>

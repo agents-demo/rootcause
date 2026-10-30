@@ -383,7 +383,7 @@ export default function WatchDetail() {
         <p>The reason is stored as an outcome and feeds threshold tuning. It is not a failure; it is a label.</p>
         <div className="field">
           <label>Reason</label>
-          <select className="select" value={reason} onChange={(e) => setReason(e.target.value)}>
+          <select aria-label="Dismiss reason" className="select" value={reason} onChange={(e) => setReason(e.target.value)}>
             <option>Normal post-change settling.</option>
             <option>Sensor or probe artefact.</option>
             <option>Maintenance explains the signal.</option>
@@ -402,7 +402,7 @@ export default function WatchDetail() {
         <p>Use this when the risk has become a real defect. The watch keeps the early signal; the case keeps the investigation.</p>
         <div className="field">
           <label>Case</label>
-          <select className="select" value={convertCase} onChange={(e) => setConvertCase(e.target.value)}>
+          <select aria-label="Convert to case" className="select" value={convertCase} onChange={(e) => setConvertCase(e.target.value)}>
             {pack?.scenarios.map((s) => <option key={s.case.id} value={s.case.id}>{s.case.id} · {s.case.defect_type}</option>)}
           </select>
         </div>

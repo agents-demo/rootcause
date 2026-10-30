@@ -565,7 +565,7 @@ export default function CaseWorkspace() {
         <p>The rejection is saved with a reason. It reduces this cause's weight and feeds the next ranking iteration.</p>
         <div className="field mb12">
           <label>Reason</label>
-          <select className="select" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}>
+          <select aria-label="Rejection reason" className="select" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}>
             <option>Crack starts below the surface; tool marks are surface-only.</option>
             <option>Machine data does not support this cause.</option>
             <option>Batch evidence does not match this case.</option>

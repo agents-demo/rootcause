@@ -239,7 +239,7 @@ export default function Review() {
         }
       >
         <p>The reason is stored with the correction. The next ranking uses it.</p>
-        <select className="select" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}>
+        <select aria-label="Rejection reason" className="select" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}>
           <option>Machine data does not support this cause.</option>
           <option>Crack starts below the surface; tool marks are surface-only.</option>
           <option>Batch evidence does not match this case.</option>
