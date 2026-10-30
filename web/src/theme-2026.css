@@ -487,6 +487,14 @@ p { letter-spacing: -0.003em; }
 [data-theme="light"] .btn.primary { color: #fff8ec; }
 [data-theme="light"] .kbd { background: var(--surface-2); }
 [data-theme="light"] .topbar { background: rgba(244,241,234,.9); }
+[data-theme="light"] { --accent: #95570f; --ok: #156b43; --soft: #665f56; }
+[data-theme="light"] .btn.cyan { color: #f4fbf8; }
+[data-theme="light"] .btn.danger { color: #8f1d18; background: #f6e4e1; border-color: rgba(143, 29, 24, 0.35); }
+[data-theme="light"] .chip.green { color: #156b43; }
+[data-theme="light"] .viewer-bar { --soft: #b8b2a7; --muted: #c9c3b8; }
+[data-theme="light"] .viewer-bar .seg button.on {
+  color: #f2b45c; background: rgba(242, 180, 92, 0.14); border-color: rgba(242, 180, 92, 0.45);
+}
 
 /* ------------------------------------------------------------------ own workspace */
 .reference-only .big { opacity: 1; color: var(--ink-2); font-size: 24px; }
