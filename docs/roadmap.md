@@ -701,7 +701,53 @@ hardware, cost budget and a pilot. They cannot be completed from a development l
 
 ---
 
-## Recommended order — followed
+## Phase 8 — Manager proof and the daily workspace
+
+This phase comes from an external critique benchmarked against ScienceDiscovery. The verdict was SD
+gap ~3/10 and WOW ~9/10: a strong vertical SD, but the daily workspace and the manager proof were not
+packaged, and the critique assumed Interface 2026 was still planned. It is not: Phase 6 is shipped
+and every page already runs the 2026 shell. The phase below separates what is now true from what is
+still open.
+
+**Read first:** [`docs/demo-runbook.md`](demo-runbook.md).
+
+### P0 — before the first manager demo
+
+- [x] Now is the default first screen and shows five decision types — `/` is the queue: watches, cause decisions, report drafts, corrective actions and coverage
+- [x] 10-minute manager cut — `/cut` with a 10:00 clock, seven linked steps, proof points and a persisted checklist
+- [x] 90-second stage cut — `/stage`; the physical props and rehearsal are open below
+- [x] Manager proof page — `/proof`, printable, with baseline vs current, acceptance, prevented scrap and engineer hours, each labelled honestly
+- [x] “What changes for the quality manager” — on `/proof` and in the runbook
+- [x] Status docs reconciled — the runbook states Interface 2026 shipped, agent live, inference/connectors inactive, data synthetic
+- [ ] Physical failed bracket, loupe or macro lens, printed case sheet, stamp; rehearse reset and fallback
+- [ ] Instrument the demo: record which screens and questions produce the manager reaction
+
+### P1 — next 90 days
+
+- [x] Now as the product home, not a page — shipped
+- [ ] Role-based navigation and flows for quality manager, engineer and operator (the role selector changes copy, not the route set)
+- [ ] Owned adjacent tasks: audits, CAPA, supplier quality, line release and post-fix verification
+- [ ] Prove one live connector path (OPC-UA or camera + batch record) and run a 90-day pilot with the engineer in the loop
+- [ ] Onboarding with a sample case and a repeatable first-run path for someone else to present
+- [x] Interface 2026 for the daily shell — shipped in Phase 6, Lighthouse 100/100/100 across routes
+- [ ] Adoption instrumentation: task families per user, time-to-first-decision, queue clearance, sign-off time
+- [ ] Weekly demo cadence: one visible capability, one proof point, one trust feature, one next per cycle
+
+### P2 — to become SD-level
+
+- [x] Multi-line and multi-factory isolation — per-tenant SQLite files in `tenancy.py`; not validated with real factories
+- [ ] Compliance and audit packs (ISO 9001, IATF 16949, 21 CFR Part 11 where relevant) — the evidence map exists, certification does not
+- [ ] Cross-line pattern detection and opt-in anonymised sharing — pack scaffolding only
+- [ ] A connector library that measurably shortens each deployment — adapters and a catalogue exist, no deployment baseline
+- [ ] A public, repeatable benchmark pack for cause accuracy and time-to-cause
+
+**Do not:** add more screens before the manager demo; present Interface 2026 as planned or as a
+future promise; claim NPU, live connectors or customer data; position RootCause as a horizontal SD.
+
+---
+
+## Recommended order - followed
+
 
 1. 0A stage piece → built.
 2. Rehearse and red-team → kit + runbook + acceptance sheet.

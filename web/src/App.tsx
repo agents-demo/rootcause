@@ -24,6 +24,8 @@ const Alerts = lazy(() => import("./pages/Alerts"));
 const ProactiveDashboard = lazy(() => import("./pages/ProactiveDashboard"));
 const ProactiveBooth = lazy(() => import("./pages/ProactiveBooth"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
+const Proof = lazy(() => import("./pages/Proof"));
+const DemoCut = lazy(() => import("./pages/DemoCut"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -75,6 +77,8 @@ function Routed() {
       "/admin": "Site administration — RootCause",
       "/capture": "Mobile capture — RootCause",
       "/design": "Design system — RootCause",
+      "/proof": "Manager proof — RootCause",
+      "/cut": "Manager cut — RootCause",
     };
     document.title = names[location.pathname] ?? "RootCause";
   }, [location.pathname]);
@@ -122,6 +126,8 @@ function Routed() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/design" element={<DesignSystem />} />
+          <Route path="/proof" element={<Proof />} />
+          <Route path="/cut" element={<DemoCut />} />
           <Route path="/booth" element={<Booth />} />
           <Route path="/booth/run/:sid" element={<BoothRun />} />
           <Route path="/booth/proactive" element={<ProactiveBooth />} />

@@ -19,6 +19,8 @@ export default function About() {
           </p>
           <div className="row gap8 mt16" style={{ flexWrap: "wrap" }}>
             <Link className="btn primary lg" to="/stage"><Icon name="play" size={14} /> Play the 90-second piece</Link>
+            <Link className="btn lg" to="/cut"><Icon name="review" size={14} /> Run the 10-minute manager cut</Link>
+            <Link className="btn lg" to="/proof"><Icon name="chart" size={14} /> Manager proof</Link>
             <Link className="btn lg" to="/booth"><Icon name="booth" size={14} /> Open the functional demo</Link>
             <a className="btn lg ghost" href="https://github.com/jiuwendemos/rootcause" target="_blank" rel="noreferrer">Repository <Icon name="external" size={12} /></a>
           </div>
