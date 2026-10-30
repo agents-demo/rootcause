@@ -58,6 +58,8 @@ export default function Review() {
 
   const inv = current.inv!;
   const accepted = inv.hypotheses.find((h) => h.status === "accepted");
+  const top = inv.hypotheses.find((h) => h.status !== "rejected") ?? null;
+  const others = inv.hypotheses.filter((h) => h.id !== top?.id);
   const report = current.report!;
   const queue = rows.filter((r) => r.status !== "approved");
 
@@ -136,22 +138,29 @@ export default function Review() {
             <div className="panel">
               <div className="panel-head"><h3>Top cause</h3><span className="sub">{inv.unknown.toFixed(0)}% “none of these”</span></div>
               <div className="panel-body">
-                <div className="cause lead" style={{ padding: 12 }}>
-                  <div className="cause-head">
-                    <div className="cause-title">
-                      <span className="cause-rank">1</span>
-                      <div><h4>{inv.hypotheses[0]?.label}</h4></div>
+                {top ? (
+                  <div className="cause lead" style={{ padding: 12 }}>
+                    <div className="cause-head">
+                      <div className="cause-title">
+                        <span className="cause-rank">1</span>
+                        <div><h4>{top.label}</h4></div>
+                      </div>
+                      <div className="conf">{top.confidence.toFixed(0)}%<small>confidence</small></div>
                     </div>
-                    <div className="conf">{inv.hypotheses[0]?.confidence.toFixed(0)}%<small>confidence</small></div>
+                    <div className="meter"><i style={{ width: `${top.confidence}%` }} /></div>
+                    <p className="summary">{top.summary}</p>
+                    <div className="chips">
+                      {top.evidence_ids.slice(0, 4).map((id) => <span key={id} className="tag">{id}</span>)}
+                    </div>
                   </div>
-                  <div className="meter"><i style={{ width: `${inv.hypotheses[0]?.confidence}%` }} /></div>
-                  <p className="summary">{inv.hypotheses[0]?.summary}</p>
-                  <div className="chips">
-                    {inv.hypotheses[0]?.evidence_ids.slice(0, 4).map((id) => <span key={id} className="tag">{id}</span>)}
+                ) : (
+                  <div className="cause lead" style={{ padding: 12 }}>
+                    <h4>No cause stands</h4>
+                    <p className="summary">Every proposed cause was rejected. Add what the evidence points to.</p>
                   </div>
-                </div>
+                )}
                 <div className="col gap6 mt12">
-                  {inv.hypotheses.slice(1, 4).map((h) => (
+                  {others.slice(0, 3).map((h) => (
                     <div key={h.id} className={classNames("cause", h.status === "rejected" && "rejected")} style={{ padding: "8px 10px" }}>
                       <div className="row between">
                         <span className="small" style={{ color: "var(--ink-2)" }}>{h.label}</span>
@@ -176,13 +185,13 @@ export default function Review() {
                     </button>
                     <Link className="btn block mt8" to={`/reports?case=${current.s.case.id}`}>Edit the report first</Link>
                   </>
-                ) : (
+                ) : top ? (
                   <>
                     <div className="row gap6 review-actions" style={{ flexWrap: "wrap" }}>
-                      <button className="btn cyan" onClick={() => accept(current.s.case.id, inv.hypotheses[0].id)}>
+                      <button className="btn cyan" onClick={() => accept(current.s.case.id, top.id)}>
                         <Icon name="check" size={12} /> Accept top cause
                       </button>
-                      <button className="btn danger" onClick={() => setRejectTarget(inv.hypotheses[0])}>
+                      <button className="btn danger" onClick={() => setRejectTarget(top)}>
                         <Icon name="x" size={12} /> Reject
                       </button>
                       <button className="btn" onClick={() => setManualOpen(true)}>
@@ -191,7 +200,7 @@ export default function Review() {
                     </div>
                     <div className="divider" />
                     <div className="col gap6">
-                      {inv.hypotheses.slice(1, 3).map((h) => (
+                      {others.slice(0, 2).map((h) => (
                         <div key={h.id} className="row between">
                           <span className="xsmall muted">{h.label}</span>
                           <button className="btn sm ghost" onClick={() => accept(current.s.case.id, h.id)}>Accept</button>
@@ -199,10 +208,17 @@ export default function Review() {
                       ))}
                     </div>
                   </>
+                ) : (
+                  <>
+                    <p className="small muted">No cause stands. Add what the evidence points to.</p>
+                    <button className="btn mt12" onClick={() => setManualOpen(true)}>
+                      <Icon name="plus" size={12} /> Add cause
+                    </button>
+                  </>
                 )}
                 <div className="divider" />
                 <ProvenanceBlock
-                  items={{ model: "rootcause-0.9.0", data: "synthetic reference pack", approver: "M. Weber" }}
+                  items={{ model: "rootcause-0.9.0", data: current.s.provenance.data ?? "entered by you", approver: "M. Weber" }}
                   compact
                 />
               </div>

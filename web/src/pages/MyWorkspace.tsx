@@ -1,15 +1,47 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { fmtDateTime } from "../lib/engine";
 import { Icon } from "../components/Icon";
 import { PageHead, StatusBadge } from "../components/UI";
 
 export default function MyWorkspace() {
-  const { pack, caseStatus, setDataMode } = useStore();
+  const { pack, caseStatus, setDataMode, addOwnCase, say } = useStore();
+  const navigate = useNavigate();
+  const [loadingExample, setLoadingExample] = useState(false);
+  const [exampleError, setExampleError] = useState("");
   const cases = pack?.scenarios ?? [];
   const open = cases.filter((s) => caseStatus(s.case.id) !== "approved").length;
   const awaiting = cases.filter((s) => caseStatus(s.case.id) === "awaiting_review").length;
   const approved = cases.filter((s) => caseStatus(s.case.id) === "approved").length;
+
+  async function loadExample() {
+    setLoadingExample(true);
+    setExampleError("");
+    try {
+      const base = import.meta.env.BASE_URL;
+      const input = await (await fetch(`${base}examples/pump-housing/case.json`)).json();
+      const attachments = await Promise.all(
+        (input.files ?? []).map(async (f: { name: string; mime: string; path: string }) => {
+          const blob = await (await fetch(`${base}${f.path}`)).blob();
+          const dataUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(new Error("read failed"));
+            reader.readAsDataURL(blob);
+          });
+          return { id: `att-${f.name}`, name: f.name, mime: f.mime, size: blob.size, data_url: dataUrl };
+        }),
+      );
+      const id = addOwnCase({ ...input, attachments });
+      say("Example case loaded into your workspace");
+      navigate(`/cases/${id}`);
+    } catch (e) {
+      setExampleError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoadingExample(false);
+    }
+  }
 
   return (
     <div>
@@ -20,6 +52,9 @@ export default function MyWorkspace() {
         actions={
           <>
             <Link className="btn primary sm" to="/cases/new"><Icon name="plus" size={12} /> New case</Link>
+            <button className="btn sm" onClick={() => void loadExample()} disabled={loadingExample}>
+              <Icon name="cases" size={12} /> {loadingExample ? "Loading…" : "Example case"}
+            </button>
             <button className="btn sm" onClick={() => setDataMode("reference")}><Icon name="grid" size={12} /> Reference data</button>
           </>
         }
@@ -35,8 +70,21 @@ export default function MyWorkspace() {
           </p>
           <div className="row gap8" style={{ flexWrap: "wrap", justifyContent: "center" }}>
             <Link className="btn primary" to="/cases/new"><Icon name="plus" size={13} /> Create my first case</Link>
-            <button className="btn" onClick={() => setDataMode("reference")}><Icon name="grid" size={13} /> Explore the reference workspace</button>
+            <button className="btn" onClick={() => void loadExample()} disabled={loadingExample}>
+              <Icon name="cases" size={13} /> {loadingExample ? "Loading example…" : "Load the example case"}
+            </button>
+            <button className="btn ghost" onClick={() => setDataMode("reference")}><Icon name="grid" size={13} /> Explore the reference workspace</button>
           </div>
+          {exampleError && <div className="xsmall" style={{ color: "var(--risk)", marginTop: 8 }}>{exampleError}</div>}
+          <a
+            className="xsmall soft"
+            href="https://github.com/jiuwendemos/rootcause/blob/main/docs/example-case.md"
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: "inline-block", marginTop: 10 }}
+          >
+            What is in the example? <Icon name="external" size={10} />
+          </a>
           <div className="own-empty-limits">
             <span><Icon name="lock" size={11} /> Stored in this browser</span>
             <span><Icon name="connectors" size={11} /> No plant connection</span>

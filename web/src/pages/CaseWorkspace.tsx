@@ -84,8 +84,8 @@ export default function CaseWorkspace() {
   }
 
   const accepted = inv.hypotheses.find((h) => h.status === "accepted") ?? null;
-  const top = inv.hypotheses[0];
-  const hasImage = scenario.image_keys.length > 0;
+  const top = inv.hypotheses.find((h) => h.status !== "rejected") ?? null;
+  const imageAttachment = scenario.attachments?.find((a) => a.mime.startsWith("image/"));
   const hasXray = scenario.image_keys.length > 1;
   const imageKey = imageTab === "xray" && hasXray ? scenario.image_keys[1] : scenario.image_keys[0];
   const surfaceFindings = scenario.findings.filter((f) => f.kind === "surface");
@@ -170,7 +170,9 @@ export default function CaseWorkspace() {
         <div className="col-stack">
           <div className="viewer evidence-canvas">
             <div className="canvas" style={{ "--depth": depth } as CSSProperties}>
-              {hasImage ? (
+              {imageAttachment ? (
+                <img src={imageAttachment.data_url} alt={imageAttachment.name} />
+              ) : scenario.image_keys.length > 0 ? (
                 <img src={`${import.meta.env.BASE_URL}assets/${imageKey}.svg`} alt={`${scenario.part} inspection image`} />
               ) : (
                 <div className="canvas-empty">
@@ -186,7 +188,7 @@ export default function CaseWorkspace() {
                   style={{ opacity: imageTab === "xray" ? 1 : depth / 100 }}
                 />
               )}
-              {hasImage && showBbox && (
+              {scenario.image_keys.length > 0 && showBbox && (
                 <div
                   className="bbox"
                   data-label={`${scenario.defect} · ${(scenario.case.detection_confidence * 100).toFixed(0)}%`}
@@ -513,6 +515,7 @@ export default function CaseWorkspace() {
             </div>
           )}
 
+          {scenario.history.length > 0 && (
           <div className="panel">
             <div className="panel-head"><h3>Similar cases</h3><span className="sub">6 months</span></div>
             <div className="panel-body tight">
@@ -531,13 +534,34 @@ export default function CaseWorkspace() {
               </div>
             </div>
           </div>
+          )}
+
+          {scenario.attachments && scenario.attachments.length > 0 && (
+            <div className="panel">
+              <div className="panel-head"><h3>Attached files</h3><span className="sub">{scenario.attachments.length} uploaded</span></div>
+              <div className="panel-body">
+                <div className="col gap6">
+                  {scenario.attachments.map((a) => (
+                    <a key={a.id} className="attach-row" href={a.data_url} download={a.name}>
+                      <Icon name={a.mime.startsWith("image/") ? "camera" : "file"} size={14} />
+                      <span>
+                        <b>{a.name}</b>
+                        <small>{Math.round(a.size / 1024)} kB · {a.mime}</small>
+                      </span>
+                      <Icon name="download" size={12} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="panel">
             <div className="panel-head"><h3>Provenance</h3><span className="sub">for Q&A</span></div>
             <div className="panel-body">
               <ProvenanceBlock
                 items={scenario.provenance}
-                note="The public demo runs fully offline from a fixed seed. The pilot runs the same workflow against factory systems on site."
+                note={scenario.provenance.note ?? "The public demo runs fully offline from a fixed seed. The pilot runs the same workflow against factory systems on site."}
               />
             </div>
           </div>

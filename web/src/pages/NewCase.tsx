@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { Icon } from "../components/Icon";
 import { PageHead } from "../components/UI";
+import type { CaseAttachment } from "../types";
 
 export default function NewCase() {
   const { pack, addOwnCase, setDataMode, say } = useStore();
@@ -17,6 +18,38 @@ export default function NewCase() {
   const [description, setDescription] = useState("");
   const [cause, setCause] = useState("");
   const [error, setError] = useState("");
+  const [attachments, setAttachments] = useState<CaseAttachment[]>([]);
+  const [fileError, setFileError] = useState("");
+
+  async function addFiles(list: FileList | null) {
+    if (!list) return;
+    setFileError("");
+    const next = [...attachments];
+    for (const file of Array.from(list)) {
+      const image = /^image\/(png|jpeg|webp)$/.test(file.type);
+      const csv = file.type === "text/csv" || file.name.toLowerCase().endsWith(".csv");
+      if (!image && !csv) {
+        setFileError(`${file.name}: use PNG, JPEG, WebP or CSV.`);
+        continue;
+      }
+      if (file.size > 1.5 * 1024 * 1024) {
+        setFileError(`${file.name} is larger than 1.5 MB.`);
+        continue;
+      }
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("read failed"));
+        reader.readAsDataURL(file);
+      }).catch(() => "");
+      if (!dataUrl) {
+        setFileError(`${file.name} could not be read.`);
+        continue;
+      }
+      next.push({ id: `att-${Date.now()}-${next.length}`, name: file.name, mime: file.type || (csv ? "text/csv" : "application/octet-stream"), size: file.size, data_url: dataUrl });
+    }
+    setAttachments(next);
+  }
 
   const valid = defect.trim() && part.trim() && description.trim();
 
@@ -26,7 +59,7 @@ export default function NewCase() {
       return;
     }
     setError("");
-    const id = addOwnCase({ defect, part, lineId, batchId, severity, station, shift, description, cause });
+    const id = addOwnCase({ defect, part, lineId, batchId, severity, station, shift, description, cause, attachments });
     setDataMode("own");
     say(`Case ${id} created in my workspace`);
     navigate(`/cases/${id}`);
@@ -88,6 +121,33 @@ export default function NewCase() {
               <input id="nc-cause" className="input" value={cause} onChange={(e) => setCause(e.target.value)} placeholder="e.g. Gas porosity in the casting" />
             </div>
             <div className="field newcase-wide">
+              <label htmlFor="nc-files">Evidence files (optional)</label>
+              <input
+                id="nc-files"
+                className="input"
+                type="file"
+                multiple
+                accept="image/png,image/jpeg,image/webp,text/csv,.csv"
+                onChange={(e) => { void addFiles(e.target.files); e.currentTarget.value = ""; }}
+              />
+              <div className="xsmall soft" style={{ marginTop: 4 }}>PNG, JPEG, WebP or CSV, up to 1.5 MB each. Stored in this browser only.</div>
+              {fileError && <div className="xsmall" style={{ color: "var(--risk)", marginTop: 4 }}>{fileError}</div>}
+              {attachments.length > 0 && (
+                <div className="attach-list">
+                  {attachments.map((a) => (
+                    <span key={a.id} className="attach-chip">
+                      <Icon name={a.mime.startsWith("image/") ? "camera" : "file"} size={11} />
+                      <span>{a.name}</span>
+                      <button type="button" aria-label={`Remove ${a.name}`} onClick={() => setAttachments((prev) => prev.filter((x) => x.id !== a.id))}>
+                        <Icon name="x" size={10} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="field newcase-wide">
               <label htmlFor="nc-desc">What did you observe?</label>
               <textarea
                 id="nc-desc"
@@ -120,7 +180,7 @@ export default function NewCase() {
         <div className="panel-head"><h3>What you get</h3><span className="sub">same flow, your data</span></div>
         <div className="panel-body">
           <ul className="proof-list">
-            <li>A case with the evidence note you wrote, a working cause, and a draft report.</li>
+            <li>A case with the evidence note you wrote, any uploaded image or CSV, a working cause, and a draft report.</li>
             <li>Reject the cause or add another; the reason is stored in the audit trail.</li>
             <li>Accept a cause, sign the report, then download the case JSON.</li>
             <li>Switch to the reference workspace at any time to see the sensor, batch and proactive flows.</li>

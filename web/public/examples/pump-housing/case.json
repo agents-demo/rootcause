@@ -1,0 +1,28 @@
+{
+  "defect": "Porosity cluster at the bearing boss",
+  "part": "Pump housing, die-cast AlSi9Cu3",
+  "lineId": "line-4",
+  "batchId": "B-7781",
+  "severity": "high",
+  "station": "End-of-line inspection",
+  "shift": "B",
+  "cause": "Ejector pin over-travel",
+  "description": "Hairline crack at the bearing boss on the clamp side. The crack starts about 0.4 mm below the surface and does not follow the ejector-pin witness marks. Vacuum in the die cavity drifted from 118 to 221 mbar across the shift, and the batch was accepted on a 1.9 ppm hydrogen deviation (limit 1.4). The ejector pins were serviced two days ago and the marks are on the opposite face. A CT/loupe capture is attached, plus the sensor window and the batch record.",
+  "files": [
+    {
+      "name": "casting-boss-loupe.jpg",
+      "mime": "image/jpeg",
+      "path": "examples/pump-housing/casting-ct.jpg"
+    },
+    {
+      "name": "sensor-window.csv",
+      "mime": "text/csv",
+      "path": "examples/pump-housing/sensor-window.csv"
+    },
+    {
+      "name": "batch-record.csv",
+      "mime": "text/csv",
+      "path": "examples/pump-housing/batch-record.csv"
+    }
+  ]
+}

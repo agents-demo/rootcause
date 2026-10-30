@@ -68,6 +68,14 @@ export interface HistoricalCase {
   notes: string;
 }
 
+export interface CaseAttachment {
+  id: string;
+  name: string;
+  mime: string;
+  size: number;
+  data_url: string;
+}
+
 export interface Evidence {
   id: string;
   kind: "image" | "chart" | "record" | "similar" | "trace" | "finding";
@@ -202,6 +210,7 @@ export interface Scenario {
   report: Report;
   operator_note: string;
   provenance: Record<string, string>;
+  attachments?: CaseAttachment[];
   baseline_hours: number;
   current_hours: number;
 }

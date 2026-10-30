@@ -1,0 +1,4 @@
+batch,material,supplier,lot,hydrogen_ppm,received,note
+B-7781,AlSi9Cu3,Rheinmetall Casting,HX-88211,1.9,2026-10-13,Accepted on a 1.4 ppm hydrogen deviation; supplier says within measurement tolerance
+B-7774,AlSi9Cu3,Rheinmetall Casting,HX-88190,1.2,2026-10-09,No deviation
+B-7762,AlSi9Cu3,Voestalpine,HX-88155,1.1,2026-10-04,No deviation

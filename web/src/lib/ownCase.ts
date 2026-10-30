@@ -1,4 +1,5 @@
 import type {
+  CaseAttachment,
   CausalChain,
   DashboardData,
   Evidence,
@@ -22,6 +23,7 @@ export interface OwnCaseInput {
   shift: string;
   description: string;
   cause: string;
+  attachments?: CaseAttachment[];
 }
 
 function slug(value: string): string {
@@ -49,6 +51,20 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
   const plantId = line?.plant_id ?? pack.plants[0]?.id ?? "plant-local";
   const causeLabel = input.cause.trim();
 
+  const attachments = input.attachments ?? [];
+  const attachmentEvidence: Evidence[] = attachments.map((a, i) => ({
+    id: `EV-${String(i + 2).padStart(2, "0")}`,
+    kind: a.mime.startsWith("image/") ? "image" : "record",
+    title: a.name,
+    detail: a.mime.startsWith("image/")
+      ? `Uploaded inspection image (${Math.round(a.size / 1024)} kB).`
+      : `Uploaded data file (${Math.round(a.size / 1024)} kB).`,
+    source: `Uploaded by ${actor}`,
+    at: now,
+    strength: a.mime.startsWith("image/") ? 0.7 : 0.6,
+    payload: { name: a.name, mime: a.mime, size: a.size },
+  }));
+
   const evidence: Evidence = {
     id: "EV-01",
     kind: "finding",
@@ -72,7 +88,7 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
     rank: 1,
     status: "proposed",
     factors: { frequency: 0.1, deviation: 0.1, batch_match: 0.05, similarity: 0.05, recurrence: 0.05 },
-    evidence_ids: ["EV-01"],
+    evidence_ids: ["EV-01", ...attachmentEvidence.map((e) => e.id)],
     note: "User-entered case",
   };
 
@@ -98,7 +114,9 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
       {
         id: "s2",
         heading: "Evidence",
-        body: "One engineer note is attached. Add machine, batch or image evidence before sign-off.",
+        body: attachments.length
+          ? `One engineer note and ${attachments.length} uploaded file${attachments.length === 1 ? "" : "s"} are attached. ${attachments.map((a) => a.name).join(", ")}.`
+          : "One engineer note is attached. Add machine, batch or image evidence before sign-off.",
       },
       {
         id: "s3",
@@ -153,7 +171,8 @@ export function buildOwnCase(input: OwnCaseInput, pack: Pack, existing: Scenario
     maintenance: [],
     history: [],
     hypotheses: [hypothesis],
-    evidence: [evidence],
+    evidence: [evidence, ...attachmentEvidence],
+    attachments,
     chain,
     trace: [],
     report,

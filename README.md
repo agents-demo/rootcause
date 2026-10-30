@@ -268,6 +268,9 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   browser. Switch to the synthetic reference workspace from Admin, the command palette, the More sheet or the
   Home empty state. Reference-only pages (watchlist, alerts, proactive, brief, dashboard, capture) show an
   explicit guard while you are in My workspace. See [the demo runbook](docs/demo-runbook.md).
+- **Example own case** — a filled-in pump-housing case with a loupe image, a sensor window and a batch
+  record in web/public/examples/pump-housing. Load it from **My cases**, or recreate it by hand. See
+  [the example case](docs/example-case.md).
 - **Manager proof and demo cut** — `/proof` packages the manager's numbers with honest labels and a
   print view; `/cut` is the 10-minute guided run with a clock, links and proof points. Scripts,
   props, reset and fallback are in [the demo runbook](docs/demo-runbook.md).

@@ -521,6 +521,27 @@ p { letter-spacing: -0.003em; }
 }
 .canvas-empty b { color: var(--ink-2); font-size: 14px; }
 .canvas-empty span { max-width: 280px; font-size: 11px; line-height: 1.5; }
+.attach-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.attach-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface-2); font-size: 11px; color: var(--ink-2);
+}
+.attach-chip button {
+  display: grid; place-items: center; padding: 0;
+  border: 0; background: transparent; color: var(--soft); cursor: pointer;
+}
+.attach-chip button:hover { color: var(--risk); }
+.attach-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--ink-2);
+  text-decoration: none; font-size: 12px;
+}
+.attach-row span { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.attach-row b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.attach-row small { color: var(--soft); font-size: 11px; }
+.attach-row:hover { border-color: var(--line-2); color: var(--ink); }
 
 /* ------------------------------------------------------------------ manager proof */
 .proof-band {

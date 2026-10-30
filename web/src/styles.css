@@ -380,7 +380,8 @@ input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; bo
 }
 .cause:hover { border-color: var(--line-2); }
 .cause.lead { border-color: rgba(255, 180, 84, 0.32); background: linear-gradient(180deg, rgba(255, 180, 84, 0.055), rgba(255, 255, 255, 0.012)); }
-.cause.rejected { opacity: 0.55; }
+.cause.rejected { border-left: 3px solid var(--risk); background: var(--surface-2); }
+.cause.rejected h4 { text-decoration: line-through; }
 .cause.accepted { border-color: rgba(94, 234, 212, 0.4); background: linear-gradient(180deg, rgba(94, 234, 212, 0.06), rgba(255, 255, 255, 0.012)); }
 .cause.manual { border-style: dashed; }
 .cause-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
