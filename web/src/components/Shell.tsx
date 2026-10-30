@@ -252,7 +252,7 @@ export function Shell({ children }: { children: ReactNode }) {
       {updateReady && (
         <div className="update-banner" role="status">
           <span>A new version of RootCause is ready.</span>
-          <button className="btn sm primary" onClick={() => window.location.reload()}>Reload</button>
+          <button className="btn sm" onClick={() => window.location.reload()}>Reload</button>
           <button className="icon-btn" aria-label="Dismiss update notice" onClick={() => setUpdateReady(false)}>
             <Icon name="x" size={12} />
           </button>

@@ -144,7 +144,7 @@ export default function ShiftBriefPage() {
                   <div style={{ fontSize: 11, color: "#6d6558" }}>{r.action}</div>
                 </div>
                 <div className="row gap6">
-                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "#b07a25" }}>{r.watch_id}</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "#8a5a12" }}>{r.watch_id}</span>
                   <span style={{ fontSize: 11, border: "1px solid #d8cfbd", borderRadius: 4, padding: "2px 5px", textTransform: "uppercase" }}>{r.severity}</span>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function ShiftBriefPage() {
             <h2>Coverage</h2>
             <p style={{ fontSize: 11 }}>{current.coverage_note}</p>
 
-            <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 9, fontSize: 11, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
+            <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 9, fontSize: 11, color: "#6a6357", display: "flex", justifyContent: "space-between" }}>
               <span>{current.generated_by}</span>
               <span>Recommendations only · no line control</span>
             </div>

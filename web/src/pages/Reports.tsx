@@ -77,7 +77,7 @@ export default function Reports() {
       .map((s) => `<h2>${escapeHtml(s.heading)}</h2><p>${escapeHtml(s.body).replace(/\n/g, "<br>")}</p>`)
       .join("");
     return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(report.title)}</title>
-<style>body{margin:0;background:#e9e4d8;color:#22211d;font:15px/1.6 system-ui,sans-serif}.sheet{max-width:820px;margin:28px auto;background:#f7f3ea;padding:46px 52px;border-left:5px solid #b07a25;position:relative}h1{font-size:31px;letter-spacing:-.02em;margin:8px 0}.kicker{font:11px monospace;letter-spacing:.2em;text-transform:uppercase;color:#8a7f6c}.meta{color:#6a6357;font-size:12px;margin-bottom:20px}.summary{font-size:16px;border-left:2px solid #d8cfbd;padding-left:14px;margin:18px 0}h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#8a7f6c;margin:24px 0 6px}li{font-size:13px;margin:8px 0}.chain span{border:1px solid #d8cfbd;background:#fffdf8;padding:6px 9px;border-radius:4px;font-size:12px;margin-right:6px}.stamp{position:absolute;right:46px;top:36px;border:2px solid #2f6b4f;color:#2f6b4f;padding:8px 12px;transform:rotate(-6deg);font:700 12px monospace;letter-spacing:.16em}.foot{margin-top:28px;border-top:1px solid #d8cfbd;padding-top:12px;font-size:10px;color:#8a7f6c}</style>
+<style>body{margin:0;background:#e9e4d8;color:#22211d;font:15px/1.6 system-ui,sans-serif}.sheet{max-width:820px;margin:28px auto;background:#f7f3ea;padding:46px 52px;border-left:5px solid #b07a25;position:relative}h1{font-size:31px;letter-spacing:-.02em;margin:8px 0}.kicker{font:11px monospace;letter-spacing:.2em;text-transform:uppercase;color:#6a6357}.meta{color:#6a6357;font-size:12px;margin-bottom:20px}.summary{font-size:16px;border-left:2px solid #d8cfbd;padding-left:14px;margin:18px 0}h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#6a6357;margin:24px 0 6px}li{font-size:13px;margin:8px 0}.chain span{border:1px solid #d8cfbd;background:#fffdf8;padding:6px 9px;border-radius:4px;font-size:12px;margin-right:6px}.stamp{position:absolute;right:46px;top:36px;border:2px solid #2f6b4f;color:#2f6b4f;padding:8px 12px;transform:rotate(-6deg);font:700 12px monospace;letter-spacing:.16em}.foot{margin-top:28px;border-top:1px solid #d8cfbd;padding-top:12px;font-size:10px;color:#6a6357}</style>
 </head><body><main class="sheet"><div class="kicker">${escapeHtml(report.case_id)} · quality report · v${report.version}</div>
 <h1>${escapeHtml(report.title)}</h1><div class="meta">Status: ${report.status.replace("_", " ")} · Generated ${new Date().toLocaleString()}</div>
 ${report.status === "approved" ? '<div class="stamp">APPROVED</div>' : ""}
@@ -218,12 +218,12 @@ ${report.status === "approved" ? '<div class="stamp">APPROVED</div>' : ""}
               <div className="ev" style={{ borderTop: "1px solid #ddd4c2" }}>
                 {scenario.evidence.slice(0, 6).map((e) => (
                   <div key={e.id} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: "1px solid #e6ddcc", fontSize: 11.5, color: "#4b463c" }}>
-                    <i style={{ fontFamily: "var(--mono)", color: "#b07a25", fontStyle: "normal", minWidth: 44 }}>{e.id}</i>
+                    <i style={{ fontFamily: "var(--mono)", color: "#8a5a12", fontStyle: "normal", minWidth: 44 }}>{e.id}</i>
                     <span><b>{e.title}</b> — {e.detail} <i>({e.source})</i></span>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 10, fontSize: 11.5, color: "#8a7f6c", display: "flex", justifyContent: "space-between" }}>
+              <div style={{ marginTop: 20, borderTop: "1px solid #d8cfbd", paddingTop: 10, fontSize: 11.5, color: "#6a6357", display: "flex", justifyContent: "space-between" }}>
                 <span>Prepared with RootCause · engineer owns the decision · no line control</span>
                 <span>{report.approved_at ? fmtDateTime(report.approved_at) : "DRAFT · not signed"}</span>
               </div>
