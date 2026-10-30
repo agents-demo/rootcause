@@ -5,7 +5,8 @@ import { Icon } from "../components/Icon";
 import { PageHead, ProvenanceBlock } from "../components/UI";
 
 export default function ProactiveBooth() {
-  const { proactive, pack } = useStore();
+  const { proactive: activeProactive, referencePack } = useStore();
+  const proactive = referencePack?.proactive ?? activeProactive;
   if (!proactive) return <div className="empty">Loading…</div>;
   const m = proactive.metrics;
   const featured = ["W-1042", "W-1043", "W-1044", "W-1045"].map((id) => proactive.watches.find((w) => w.id === id)).filter(Boolean);
@@ -106,7 +107,7 @@ export default function ProactiveBooth() {
         <div className="panel-head"><h3>Provenance</h3><span className="sub">for Q&A</span></div>
         <div className="panel-body">
           <ProvenanceBlock
-            items={pack?.proactive ? {
+            items={referencePack?.proactive ? {
               data: "Synthetic watches, signals, exposures and notifications, fixed seed 417",
               schedule: `${proactive.settings.schedule.mode} · every ${proactive.settings.schedule.interval_minutes} min`,
               coverage: `${pct(m.coverage_pct, 1)} · floor ${pct(proactive.settings.schedule.coverage_floor, 0)}`,

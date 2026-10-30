@@ -6,7 +6,7 @@ import { Icon } from "../components/Icon";
 import { AuditTrail, PageHead, SeverityBadge, StatusBadge } from "../components/UI";
 
 export default function Cases() {
-  const { pack, investigation, caseStatus, audits, say } = useStore();
+  const { pack, investigation, caseStatus, audits, say, dataMode } = useStore();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const auditCase = params.get("audit");
@@ -75,7 +75,7 @@ export default function Cases() {
       />
 
       <div className="grid g4 mb16">
-        <div className="stat"><div className="label">Cases</div><div className="value">{rows.length}</div><div className="foot">across 4 lines</div></div>
+        <div className="stat"><div className="label">Cases</div><div className="value">{rows.length}</div><div className="foot">{dataMode === "own" ? "my workspace" : "across 4 lines"}</div></div>
         <div className="stat"><div className="label">Open</div><div className="value">{counts.open}</div><div className="foot">need a decision</div></div>
         <div className="stat"><div className="label">Approved</div><div className="value">{counts.approved}</div><div className="foot">signed by an engineer</div></div>
         <div className="stat"><div className="label">Critical</div><div className="value">{counts.critical}</div><div className="foot">containment first</div></div>
@@ -86,6 +86,7 @@ export default function Cases() {
           <div className="panel-head">
             <h3>Cases</h3>
             <div className="row gap6">
+              <Link className="btn sm" to="/cases/new"><Icon name="plus" size={11} /> New</Link>
               <div className="search">
                 <Icon name="search" size={12} />
                 <input className="input" style={{ width: 190, padding: "5px 8px 5px 27px", fontSize: 11 }} placeholder="Search case, part, batch…" value={query} onChange={(e) => setQuery(e.target.value)} />

@@ -728,7 +728,8 @@ still open.
 - [ ] Role-based navigation and flows for quality manager, engineer and operator (the role selector changes copy, not the route set)
 - [ ] Owned adjacent tasks: audits, CAPA, supplier quality, line release and post-fix verification
 - [ ] Prove one live connector path (OPC-UA or camera + batch record) and run a 90-day pilot with the engineer in the loop
-- [ ] Onboarding with a sample case and a repeatable first-run path for someone else to present
+- [x] Blank first run and own-data flow — My workspace opens empty, /cases/new creates a case, annotate/review/sign works; reference data is one switch away (Admin, palette, More, Home)
+- [ ] A sample case inside My workspace and a repeatable first-run script for someone else to present
 - [x] Interface 2026 for the daily shell — shipped in Phase 6, Lighthouse 100/100/100 across routes
 - [ ] Adoption instrumentation: task families per user, time-to-first-decision, queue clearance, sign-off time
 - [ ] Weekly demo cadence: one visible capability, one proof point, one trust feature, one next per cycle

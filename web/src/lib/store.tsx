@@ -22,6 +22,7 @@ import type {
   WatchCase,
 } from "../types";
 import { investigationFor, rankHypotheses } from "./engine";
+import { buildOwnCase, buildOwnPack, type DataMode, type OwnCaseInput } from "./ownCase";
 
 const STORAGE_KEY = "rootcause.demo.v1";
 
@@ -37,6 +38,8 @@ interface Persisted {
   baselines: Record<string, number>;
   events: AuditEvent[];
   proactive?: ProactivePack;
+  dataMode: DataMode;
+  ownCases: Scenario[];
 }
 
 const EMPTY: Persisted = {
@@ -50,6 +53,8 @@ const EMPTY: Persisted = {
   sharing: false,
   baselines: {},
   events: [],
+  dataMode: "own",
+  ownCases: [],
 };
 
 function loadPersisted(): Persisted {
@@ -64,6 +69,11 @@ function loadPersisted(): Persisted {
 
 interface StoreValue {
   pack: Pack | null;
+  referencePack: Pack | null;
+  dataMode: DataMode;
+  setDataMode: (mode: DataMode) => void;
+  addOwnCase: (input: OwnCaseInput) => string;
+  ownCases: Scenario[];
   loading: boolean;
   error: string | null;
   live: boolean;
@@ -116,6 +126,7 @@ const StoreContext = createContext<StoreValue | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [pack, setPack] = useState<Pack | null>(null);
+  const [referencePack, setReferencePack] = useState<Pack | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [live, setLive] = useState(false);
@@ -153,6 +164,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           if (fresh.ok) data = (await fresh.json()) as Pack;
         }
         if (cancelled) return;
+        setReferencePack(data);
         setPack(data);
         setState((prev) => ({ ...prev, proactive: prev.proactive ?? data.proactive }));
         setLoading(false);
@@ -215,11 +227,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           setLive(true);
           setState((prev) => ({
             ...prev,
-            rejected,
-            accepted,
-            manual,
-            reports,
-            approvals,
+            rejected: { ...prev.rejected, ...rejected },
+            accepted: { ...prev.accepted, ...accepted },
+            manual: { ...prev.manual, ...manual },
+            reports: { ...prev.reports, ...reports },
+            approvals: { ...prev.approvals, ...approvals },
           }));
         } catch {
           /* static demo: stay offline-first */
@@ -234,6 +246,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [apiUrl]);
+
+  useEffect(() => {
+    if (!referencePack) return;
+    setPack(state.dataMode === "own" ? buildOwnPack(referencePack, state.ownCases) : referencePack);
+  }, [referencePack, state.dataMode, state.ownCases]);
 
   useEffect(() => {
     try {
@@ -496,9 +513,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [call, pushEvent, say],
   );
 
+  const setDataMode = useCallback((mode: DataMode) => {
+    setState((s) => ({ ...s, dataMode: mode }));
+  }, []);
+
+  const addOwnCase = useCallback(
+    (input: OwnCaseInput) => {
+      if (!referencePack) throw new Error("reference pack is not loaded");
+      const scenario = buildOwnCase(input, referencePack, state.ownCases);
+      setState((s) => ({ ...s, dataMode: "own", ownCases: [...s.ownCases, scenario] }));
+      return scenario.case.id;
+    },
+    [referencePack, state.ownCases],
+  );
+
   const reset = useCallback(() => {
-    setState(EMPTY);
-    say("Demo reset");
+    setState((prev) => ({ ...EMPTY, ownCases: prev.ownCases, dataMode: prev.dataMode }));
+    say("Workspace reset");
   }, [say]);
 
   const resetCase = useCallback(
@@ -967,6 +998,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value = useMemo<StoreValue>(
     () => ({
       pack,
+      referencePack,
+      dataMode: state.dataMode,
+      setDataMode,
+      addOwnCase,
+      ownCases: state.ownCases,
       loading,
       error,
       live,
@@ -979,7 +1015,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       actionsDone: state.actionsDone,
       alertsAck: state.alertsAck,
       baselines: state.baselines,
-      proactive: state.proactive ?? pack?.proactive ?? null,
+      proactive: state.dataMode === "own" ? (pack?.proactive ?? null) : (state.proactive ?? pack?.proactive ?? null),
       accept,
       reject,
       addManual,
@@ -1015,7 +1051,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       say,
     }),
     [
-      pack, loading, error, live, scenarioFor, caseStatus, reportFor, investigation, audits,
+      pack, referencePack, state.dataMode, setDataMode, addOwnCase, state.ownCases, loading, error, live, scenarioFor, caseStatus, reportFor, investigation, audits,
       state.rejected, accept, reject, addManual, patchReport, approveReport, acknowledge,
       completeAction, setSharing, setBaseline, reset, resetCase, toast, say, state.actionsDone, state.alertsAck, state.baselines,
       state.proactive, scanProactive, triageWatch, snoozeWatch, dismissWatch, convertWatch, trueRiskWatch,

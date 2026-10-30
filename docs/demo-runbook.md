@@ -9,6 +9,12 @@ pack does not support.
 - Proof sheet: `/proof`
 - Weekly series: `/dashboard`
 
+## Before the run: pick the workspace
+
+The app opens in **My workspace** by default: blank, with cases you enter in this browser. For the manager
+cut, switch to **Reference data** first — Admin → Workspace data, the command palette, the More sheet, or the
+button on the My cases screen. The choice persists.
+
 ## Reality check before the run
 
 | Claim | State |

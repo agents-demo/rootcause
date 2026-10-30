@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { StoreProvider, useStore } from "./lib/store";
 import { UIProvider } from "./lib/ui";
@@ -26,6 +26,7 @@ const ProactiveBooth = lazy(() => import("./pages/ProactiveBooth"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const Proof = lazy(() => import("./pages/Proof"));
 const DemoCut = lazy(() => import("./pages/DemoCut"));
+const NewCase = lazy(() => import("./pages/NewCase"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -41,6 +42,18 @@ function BoothRun() {
   const scenario = pack?.scenarios.find((s) => s.id === sid) ?? pack?.scenarios[0];
   if (!scenario) return <div className="empty">Loading…</div>;
   return <Navigate to={`/cases/${scenario.case.id}?booth=1`} replace />;
+}
+
+function ReferenceGuard({ feature, children }: { feature: string; children: ReactNode }) {
+  const { dataMode, setDataMode } = useStore();
+  if (dataMode !== "own") return <>{children}</>;
+  return (
+    <div className="empty reference-only" style={{ paddingTop: 60 }}>
+      <div className="big">Reference workspace</div>
+      <p>The {feature} runs on the synthetic reference pack. Your workspace has no plant connection yet.</p>
+      <button className="btn mt12" onClick={() => setDataMode("reference")}>Open the reference workspace</button>
+    </div>
+  );
 }
 
 function NotFound() {
@@ -79,6 +92,7 @@ function Routed() {
       "/design": "Design system — RootCause",
       "/proof": "Manager proof — RootCause",
       "/cut": "Manager cut — RootCause",
+      "/cases/new": "New case — RootCause",
     };
     document.title = names[location.pathname] ?? "RootCause";
   }, [location.pathname]);
@@ -126,24 +140,25 @@ function Routed() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/design" element={<DesignSystem />} />
-          <Route path="/proof" element={<Proof />} />
+          <Route path="/proof" element={<ReferenceGuard feature="manager proof"><Proof /></ReferenceGuard>} />
           <Route path="/cut" element={<DemoCut />} />
           <Route path="/booth" element={<Booth />} />
           <Route path="/booth/run/:sid" element={<BoothRun />} />
           <Route path="/booth/proactive" element={<ProactiveBooth />} />
-          <Route path="/watchlist" element={<Watchlist />} />
-          <Route path="/watch/:watchId" element={<WatchDetail />} />
-          <Route path="/brief" element={<ShiftBriefPage />} />
-          <Route path="/alerts" element={<Alerts />} />
-          <Route path="/proactive" element={<ProactiveDashboard />} />
+          <Route path="/watchlist" element={<ReferenceGuard feature="watchlist"><Watchlist /></ReferenceGuard>} />
+          <Route path="/watch/:watchId" element={<ReferenceGuard feature="watch case"><WatchDetail /></ReferenceGuard>} />
+          <Route path="/brief" element={<ReferenceGuard feature="shift brief"><ShiftBriefPage /></ReferenceGuard>} />
+          <Route path="/alerts" element={<ReferenceGuard feature="alert center"><Alerts /></ReferenceGuard>} />
+          <Route path="/proactive" element={<ReferenceGuard feature="proactive control room"><ProactiveDashboard /></ReferenceGuard>} />
           <Route path="/cases" element={<Cases />} />
+          <Route path="/cases/new" element={<NewCase />} />
           <Route path="/cases/:caseId" element={<CaseWorkspace />} />
           <Route path="/review" element={<Review />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<ReferenceGuard feature="pilot dashboard"><Dashboard /></ReferenceGuard>} />
           <Route path="/connectors" element={<Connectors />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/capture" element={<MobileCapture />} />
+          <Route path="/capture" element={<ReferenceGuard feature="photo capture"><MobileCapture /></ReferenceGuard>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

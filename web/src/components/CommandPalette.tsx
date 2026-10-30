@@ -18,7 +18,7 @@ const RECENT_KEY = "rootcause.recent.v1";
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate();
-  const { pack, proactive, scanProactive, say } = useStore();
+  const { pack, proactive, scanProactive, say, dataMode, setDataMode } = useStore();
   const ui = useUI();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
@@ -54,6 +54,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: "nav-dashboard", label: "Quality dashboard", group: "Navigate", icon: "dashboard", run: () => go("/dashboard") },
       { id: "nav-proof", label: "Manager proof", group: "Navigate", icon: "chart", run: () => go("/proof") },
       { id: "nav-cut", label: "10-minute manager cut", group: "Navigate", icon: "play", run: () => go("/cut") },
+      { id: "nav-newcase", label: "New case", group: "Navigate", icon: "plus", run: () => go("/cases/new") },
       { id: "nav-connectors", label: "Connectors", group: "Navigate", icon: "connectors", run: () => go("/connectors") },
       { id: "nav-admin", label: "Admin", group: "Navigate", icon: "admin", run: () => go("/admin") },
       { id: "nav-about", label: "About RootCause", group: "Navigate", icon: "about", run: () => go("/about") },
@@ -64,7 +65,8 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: "act-scan", label: "Run a proactive scan", group: "Actions", icon: "refresh", run: () => { scanProactive(); onClose(); } },
       { id: "act-theme", label: ui.theme === "dark" ? "Switch to light desk mode" : "Switch to dark control room", group: "Actions", icon: "spark", run: () => { ui.toggleTheme(); onClose(); } },
       { id: "act-density", label: ui.density === "comfortable" ? "Use compact density" : "Use comfortable density", group: "Actions", icon: "grid", run: () => { ui.setDensity(ui.density === "comfortable" ? "compact" : "comfortable"); onClose(); } },
-      { id: "act-datasource", label: ui.showDataSource ? "Hide the reference-data notice" : "Show the reference-data notice", group: "Actions", icon: "shield", run: () => { ui.setShowDataSource(!ui.showDataSource); onClose(); } },
+      { id: "act-datasource", label: ui.showDataSource ? "Hide the data notice" : "Show the data notice", group: "Actions", icon: "shield", run: () => { ui.setShowDataSource(!ui.showDataSource); onClose(); } },
+      { id: "act-mode", label: dataMode === "own" ? "Open the reference workspace" : "Open my workspace", group: "Actions", icon: "grid", run: () => { setDataMode(dataMode === "own" ? "reference" : "own"); go("/"); }, hint: dataMode },
       { id: "act-help", label: "Keyboard shortcuts", group: "Actions", icon: "about", hint: "?", run: () => { onClose(); window.dispatchEvent(new CustomEvent("rootcause:shortcuts")); } },
       { id: "act-capture", label: "Start from a photo", group: "Actions", icon: "camera", run: () => go("/capture") },
     ];

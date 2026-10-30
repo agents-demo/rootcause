@@ -5,7 +5,8 @@ import { Icon } from "../components/Icon";
 import { PageHead, ProvenanceBlock, SeverityBadge } from "../components/UI";
 
 export default function Booth() {
-  const { pack, investigation } = useStore();
+  const { pack: activePack, referencePack, investigation } = useStore();
+  const pack = referencePack ?? activePack;
   const navigate = useNavigate();
   if (!pack) return <div className="empty">Loading demo pack…</div>;
 

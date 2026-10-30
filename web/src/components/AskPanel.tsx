@@ -6,13 +6,14 @@ import type { Scenario, WatchCase } from "../types";
 import { Icon } from "./Icon";
 
 export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: WatchCase }) {
-  const { live, proactive, say } = useStore();
+  const { live, dataMode, proactive, say } = useStore();
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState<AskResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [backend, setBackend] = useState("Local evidence engine");
   const controller = useRef<AbortController | null>(null);
   const caseId = watch?.linked_case_id ?? scenario?.case.id;
+  const localOnly = dataMode === "own";
 
   async function ask() {
     const q = query.trim();
@@ -21,7 +22,7 @@ export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: Wat
     setAnswer(null);
     controller.current?.abort();
     controller.current = new AbortController();
-    if (live) {
+    if (live && dataMode === "reference") {
       try {
         const res = await fetch(new URL("api/agent/ask", document.baseURI).toString(), {
           method: "POST",
@@ -55,7 +56,7 @@ export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: Wat
     <div className="ask-panel">
       <div className="row between">
         <h3>Ask {watch ? "this watch" : "this case"}</h3>
-        <span className="chip" style={{ fontSize: 11 }}>{backend}</span>
+        <span className="chip" style={{ fontSize: 11 }}>{localOnly ? "Local evidence engine · my workspace" : backend}</span>
       </div>
       <div className="ask-input">
         <input
@@ -82,7 +83,11 @@ export function AskPanel({ scenario, watch }: { scenario?: Scenario; watch?: Wat
           </div>
         </div>
       )}
-      <p className="xsmall soft mt8">Answers cite evidence. They never approve a cause or control the line.</p>
+      <p className="xsmall soft mt8">
+        {localOnly
+          ? "Your case is answered locally. It is not sent to the model or to a plant system."
+          : "Answers cite evidence. They never approve a cause or control the line."}
+      </p>
     </div>
   );
 }

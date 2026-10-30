@@ -6,7 +6,7 @@ import { Icon } from "../components/Icon";
 import { PageHead, StatusBadge } from "../components/UI";
 
 export default function Admin() {
-  const { pack, setSharing, say, live } = useStore();
+  const { pack, referencePack, dataMode, setDataMode, ownCases, setSharing, say, live } = useStore();
   const [plant, setPlant] = useState("plant-de");
   const [openPack, setOpenPack] = useState<string | null>("iso9001");
   const [npu, setNpu] = useState(true);
@@ -69,8 +69,8 @@ export default function Admin() {
     <div>
       <PageHead
         kicker="Site administration"
-        title="One factory, four lines, one record"
-        subtitle="The pilot is deliberately single-site. Users, lines, billing, the NPU option and the compliance evidence map live here. Sharing with other factories is opt-in and anonymised."
+        title={dataMode === "own" ? "Your workspace, your records" : "One factory, four lines, one record"}
+        subtitle={dataMode === "own" ? "Site administration for this browser. The plant, line, billing and compliance figures below belong to the reference pilot, not to your workspace." : "The pilot is deliberately single-site. Users, lines, billing, the NPU option and the compliance evidence map live here. Sharing with other factories is opt-in and anonymised."}
         actions={
           <>
             <span className="chip amber"><span className="dot warn" /> Reference pilot · day 34</span>
@@ -80,11 +80,31 @@ export default function Admin() {
         }
       />
 
-      <div className="grid g4 mb16">
+      {dataMode === "reference" && <div className="grid g4 mb16">
         <div className="stat"><div className="label">Plant</div><div className="value" style={{ fontSize: 21 }}>{plantInfo?.name}</div><div className="foot">{plantInfo?.site}, {plantInfo?.country}</div></div>
         <div className="stat"><div className="label">Lines</div><div className="value">{pack.billing.lines}</div><div className="foot">single-site pilot</div></div>
         <div className="stat"><div className="label">MRR</div><div className="value">{eur(pack.billing.mrr_eur)}</div><div className="foot">{pack.billing.plan}</div></div>
         <div className="stat"><div className="label">Next invoice</div><div className="value" style={{ fontSize: 21 }}>{fmtDate(pack.billing.next_invoice)}</div><div className="foot">per line + NPU option</div></div>
+      </div>}
+
+      <div className="panel mb16">
+        <div className="panel-head"><h3>Workspace data</h3><span className="sub">what the app shows</span></div>
+        <div className="panel-body">
+          <div className="row between" style={{ flexWrap: "wrap", gap: 12 }}>
+            <p className="small muted" style={{ maxWidth: 640, margin: 0 }}>
+              My workspace holds the cases you enter in this browser and contains no synthetic records. Reference
+              data is the fixed synthetic pack used for the demo, the proactive layer and the pilot dashboard.
+            </p>
+            <div className="row gap8" style={{ flexWrap: "wrap" }}>
+              <button className={dataMode === "own" ? "btn sm primary" : "btn sm"} onClick={() => setDataMode("own")}>
+                My workspace ({ownCases.length})
+              </button>
+              <button className={dataMode === "reference" ? "btn sm primary" : "btn sm"} onClick={() => setDataMode("reference")}>
+                Reference data ({referencePack?.scenarios.length ?? 0})
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid" style={{ gridTemplateColumns: "1.35fr 1fr", alignItems: "start" }}>

@@ -85,6 +85,7 @@ export default function CaseWorkspace() {
 
   const accepted = inv.hypotheses.find((h) => h.status === "accepted") ?? null;
   const top = inv.hypotheses[0];
+  const hasImage = scenario.image_keys.length > 0;
   const hasXray = scenario.image_keys.length > 1;
   const imageKey = imageTab === "xray" && hasXray ? scenario.image_keys[1] : scenario.image_keys[0];
   const surfaceFindings = scenario.findings.filter((f) => f.kind === "surface");
@@ -169,7 +170,14 @@ export default function CaseWorkspace() {
         <div className="col-stack">
           <div className="viewer evidence-canvas">
             <div className="canvas" style={{ "--depth": depth } as CSSProperties}>
-              <img src={`${import.meta.env.BASE_URL}assets/${imageKey}.svg`} alt={`${scenario.part} inspection image`} />
+              {hasImage ? (
+                <img src={`${import.meta.env.BASE_URL}assets/${imageKey}.svg`} alt={`${scenario.part} inspection image`} />
+              ) : (
+                <div className="canvas-empty">
+                  <b>No inspection image attached</b>
+                  <span>This case was entered manually. Add evidence or connect a camera to attach one.</span>
+                </div>
+              )}
               {hasXray && (depth > 0 || imageTab === "xray") && (
                 <img
                   className="xray show"
@@ -178,7 +186,7 @@ export default function CaseWorkspace() {
                   style={{ opacity: imageTab === "xray" ? 1 : depth / 100 }}
                 />
               )}
-              {showBbox && (
+              {hasImage && showBbox && (
                 <div
                   className="bbox"
                   data-label={`${scenario.defect} · ${(scenario.case.detection_confidence * 100).toFixed(0)}%`}

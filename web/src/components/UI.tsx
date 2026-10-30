@@ -3,7 +3,15 @@ import type { AuditEvent, CausalChain, Evidence, TraceStep } from "../types";
 import { classNames } from "../lib/engine";
 import { Icon } from "./Icon";
 
-export function DataSourceNote({ seed, live = false }: { seed: number; live?: boolean }) {
+export function DataSourceNote({ seed, live = false, mode = "reference" }: { seed: number; live?: boolean; mode?: "own" | "reference" }) {
+  if (mode === "own") {
+    return (
+      <div className="data-source-note" role="note" aria-label="Data source">
+        <span className="chip"><i className="dot" /> My workspace</span>
+        <span>Cases you enter are stored in this browser. No plant connection, no synthetic records.</span>
+      </div>
+    );
+  }
   return (
     <div className="data-source-note" role="note" aria-label="Data source">
       <span className="chip amber"><i className="dot warn" /> Reference data</span>

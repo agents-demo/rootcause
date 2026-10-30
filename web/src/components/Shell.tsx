@@ -29,6 +29,7 @@ const moreModes = [
   { to: "/reports", label: "Reports", icon: "report" },
   { to: "/dashboard", label: "Quality dashboard", icon: "dashboard" },
   { to: "/proof", label: "Manager proof", icon: "chart" },
+  { to: "/cases/new", label: "New case", icon: "plus" },
   { to: "/cut", label: "10-minute demo cut", icon: "play" },
   { to: "/proactive", label: "Proactive room", icon: "gauge" },
   { to: "/capture", label: "Photo capture", icon: "camera" },
@@ -60,7 +61,7 @@ const titles: Record<string, string> = {
 };
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { pack, proactive, toast, reset, live, readNotification, readAllNotifications } = useStore();
+  const { pack, proactive, toast, reset, live, dataMode, setDataMode, readNotification, readAllNotifications } = useStore();
   const location = useLocation();
   const navigate = useNavigate();
   const ui = useUI();
@@ -238,7 +239,10 @@ export function Shell({ children }: { children: ReactNode }) {
               <button className="btn sm" onClick={() => { setMoreOpen(false); setCmdOpen(true); }}>
                 <Icon name="search" size={13} /> Ask or jump
               </button>
-              <button className="btn sm ghost" onClick={reset}><Icon name="reset" size={13} /> Reset reference data</button>
+              <button className="btn sm ghost" onClick={() => { setDataMode(dataMode === "own" ? "reference" : "own"); setMoreOpen(false); }}>
+                <Icon name="grid" size={13} /> {dataMode === "own" ? "Reference data" : "My workspace"}
+              </button>
+              <button className="btn sm ghost" onClick={reset}><Icon name="reset" size={13} /> {dataMode === "own" ? "Reset decisions" : "Reset reference data"}</button>
             </div>
           </div>
         </div>
@@ -246,7 +250,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <div className="main-2026">
         <main className="content-2026" id="main-content" aria-label={title}>
-          {ui.showDataSource && pack && <DataSourceNote seed={pack.meta.seed} live={live} />}
+          {ui.showDataSource && pack && <DataSourceNote seed={pack.meta.seed} live={live} mode={dataMode} />}
           {children}
         </main>
       </div>

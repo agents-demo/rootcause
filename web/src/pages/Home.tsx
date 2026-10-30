@@ -4,6 +4,7 @@ import { useStore } from "../lib/store";
 import { useUI, navigateWithTransition } from "../lib/ui";
 import { fmtDateTime, pct, timeAgo } from "../lib/engine";
 import { Icon } from "../components/Icon";
+import MyWorkspace from "./MyWorkspace";
 
 interface Decision {
   id: string;
@@ -17,7 +18,7 @@ interface Decision {
 }
 
 export default function Home() {
-  const { pack, proactive, caseStatus, reportFor, actionsDone } = useStore();
+  const { pack, proactive, caseStatus, reportFor, actionsDone, dataMode } = useStore();
   const ui = useUI();
   const navigate = useNavigate();
   const [onboarding, setOnboarding] = useState(() => localStorage.getItem("rootcause.onboarded") !== "1");
@@ -80,6 +81,8 @@ export default function Home() {
     const rank = { critical: 0, high: 1, warning: 2, info: 3 };
     return list.sort((a, b) => rank[a.severity] - rank[b.severity]);
   }, [pack, proactive, caseStatus, reportFor, actionsDone]);
+
+  if (dataMode === "own") return <MyWorkspace />;
 
   if (!pack || !proactive) return <div className="empty">Loading the decision queue…</div>;
   const m = proactive.metrics;

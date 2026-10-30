@@ -264,6 +264,10 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   watch board, evidence docks, light desk mode, density, type/token system, chart data tables,
   focus mode, URL-addressable case panes and a living design catalogue. Validation harness is in
   [Interface 2026](docs/interface-2026.md); live usability sessions belong to the pilot.
+- **Workspace data mode** — the app opens in **My workspace**: blank, and your own cases are stored in this
+  browser. Switch to the synthetic reference workspace from Admin, the command palette, the More sheet or the
+  Home empty state. Reference-only pages (watchlist, alerts, proactive, brief, dashboard, capture) show an
+  explicit guard while you are in My workspace. See [the demo runbook](docs/demo-runbook.md).
 - **Manager proof and demo cut** — `/proof` packages the manager's numbers with honest labels and a
   print view; `/cut` is the 10-minute guided run with a clock, links and proof points. Scripts,
   props, reset and fallback are in [the demo runbook](docs/demo-runbook.md).
