@@ -8,7 +8,7 @@ an extraction manifest. It does **not** rename public types or change a single d
 - Branch: `laix/handoff-v1`
 - Tag: `laix-handoff-v1`
 - Captured from: `rootcause@a8b7851`
-- Handoff commit: `PENDING`
+- Handoff commit: `72cac4c` (this file is `72cac4c` plus the hash-recording follow-up)
 
 ## Module paths and line counts
 
