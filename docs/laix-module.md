@@ -33,8 +33,11 @@ rules first; a calibrated scorer or bandit can replace `_score` without changing
 
 ## The outcome loop
 
-RootCause persists the loop in SQLite (`laix_actions`, `laix_followups`). `QualityOutcomeTracker`
-and `estimate_outcome` compute it; the API records actions and follow-ups:
+RootCause persists the loop in SQLite (`laix_actions`, `laix_followups`). On **report approval**, the
+existing post-fix follow-up becomes an action automatically when `ROOTCAUSE_LAIX=1` and a baseline is
+configured (`ROOTCAUSE_LAIX_BASELINE`); verifying that follow-up records the recurrence.
+`QualityOutcomeTracker` and `estimate_outcome` compute it; the API also records actions and
+follow-ups directly:
 
 ```bash
 GET  /api/laix/actions
@@ -51,8 +54,9 @@ It returns an `Outcome`:
 - `causal: false` and a note that this is observational, not a causal claim.
 
 This is the piece RootCause was missing: a corrective action now has a measurable “did it help?”
-answer instead of only “it was done”. The app does not auto-record actions from report approval yet;
-the caller supplies the real baseline and window.
+answer instead of only “it was done”. The Admin page has a **Decision layer · LAIX** panel (on-site
+API only) with the policy, baseline, window and each outcome, plus **No recurrence** / **Recurred**
+buttons. They call the existing follow-up verification endpoint, so the loop is usable from the app.
 
 ## How RootCause uses it
 
@@ -66,6 +70,11 @@ When enabled, `scheduler.run_scan` calls the policy for each candidate signal. `
 watch; `ask`, `guide`, `act` and `escalate` open it. The scan result includes a `laix` block with the
 policy version and every decision record; the records are also written to the append-only audit as
 `laix.decision`, so the “what, why, evidence, confidence” survives the request.
+
+The adapter reads `ROOTCAUSE_LAIX_INTERRUPT_COST`, `ROOTCAUSE_LAIX_MISS_COST` and
+`ROOTCAUSE_LAIX_REQUIRE_APPROVAL`; the interruption budget comes from the scan's max alerts. The
+outcome auto-record needs `ROOTCAUSE_LAIX_BASELINE` (> 0) and uses `ROOTCAUSE_LAIX_WINDOW_DAYS`
+(default 30).
 
 There are HTTP endpoints for a future TypeScript SDK or another app:
 
