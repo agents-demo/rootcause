@@ -1,0 +1,178 @@
+{
+  "contract": "laix-outcome",
+  "version": "1",
+  "baseline_rate": 0.3,
+  "window_days": 30,
+  "cases": [
+    {
+      "id": "ten-followups",
+      "action_id": "A-1",
+      "followups": [
+        {
+          "action_id": "A-1",
+          "case_id": "C-1",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": true,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-2",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": true,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-3",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-4",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-5",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-6",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-7",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-8",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-9",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-10",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        }
+      ],
+      "action": "post-fix monitoring",
+      "expected": {
+        "treated": 10,
+        "recurred": 2,
+        "treated_rate": 0.2,
+        "effect": 0.3333,
+        "confidence": 0.5,
+        "causal": false
+      }
+    },
+    {
+      "id": "four-followups",
+      "action_id": "A-1",
+      "followups": [
+        {
+          "action_id": "A-1",
+          "case_id": "C-1",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": true,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-2",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-3",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        },
+        {
+          "action_id": "A-1",
+          "case_id": "C-4",
+          "at": "2026-10-31T00:00:00Z",
+          "recurrence": false,
+          "line_id": "line-6",
+          "defect": "porosity",
+          "notes": ""
+        }
+      ],
+      "action": "post-fix monitoring",
+      "expected": {
+        "treated": 4,
+        "recurred": 1,
+        "treated_rate": 0.25,
+        "effect": 0.1667,
+        "confidence": 0.2,
+        "causal": false
+      }
+    },
+    {
+      "id": "no-followups",
+      "action_id": "A-1",
+      "followups": [],
+      "action": "post-fix monitoring",
+      "expected": {
+        "treated": 0,
+        "recurred": 0,
+        "treated_rate": 0.0,
+        "effect": 1.0,
+        "confidence": 0.0,
+        "causal": false
+      }
+    }
+  ]
+}

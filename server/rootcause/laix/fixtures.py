@@ -78,3 +78,43 @@ def cases() -> list[BenchCase]:
             _constraints(),
         ),
     ]
+
+def contract_cases() -> list[BenchCase]:
+    """Additional labelled cases for the frozen policy contract; not part of the bench score."""
+    return [
+        BenchCase(
+            "critical-thin",
+            "escalate",
+            _signal(id="critical-thin", severity="critical", z=0.0, baseline=None),
+            _state(),
+            _constraints(),
+        ),
+        BenchCase(
+            "critical-budget",
+            "escalate",
+            _signal(id="critical-budget", severity="critical", z=3.0),
+            _state(),
+            _constraints(max_interruptions_per_shift=2, interruptions_used=2),
+        ),
+        BenchCase(
+            "info-strong",
+            "guide",
+            _signal(id="info-strong", severity="info", z=3.0),
+            _state(),
+            _constraints(),
+        ),
+        BenchCase(
+            "warning-no-baseline",
+            "guide",
+            _signal(id="warning-no-baseline", severity="warning", z=3.0, baseline=None),
+            _state(),
+            _constraints(),
+        ),
+        BenchCase(
+            "high-budget",
+            "wait",
+            _signal(id="high-budget", severity="high", z=3.2),
+            _state(),
+            _constraints(max_interruptions_per_shift=2, interruptions_used=2),
+        ),
+    ]

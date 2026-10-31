@@ -1,0 +1,597 @@
+{
+  "policy": "quality-intervention.v1",
+  "version": "1",
+  "provenance": {
+    "capturedFrom": "rootcause@a8b7851",
+    "source": "server/rootcause/laix/fixtures.py (cases + contract_cases)",
+    "date": "2026-10-31"
+  },
+  "cases": [
+    {
+      "id": "high-hydrogen",
+      "label": "high severity, strong evidence",
+      "signal": {
+        "id": "high",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 3.2,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "high",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "act",
+        "confidence": 0.837,
+        "why": [
+          "severity=high",
+          "evidence=0.933 (z=3.2)",
+          "attention budget 1/10",
+          "score=0.843; wait cost=1.57; interrupt cost=1.0",
+          "surface it now: the cost of waiting is higher than the interruption"
+        ],
+        "requires_approval": true
+      }
+    },
+    {
+      "id": "weak-drift",
+      "label": "info below the action threshold",
+      "signal": {
+        "id": "weak",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 0.3,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "info",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "wait",
+        "confidence": 0.7,
+        "why": [
+          "severity=info",
+          "evidence=0.45 (z=0.3)",
+          "attention budget 1/10",
+          "score=0.34; wait cost=6.6; interrupt cost=1.0",
+          "below the action threshold"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "thin-evidence",
+      "label": "warning with thin evidence asks for a check",
+      "signal": {
+        "id": "thin",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 0.1,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "warning",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "ask",
+        "confidence": 0.548,
+        "why": [
+          "severity=warning",
+          "evidence=0.417 (z=0.1)",
+          "attention budget 1/10",
+          "score=0.495; wait cost=5.05; interrupt cost=1.0",
+          "signal is real but evidence is thin: ask for a check or a second view"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "medium-trend",
+      "label": "warning guides with a watch",
+      "signal": {
+        "id": "medium",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 2.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "warning",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "guide",
+        "confidence": 0.686,
+        "why": [
+          "severity=warning",
+          "evidence=0.733 (z=2.0)",
+          "attention budget 1/10",
+          "score=0.59; wait cost=4.1; interrupt cost=1.0",
+          "open a watch and let the engineer choose when to look"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "critical-hydrogen",
+      "label": "critical signal escalates",
+      "signal": {
+        "id": "critical",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 4.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "critical",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "escalate",
+        "confidence": 0.95,
+        "why": [
+          "severity=critical",
+          "evidence=1.0 (z=4.0)",
+          "attention budget 1/10",
+          "score=1.0; wait cost=0.0; interrupt cost=1.0",
+          "critical signal: a named human decides now"
+        ],
+        "requires_approval": true
+      }
+    },
+    {
+      "id": "budget-spent",
+      "label": "budget spent waits for a non-critical signal",
+      "signal": {
+        "id": "budget",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 3.2,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "high",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 2,
+        "interruptions_used": 2,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "wait",
+        "confidence": 0.8,
+        "why": [
+          "severity=high",
+          "evidence=0.933 (z=3.2)",
+          "attention budget 2/2",
+          "score=0.843; wait cost=1.57; interrupt cost=1.0",
+          "interruption budget spent; stay silent unless the signal is critical"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "already-open",
+      "label": "already-open signal waits",
+      "signal": {
+        "id": "duplicate",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 2.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "warning",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [
+          "line-6:hydrogen"
+        ],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "wait",
+        "confidence": 0.95,
+        "why": [
+          "already actioned or already open for this line and parameter"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "critical-thin",
+      "label": "critical with no z-score still escalates",
+      "signal": {
+        "id": "critical-thin",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": null,
+        "z": 0.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "critical",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "escalate",
+        "confidence": 0.903,
+        "why": [
+          "severity=critical",
+          "evidence=0.55 (z=0.0)",
+          "attention budget 1/10",
+          "score=0.865; wait cost=1.35; interrupt cost=1.0",
+          "critical signal: a named human decides now"
+        ],
+        "requires_approval": true
+      }
+    },
+    {
+      "id": "critical-budget",
+      "label": "critical overrides a spent budget",
+      "signal": {
+        "id": "critical-budget",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 3.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "critical",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 2,
+        "interruptions_used": 2,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "escalate",
+        "confidence": 0.94,
+        "why": [
+          "severity=critical",
+          "evidence=0.9 (z=3.0)",
+          "attention budget 2/2",
+          "score=0.97; wait cost=0.3; interrupt cost=1.0",
+          "critical signal: a named human decides now"
+        ],
+        "requires_approval": true
+      }
+    },
+    {
+      "id": "info-strong",
+      "label": "info with strong evidence guides",
+      "signal": {
+        "id": "info-strong",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 3.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "info",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "guide",
+        "confidence": 0.64,
+        "why": [
+          "severity=info",
+          "evidence=0.9 (z=3.0)",
+          "attention budget 1/10",
+          "score=0.475; wait cost=5.25; interrupt cost=1.0",
+          "open a watch and let the engineer choose when to look"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "warning-no-baseline",
+      "label": "warning without a baseline guides",
+      "signal": {
+        "id": "warning-no-baseline",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": null,
+        "z": 3.0,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "warning",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 10,
+        "interruptions_used": 1,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "guide",
+        "confidence": 0.688,
+        "why": [
+          "severity=warning",
+          "evidence=0.75 (z=3.0)",
+          "attention budget 1/10",
+          "score=0.595; wait cost=4.05; interrupt cost=1.0",
+          "open a watch and let the engineer choose when to look"
+        ],
+        "requires_approval": false
+      }
+    },
+    {
+      "id": "high-budget",
+      "label": "high signal with the budget spent waits",
+      "signal": {
+        "id": "high-budget",
+        "source": "fixture",
+        "kind": "ewma",
+        "line_id": "line-6",
+        "parameter": "hydrogen",
+        "value": 2.1,
+        "baseline": 1.2,
+        "z": 3.2,
+        "at": "2026-10-31T00:00:00Z",
+        "severity": "high",
+        "evidence_id": "EV-04",
+        "attributes": {}
+      },
+      "state": {
+        "id": "line-6",
+        "goal": "prevent the next escape",
+        "phase": "watch",
+        "beliefs": {},
+        "confidence": 0.6,
+        "open_watch_keys": [],
+        "actions": [],
+        "expires_at": null
+      },
+      "constraints": {
+        "max_interruptions_per_shift": 2,
+        "interruptions_used": 2,
+        "interrupt_cost": 1.0,
+        "miss_cost": 10.0,
+        "latency_budget_ms": 1000,
+        "risk_ceiling": "critical",
+        "require_approval": true
+      },
+      "expected": {
+        "action": "wait",
+        "confidence": 0.8,
+        "why": [
+          "severity=high",
+          "evidence=0.933 (z=3.2)",
+          "attention budget 2/2",
+          "score=0.843; wait cost=1.57; interrupt cost=1.0",
+          "interruption budget spent; stay silent unless the signal is critical"
+        ],
+        "requires_approval": false
+      }
+    }
+  ]
+}

@@ -59,7 +59,8 @@ class QualityInterventionPolicy:
         return score, round(evidence, 3)
 
     def decide(self, signal: Signal, state: ExperienceState, constraints: Constraints) -> Decision:
-        key = f"{signal.line_id}:{signal.parameter}"
+        generic = signal.as_generic()
+        key = f"{generic['subject']}:{generic['kind']}"
         if signal.id in state.actions or key in state.open_watch_keys:
             return _wait(
                 ["already actioned or already open for this line and parameter"],
@@ -194,7 +195,7 @@ class QualityInterventionPolicy:
                 current = replace(
                     current,
                     actions=tuple([*current.actions, signal.id]),
-                    open_watch_keys=tuple([*current.open_watch_keys, f"{signal.line_id}:{signal.parameter}"]),
+                    open_watch_keys=tuple([*current.open_watch_keys, f"{signal.as_generic()['subject']}:{signal.as_generic()['kind']}"]),
                 )
         return out
 

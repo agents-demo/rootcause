@@ -37,6 +37,19 @@ class Signal:
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
 
+    def as_generic(self) -> dict[str, Any]:
+        """A domain-free view of the signal for the portable contract.
+
+        Existing fields stay for the app and tests. ``subject`` is the app's line identifier and
+        ``kind`` is the observed parameter; the numeric evidence moves into ``attributes``.
+        """
+        return {
+            "subject": self.line_id,
+            "kind": self.parameter,
+            "attributes": {"value": self.value, "baseline": self.baseline, "z": self.z},
+            "evidence_id": self.evidence_id,
+        }
+
 
 @dataclass(frozen=True)
 class ExperienceState:

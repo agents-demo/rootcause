@@ -39,6 +39,7 @@ include = ["rootcause*"]
 
 [tool.setuptools.package-data]
 rootcause = ["data/*.json"]
+"rootcause.laix" = ["contract/*.json", "fixtures/*.json"]
 
 [tool.ruff]
 line-length = 120
