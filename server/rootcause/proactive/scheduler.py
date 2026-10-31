@@ -7,12 +7,12 @@ a scan run. It never writes to a machine.
 
 from __future__ import annotations
 
-import os
 import time
 from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from ..laix_adapter import QUALITY_POLICY, decide_for_risk_signal
 from ..models import RiskSignal, ScanRun, WatchCase
 from . import signals as sig
 from .containment import suggested_checks_from_pattern
@@ -67,7 +67,6 @@ def run_scan(
     existing_list = list(existing)
     candidates: list[WatchCase] = []
     suppressed = 0
-    use_laix = os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"}
     laix_records: list[dict] = []
     priors = pattern_priors(existing_list)
     for signal in cleaned:
@@ -82,19 +81,16 @@ def run_scan(
         if duplicate_for(existing_list, key):
             suppressed += 1
             continue
-        if use_laix:
-            from ..laix_adapter import decide_for_risk_signal
-
-            decision, record = decide_for_risk_signal(
-                signal,
-                [*existing_list, *candidates],
-                max_alerts=max_alerts,
-                interruptions_used=len(existing_list),
-            )
-            laix_records.append(record.as_dict())
-            if decision.action == "wait":
-                suppressed += 1
-                continue
+        decision, record = decide_for_risk_signal(
+            signal,
+            [*existing_list, *candidates],
+            max_alerts=max_alerts,
+            interruptions_used=len(existing_list),
+        )
+        laix_records.append(record.as_dict())
+        if decision.action == "wait":
+            suppressed += 1
+            continue
         watch = build_watch(
             watch_id=f"W-{now.strftime('%H%M%S')}-{len(candidates) + 1}",
             signals=[signal],
@@ -126,9 +122,11 @@ def run_scan(
         "signals": [s.model_dump() for s in cleaned],
         "candidates": [w.model_dump() for w in kept],
         "laix": {
-            "enabled": use_laix,
-            "policy": "quality-intervention.v1",
+            "engine": "laix",
+            "enabled": True,
+            "policy": QUALITY_POLICY.name,
             "decisions": laix_records,
+            "records": laix_records,
         },
     }
 

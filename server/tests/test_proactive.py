@@ -172,11 +172,12 @@ def test_gradient_boosting_challenger_is_deterministic():
     assert (first == second).all()
     assert predictive.c_index(list(range(1, 121)), list(y), list(first)) >= 0
 
-def test_scan_can_use_the_laix_policy(monkeypatch):
-    monkeypatch.setenv("ROOTCAUSE_LAIX", "1")
+def test_scan_uses_the_laix_policy(monkeypatch):
     result = scheduler.run_scan(pack=pack(), existing=[], now=NOW, mode="shadow")
     laix = result["laix"]
+    assert laix["engine"] == "laix"
     assert laix["enabled"] is True
     assert laix["policy"] == "quality-intervention.v1"
     assert laix["decisions"]
+    assert laix["records"] == laix["decisions"]
     assert {row["action"] for row in laix["decisions"]} <= {"wait", "ask", "guide", "act", "verify", "escalate"}

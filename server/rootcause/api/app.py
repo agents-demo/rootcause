@@ -15,6 +15,7 @@ import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from importlib import metadata
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -22,6 +23,7 @@ from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
+from laix import POLICY_VERSION, SCHEMA_VERSION
 
 from .. import config
 from ..agent.jiuwen_runtime import OpenJiuwenRuntime
@@ -41,22 +43,7 @@ from ..engine.feedback import apply_priors, priors_from_corrections
 from ..engine.orchestrator import run_investigation
 from ..engine.ranking import explain, rank_hypotheses
 from ..engine.reporting import report_docx, report_html, report_markdown, report_pdf, report_rtf
-from ..laix import (
-    Constraints as LaixConstraints,
-)
-from ..laix import (
-    ExperienceState as LaixState,
-)
-from ..laix import (
-    FollowUp as LaixFollowUp,
-)
-from ..laix import (
-    QualityInterventionPolicy,
-    estimate_outcome,
-)
-from ..laix import (
-    Signal as LaixSignal,
-)
+from ..laix_adapter import LAYER, QUALITY_POLICY, decide_quality
 from ..models import (
     AcceptRequest,
     ApprovalRequest,
@@ -76,12 +63,23 @@ from ..proactive import notifications as notify
 from ..proactive import watch as watch_engine
 from ..proactive.privacy import sanitize_note
 from ..proactive.queue import OfflineQueue
+from ..quality import (
+    Constraints as QualityConstraints,
+)
+from ..quality import (
+    ExperienceState as QualityState,
+)
+from ..quality import (
+    FollowUp as QualityFollowUp,
+)
+from ..quality import (
+    Signal as QualitySignal,
+)
+from ..quality import (
+    estimate_outcome,
+)
 from ..research import predictive
 from ..tenancy import DEFAULT_TENANT, StoreRouter, current_tenant, set_tenant
-
-
-def _laix_enabled() -> bool:
-    return os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"}
 
 
 def _laix_baseline() -> float:
@@ -610,7 +608,7 @@ def approve(case_id: str, body: ApprovalRequest, request: Request) -> dict[str, 
                 watch_id=watch["id"] if watch else None,
             )
             rc.store.save_followup(follow.model_dump(mode="json"), actor=body.actor, detail="Post-fix monitoring window opened")
-    if _laix_enabled() and _laix_baseline() > 0:
+    if _laix_baseline() > 0:
         case_follow = next((f for f in rc.store.list_followups() if f.get("case_id") == case_id), None)
         if case_follow:
             rc.store.save_laix_action(
@@ -1417,7 +1415,7 @@ async def verify_followup(followup_id: str, request: Request) -> dict[str, Any]:
         recurrence_watch_id=body.get("recurrence_watch_id"),
     )
     rc.store.save_followup(follow.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), detail=follow.note)
-    if _laix_enabled() and any(action["id"] == followup_id for action in rc.store.list_laix_actions()):
+    if any(action["id"] == followup_id for action in rc.store.list_laix_actions()):
         case = rc.store.get_case(follow.case_id) or {}
         rc.store.add_laix_followup(
             {
@@ -1480,19 +1478,32 @@ def laix_decisions(request: Request, limit: int = 50) -> dict[str, Any]:
 
 @app.get("/api/laix/status")
 def laix_status() -> dict[str, Any]:
+    layer_status = LAYER.status()
+    try:
+        laix_version = metadata.version("laix")
+    except metadata.PackageNotFoundError:
+        laix_version = "unknown"
     return {
-        "policy": "quality-intervention.v1",
-        "enabled": _laix_enabled(),
-        "auto_record": _laix_enabled() and _laix_baseline() > 0,
+        "engine": "laix",
+        "laix_version": laix_version,
+        "laix_policy_version": POLICY_VERSION,
+        "schema_version": SCHEMA_VERSION,
+        "quality_policy": QUALITY_POLICY.name,
+        "quality_policy_version": QUALITY_POLICY.version,
+        "active_policy": layer_status["policy"],
+        "policy": QUALITY_POLICY.name,
+        "enabled": True,
+        "auto_record": _laix_baseline() > 0,
         "baseline_rate": _laix_baseline(),
         "window_days": _laix_window_days(),
         "interrupt_cost": float(os.getenv("ROOTCAUSE_LAIX_INTERRUPT_COST", "1.0")),
         "miss_cost": float(os.getenv("ROOTCAUSE_LAIX_MISS_COST", "10.0")),
         "components": ["intervention", "outcome"],
         "actions": ["wait", "ask", "guide", "act", "verify", "escalate"],
+        "decisions": layer_status["decisions"],
         "note": (
-            "Portable decision layer. It reads signals, state and constraints; it does not approve a "
-            "cause, control a line or call a model."
+            "LAIX is the generic decision layer. The quality-intervention policy is a RootCause plugin; "
+            "it does not approve a cause, control a line or call a model."
         ),
     }
 
@@ -1501,14 +1512,12 @@ def laix_status() -> dict[str, Any]:
 async def laix_decide(request: Request) -> dict[str, Any]:
     body = await request.json()
     try:
-        signal = LaixSignal(**body["signal"])
-        state = LaixState(**body["state"])
-        constraints = LaixConstraints(**body.get("constraints", {}))
+        signal = QualitySignal(**body["signal"])
+        state = QualityState(**body["state"])
+        constraints = QualityConstraints(**body.get("constraints", {}))
     except (KeyError, TypeError) as exc:
-        raise HTTPException(400, f"invalid LAIX input: {exc}") from exc
-    policy = QualityInterventionPolicy()
-    decision = policy.decide(signal, state, constraints)
-    record = policy.record(decision, signal, state, constraints, actor=str(body.get("actor", "api")))
+        raise HTTPException(400, f"invalid quality input: {exc}") from exc
+    decision, record = decide_quality(signal, state, constraints, actor=str(body.get("actor", "api")))
     return {"decision": decision.as_dict(), "record": record.as_dict()}
 
 
@@ -1519,7 +1528,7 @@ async def laix_outcome(request: Request) -> dict[str, Any]:
     if not action_id:
         raise HTTPException(400, "action_id is required")
     try:
-        followups = [LaixFollowUp(**row) for row in body.get("followups", [])]
+        followups = [QualityFollowUp(**row) for row in body.get("followups", [])]
     except TypeError as exc:
         raise HTTPException(400, f"invalid follow-up: {exc}") from exc
     outcome = estimate_outcome(
@@ -1584,7 +1593,7 @@ def laix_outcomes(request: Request) -> dict[str, Any]:
     outcomes = []
     for action in actions:
         rows = [
-            LaixFollowUp(
+            QualityFollowUp(
                 action_id=row["action_id"],
                 case_id=row.get("case_id", ""),
                 at=row["at"],

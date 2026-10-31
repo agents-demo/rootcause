@@ -17,6 +17,7 @@ dependencies = [
     "Pillow>=10",
     "numpy>=1.26",
     "python-dotenv>=1.0",
+    "laix @ git+https://github.com/michaelatamuk/laix.git@v0.2.1#subdirectory=python/laix",
 ]
 
 [project.optional-dependencies]
@@ -39,7 +40,7 @@ include = ["rootcause*"]
 
 [tool.setuptools.package-data]
 rootcause = ["data/*.json"]
-"rootcause.laix" = ["contract/*.json", "fixtures/*.json"]
+"rootcause.quality" = ["fixtures/*.json"]
 
 [tool.ruff]
 line-length = 120

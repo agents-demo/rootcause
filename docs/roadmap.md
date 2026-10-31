@@ -752,22 +752,22 @@ future promise; claim NPU, live connectors or customer data; position RootCause 
 
 ---
 
-## LAIX extraction (candidate module)
+## LAIX decision layer
 
-The portable decision layer is in server/rootcause/laix/ and documented in
-[docs/laix-module.md](laix-module.md). It is a candidate to lift into LAIX, not a rebrand of the app.
+LAIX is a pinned dependency (`laix @ git+…@v0.2.1`); the quality intervention policy is a RootCause
+plugin. See [docs/laix-module.md](laix-module.md).
 
-- [x] Portable contracts: signal, experience state, constraints, decision, record, outcome - no app imports
-- [x] Quality intervention policy: wait / ask / guide / act / verify / escalate, with why, evidence and costs
+- [x] LAIX installed from the pinned tag; the local `server/rootcause/laix/` package is gone
+- [x] Quality contracts and the `quality-intervention.v1` policy plugin stay in `server/rootcause/quality/`
+- [x] Quality signal -> LAIX `DecisionRequest` -> `Layer(policy=QualityPolicy())` -> app decision, record and action
+- [x] Always-on decision path; no native/shadow switch and no `ROOTCAUSE_LAIX` engine flag
 - [x] Outcome loop: recurrence after an action vs baseline, observational confidence and a non-causal label
-- [x] RootCause adapter and optional ROOTCAUSE_LAIX=1 scheduler integration
 - [x] /api/laix/status, /api/laix/decide, /api/laix/outcome, /api/laix/decisions
-- [x] Language-neutral JSON Schema and a seven-case agreement benchmark (python -m rootcause.laix.bench)
-- [x] Decision records persisted in the append-only audit when LAIX is enabled
-- [x] Policy, outcome and adapter tests
-- [ ] Lift laix/ into the LAIX runtime and replace the in-memory tracker with the LAIX experience-state store
+- [x] Quality JSON Schema and a seven-case agreement benchmark (`python -m rootcause.quality.bench`)
+- [x] Decision records persisted in the append-only audit
+- [x] Policy, replay, isolation, outcome and adapter tests
 - [x] Per-site LAIX config: interrupt/miss cost and approval via environment; budget from scan settings
-- [ ] Replace the rule policy with a calibrated scorer or bandit and replay it through LAIX-Bench
+- [ ] Replace the rule policy with a calibrated scorer or bandit and replay it through the quality bench
 - [ ] Causal outcome study on a real pilot with matching and a control window
 
 ---

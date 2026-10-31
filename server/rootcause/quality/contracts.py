@@ -1,10 +1,8 @@
-"""Portable contracts for the LAIX decision layer.
+"""Quality contracts for the RootCause policy plugin.
 
-Nothing in this package imports RootCause, FastAPI, SQLite or an agent framework. It is meant to be
-lifted into LAIX (Python runtime or SDK) as-is.
-
-The shapes follow the LAIX north interface: an app supplies signals, experience state, the outcome it
-wants and its constraints; LAIX returns a decision, its evidence, its confidence and its costs.
+These dataclasses are the vertical half of the decision layer. They stay in RootCause; LAIX receives
+them only as opaque values inside ``DecisionRequest.attributes``. The generic LAIX contract and the
+``Layer`` live in the installed ``laix`` package.
 """
 
 from __future__ import annotations

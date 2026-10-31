@@ -48,7 +48,12 @@ def test_ready_refuses_synthetic_records_in_production(tmp_path, monkeypatch):
 def test_laix_decision_and_outcome_endpoints(tmp_path, monkeypatch):
     for c in client(tmp_path, monkeypatch):
         status = c.get("/api/laix/status").json()
+        assert status["engine"] == "laix"
         assert status["policy"] == "quality-intervention.v1"
+        assert status["quality_policy"] == "quality-intervention.v1"
+        assert status["quality_policy_version"] == "1.0"
+        assert status["laix_version"]
+        assert status["schema_version"]
         assert "intervention" in status["components"]
 
         decision = c.post(
@@ -317,14 +322,15 @@ def test_proactive_brief_scan_notifications_and_settings(tmp_path, monkeypatch):
         assert follow.json()["status"] == "verified"
 
 def test_proactive_scan_reports_laix_decisions(tmp_path, monkeypatch):
-    monkeypatch.setenv("ROOTCAUSE_LAIX", "1")
     for c in client(tmp_path, monkeypatch):
         r = c.post("/api/proactive/scan", json={})
         assert r.status_code == 200
         laix = r.json()["laix"]
+        assert laix["engine"] == "laix"
         assert laix["enabled"] is True
         assert laix["policy"] == "quality-intervention.v1"
         assert laix["decisions"]
+        assert laix["records"] == laix["decisions"]
         records = c.get("/api/laix/decisions").json()
         assert records["count"] >= 1
         assert records["decisions"][0]["action"] in {"wait", "ask", "guide", "act", "verify", "escalate"}
@@ -357,7 +363,6 @@ def test_laix_outcome_loop_endpoints(tmp_path, monkeypatch):
         assert row["effect"] > 0
 
 def test_approval_auto_records_a_laix_outcome(tmp_path, monkeypatch):
-    monkeypatch.setenv("ROOTCAUSE_LAIX", "1")
     monkeypatch.setenv("ROOTCAUSE_LAIX_BASELINE", "0.5")
     for c in client(tmp_path, monkeypatch):
         approved = c.post(

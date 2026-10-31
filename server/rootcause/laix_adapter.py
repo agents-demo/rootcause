@@ -1,10 +1,11 @@
 """RootCause → LAIX adapter.
 
 This is the only file that knows both worlds. It maps a RootCause ``RiskSignal`` and the open watches
-to the portable LAIX contracts, calls the policy, and returns a decision plus its record.
+to a generic ``DecisionRequest``, calls the LAIX ``Layer`` with the RootCause quality policy plugin,
+and maps the returned ``LayerDecision`` back to the shape the app, API and scheduler already use.
 
-If RootCause is later rebuilt on LAIX, this adapter shrinks to implementing the LAIX south interface
-(read state, run skill, ask approval, stream events).
+LAIX owns the contract, the layer, the policy plugin interface, records and outcomes. RootCause owns
+the quality signal, the quality policy, the line/case/watch data and this adapter.
 """
 
 from __future__ import annotations
@@ -12,17 +13,22 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 
-from .laix import (
+from laix import DecisionRequest, Layer
+from laix.layer import Decision as LayerDecision
+
+from .models import RiskSignal, WatchCase
+from .quality import (
     Constraints,
     Decision,
     DecisionRecord,
     ExperienceState,
-    QualityInterventionPolicy,
+    QualityPolicy,
     Signal,
+    record_for,
 )
-from .models import RiskSignal, WatchCase
 
-POLICY = QualityInterventionPolicy()
+QUALITY_POLICY = QualityPolicy()
+LAYER = Layer(policy=QUALITY_POLICY)
 
 
 def signal_from_risk(signal: RiskSignal) -> Signal:
@@ -77,6 +83,43 @@ def constraints_for_scan(*, max_alerts: int, interruptions_used: int) -> Constra
     )
 
 
+def decision_from_layer(decision: LayerDecision, signal: Signal, state: ExperienceState) -> Decision:
+    expected_cost = decision.breakdown.interruption if decision.breakdown else 0.0
+    return Decision(
+        action=decision.verb,
+        confidence=decision.confidence,
+        why=list(decision.rationale.split("\n")) if decision.rationale else [],
+        evidence_ids=[ref.id for ref in decision.evidence],
+        expected_cost=expected_cost,
+        wait_cost=decision.cost_of_waiting,
+        requires_approval=decision.requires_approval,
+        policy=decision.policy_version or QUALITY_POLICY.name,
+        state_id=state.id,
+        signal_id=signal.id,
+    )
+
+
+def decide_quality(
+    signal: Signal,
+    state: ExperienceState,
+    constraints: Constraints,
+    *,
+    actor: str = "policy",
+) -> tuple[Decision, DecisionRecord]:
+    """One quality decision through ``Layer(policy=QualityPolicy())``."""
+    request = DecisionRequest(
+        subject=signal.id,
+        at=signal.at or "",
+        attributes={
+            "quality_signal": signal,
+            "quality_state": state,
+            "quality_constraints": constraints,
+        },
+    )
+    layer_decision = LAYER.decide(request)[0]
+    return decision_from_layer(layer_decision, signal, state), record_for(layer_decision, request, actor=actor)
+
+
 def decide_for_risk_signal(
     signal: RiskSignal,
     existing: Iterable[WatchCase],
@@ -87,6 +130,4 @@ def decide_for_risk_signal(
     laix_signal = signal_from_risk(signal)
     state = state_from_existing(signal, existing)
     constraints = constraints_for_scan(max_alerts=max_alerts, interruptions_used=interruptions_used)
-    decision = POLICY.decide(laix_signal, state, constraints)
-    record = POLICY.record(decision, laix_signal, state, constraints)
-    return decision, record
+    return decide_quality(laix_signal, state, constraints)
