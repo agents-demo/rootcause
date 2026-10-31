@@ -40,6 +40,22 @@ from ..engine.feedback import apply_priors, priors_from_corrections
 from ..engine.orchestrator import run_investigation
 from ..engine.ranking import explain, rank_hypotheses
 from ..engine.reporting import report_docx, report_html, report_markdown, report_pdf, report_rtf
+from ..laix import (
+    Constraints as LaixConstraints,
+)
+from ..laix import (
+    ExperienceState as LaixState,
+)
+from ..laix import (
+    FollowUp as LaixFollowUp,
+)
+from ..laix import (
+    QualityInterventionPolicy,
+    estimate_outcome,
+)
+from ..laix import (
+    Signal as LaixSignal,
+)
 from ..models import (
     AcceptRequest,
     ApprovalRequest,
@@ -970,7 +986,14 @@ async def proactive_scan(request: Request) -> dict[str, Any]:
     )
     for follow in reopened:
         rc.store.save_followup(follow.model_dump(mode="json"), actor="scheduler", detail="Recurrence guard reopened the follow-up")
-    return {"run": run_data, "signals": result["signals"], "opened": result["candidates"], "watchlist": rc.store.list_watches(), "reopened": [f.model_dump(mode="json") for f in reopened]}
+    return {
+        "run": run_data,
+        "signals": result["signals"],
+        "opened": result["candidates"],
+        "watchlist": rc.store.list_watches(),
+        "reopened": [f.model_dump(mode="json") for f in reopened],
+        "laix": result.get("laix", {"enabled": False, "decisions": []}),
+    }
 
 
 @app.get("/api/watch/{watch_id}")
@@ -1386,6 +1409,54 @@ def run() -> None:
 
     uvicorn.run("rootcause.api.app:app", host="127.0.0.1", port=8000, reload=False)
 
+
+@app.get("/api/laix/status")
+def laix_status() -> dict[str, Any]:
+    return {
+        "policy": "quality-intervention.v1",
+        "enabled": os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"},
+        "components": ["intervention", "outcome"],
+        "actions": ["wait", "ask", "guide", "act", "verify", "escalate"],
+        "note": (
+            "Portable decision layer. It reads signals, state and constraints; it does not approve a "
+            "cause, control a line or call a model."
+        ),
+    }
+
+
+@app.post("/api/laix/decide")
+async def laix_decide(request: Request) -> dict[str, Any]:
+    body = await request.json()
+    try:
+        signal = LaixSignal(**body["signal"])
+        state = LaixState(**body["state"])
+        constraints = LaixConstraints(**body.get("constraints", {}))
+    except (KeyError, TypeError) as exc:
+        raise HTTPException(400, f"invalid LAIX input: {exc}") from exc
+    policy = QualityInterventionPolicy()
+    decision = policy.decide(signal, state, constraints)
+    record = policy.record(decision, signal, state, constraints, actor=str(body.get("actor", "api")))
+    return {"decision": decision.as_dict(), "record": record.as_dict()}
+
+
+@app.post("/api/laix/outcome")
+async def laix_outcome(request: Request) -> dict[str, Any]:
+    body = await request.json()
+    action_id = body.get("action_id")
+    if not action_id:
+        raise HTTPException(400, "action_id is required")
+    try:
+        followups = [LaixFollowUp(**row) for row in body.get("followups", [])]
+    except TypeError as exc:
+        raise HTTPException(400, f"invalid follow-up: {exc}") from exc
+    outcome = estimate_outcome(
+        str(action_id),
+        str(body.get("action", "action")),
+        followups,
+        float(body.get("baseline_rate", 0.0)),
+        window_days=int(body.get("window_days", 30)),
+    )
+    return outcome.as_dict()
 
 # Serve the built SPA when present. The dev server proxies /api instead.
 if config.WEB_DIST.exists():

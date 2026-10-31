@@ -274,6 +274,10 @@ No line control. No automatic rejection. No factory data leaving the site. Read 
   engineer's initial ejector-pin guess, with prevention checks and a falsifier. See
   [the example case](docs/example-case.md) and the
   [1:40 walkthrough](web/public/demo/rootcause-walkthrough.mp4).
+- **LAIX extraction** — a portable decision layer under server/rootcause/laix/: the intervention
+  policy (wait / ask / guide / act / escalate), decision records and an outcome loop. RootCause wires
+  it through an adapter; ROOTCAUSE_LAIX=1 makes the proactive scheduler use it, and /api/laix/*
+  exposes it. See [the LAIX module](docs/laix-module.md).
 - **Manager proof and demo cut** — `/proof` packages the manager's numbers with honest labels and a
   print view; `/cut` is the 10-minute guided run with a clock, links and proof points. Scripts,
   props, reset and fallback are in [the demo runbook](docs/demo-runbook.md).

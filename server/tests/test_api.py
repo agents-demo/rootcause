@@ -45,6 +45,54 @@ def test_ready_refuses_synthetic_records_in_production(tmp_path, monkeypatch):
         assert detail["synthetic_cases"] == 4
 
 
+def test_laix_decision_and_outcome_endpoints(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        status = c.get("/api/laix/status").json()
+        assert status["policy"] == "quality-intervention.v1"
+        assert "intervention" in status["components"]
+
+        decision = c.post(
+            "/api/laix/decide",
+            json={
+                "signal": {
+                    "id": "SIG-API-1",
+                    "source": "test",
+                    "kind": "ewma",
+                    "line_id": "line-6",
+                    "parameter": "hydrogen",
+                    "value": 2.1,
+                    "baseline": 1.2,
+                    "z": 3.0,
+                    "severity": "high",
+                    "evidence_id": "EV-04",
+                },
+                "state": {"id": "line-6", "goal": "prevent escape", "phase": "watch", "confidence": 0.6},
+                "constraints": {"max_interruptions_per_shift": 10, "interruptions_used": 1},
+            },
+        )
+        assert decision.status_code == 200
+        body = decision.json()
+        assert body["decision"]["action"] in {"act", "guide"}
+        assert body["record"]["signal_id"] == "SIG-API-1"
+        assert body["decision"]["evidence_ids"] == ["EV-04"]
+
+        outcome = c.post(
+            "/api/laix/outcome",
+            json={
+                "action_id": "A-1",
+                "action": "venting-check",
+                "baseline_rate": 0.3,
+                "followups": [
+                    {"action_id": "A-1", "case_id": "RC-1", "at": "2026-10-30T00:00:00Z", "recurrence": False},
+                    {"action_id": "A-1", "case_id": "RC-2", "at": "2026-10-30T00:00:00Z", "recurrence": True},
+                ],
+            },
+        )
+        assert outcome.status_code == 200
+        assert outcome.json()["treated"] == 2
+        assert outcome.json()["causal"] is False
+
+
 def test_investigation_and_reject_flow(tmp_path, monkeypatch):
     for c in client(tmp_path, monkeypatch):
         inv = c.get("/api/cases/RC-0417").json()["investigation"]
@@ -268,3 +316,12 @@ def test_proactive_brief_scan_notifications_and_settings(tmp_path, monkeypatch):
         assert follow.status_code == 200
         assert follow.json()["status"] == "verified"
 
+def test_proactive_scan_reports_laix_decisions(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROOTCAUSE_LAIX", "1")
+    for c in client(tmp_path, monkeypatch):
+        r = c.post("/api/proactive/scan", json={})
+        assert r.status_code == 200
+        laix = r.json()["laix"]
+        assert laix["enabled"] is True
+        assert laix["policy"] == "quality-intervention.v1"
+        assert laix["decisions"]

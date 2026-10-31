@@ -749,6 +749,23 @@ future promise; claim NPU, live connectors or customer data; position RootCause 
 
 ---
 
+## LAIX extraction (candidate module)
+
+The portable decision layer is in server/rootcause/laix/ and documented in
+[docs/laix-module.md](laix-module.md). It is a candidate to lift into LAIX, not a rebrand of the app.
+
+- [x] Portable contracts: signal, experience state, constraints, decision, record, outcome - no app imports
+- [x] Quality intervention policy: wait / ask / guide / act / verify / escalate, with why, evidence and costs
+- [x] Outcome loop: recurrence after an action vs baseline, observational confidence and a non-causal label
+- [x] RootCause adapter and optional ROOTCAUSE_LAIX=1 scheduler integration
+- [x] /api/laix/status, /api/laix/decide, /api/laix/outcome
+- [x] Policy, outcome and adapter tests
+- [ ] Lift laix/ into the LAIX runtime and replace the in-memory tracker with the LAIX experience-state store
+- [ ] Replace the rule policy with a calibrated scorer or bandit and replay it through LAIX-Bench
+- [ ] Causal outcome study on a real pilot with matching and a control window
+
+---
+
 ## Recommended order - followed
 
 

@@ -7,6 +7,7 @@ a scan run. It never writes to a machine.
 
 from __future__ import annotations
 
+import os
 import time
 from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
@@ -66,6 +67,8 @@ def run_scan(
     existing_list = list(existing)
     candidates: list[WatchCase] = []
     suppressed = 0
+    use_laix = os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"}
+    laix_records: list[dict] = []
     priors = pattern_priors(existing_list)
     for signal in cleaned:
         if signal.line_id in blind_lines and signal.kind != "data_quality":
@@ -79,6 +82,19 @@ def run_scan(
         if duplicate_for(existing_list, key):
             suppressed += 1
             continue
+        if use_laix:
+            from ..laix_adapter import decide_for_risk_signal
+
+            decision, record = decide_for_risk_signal(
+                signal,
+                [*existing_list, *candidates],
+                max_alerts=max_alerts,
+                interruptions_used=len(existing_list),
+            )
+            laix_records.append(record.as_dict())
+            if decision.action == "wait":
+                suppressed += 1
+                continue
         watch = build_watch(
             watch_id=f"W-{now.strftime('%H%M%S')}-{len(candidates) + 1}",
             signals=[signal],
@@ -105,7 +121,16 @@ def run_scan(
         lag_seconds=0,
         note="Shadow mode: no notifications sent." if mode == "shadow" else "Live scan.",
     )
-    return {"run": run, "signals": [s.model_dump() for s in cleaned], "candidates": [w.model_dump() for w in kept]}
+    return {
+        "run": run,
+        "signals": [s.model_dump() for s in cleaned],
+        "candidates": [w.model_dump() for w in kept],
+        "laix": {
+            "enabled": use_laix,
+            "policy": "quality-intervention.v1",
+            "decisions": laix_records,
+        },
+    }
 
 
 def health(runs: Iterable[dict[str, Any]], *, now: datetime | None = None, interval_minutes: int = 15) -> dict[str, Any]:
