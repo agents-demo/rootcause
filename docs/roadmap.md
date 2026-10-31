@@ -731,6 +731,8 @@ still open.
 - [x] Blank first run and own-data flow — My workspace opens empty, /cases/new creates a case, annotate/review/sign works; reference data is one switch away (Admin, palette, More, Home)
 - [x] A sample case inside My workspace and a repeatable first-run script — web/public/examples/pump-housing + [example case](example-case.md)
 - [x] Evidence analysis for own cases — CSV sensor/batch parsing, computed signals, evidence-weighted cause ranking, prevention checks and falsifiers; image/ONNX ingestion and live connectors remain open
+- [x] LAIX outcome persistence — laix_actions / laix_followups, /api/laix/outcomes; recurrence vs baseline, observational
+- [ ] Auto-record LAIX actions from report approval / watch conversion and show outcomes in the dashboard
 - [ ] Prevention loop for own cases — a persisted follow-up/watch created from the analysis, not only advice on the case
 - [x] Interface 2026 for the daily shell — shipped in Phase 6, Lighthouse 100/100/100 across routes
 - [ ] Adoption instrumentation: task families per user, time-to-first-decision, queue clearance, sign-off time

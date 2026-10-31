@@ -328,3 +328,30 @@ def test_proactive_scan_reports_laix_decisions(tmp_path, monkeypatch):
         records = c.get("/api/laix/decisions").json()
         assert records["count"] >= 1
         assert records["decisions"][0]["action"] in {"wait", "ask", "guide", "act", "verify", "escalate"}
+
+def test_laix_outcome_loop_endpoints(tmp_path, monkeypatch):
+    for c in client(tmp_path, monkeypatch):
+        action = c.post(
+            "/api/laix/actions",
+            json={
+                "action": "venting-check",
+                "case_id": "RC-1",
+                "line_id": "line-6",
+                "window_days": 30,
+                "baseline_rate": 0.5,
+            },
+        )
+        assert action.status_code == 200
+        action_id = action.json()["id"]
+        for case_id, recurrence in (("RC-2", False), ("RC-3", False), ("RC-4", True)):
+            follow = c.post(
+                f"/api/laix/actions/{action_id}/followup",
+                json={"case_id": case_id, "recurrence": recurrence, "line_id": "line-6"},
+            )
+            assert follow.status_code == 200
+        outcomes = c.get("/api/laix/outcomes").json()
+        row = next(item for item in outcomes["outcomes"] if item["action_id"] == action_id)
+        assert row["treated"] == 3
+        assert row["recurred"] == 1
+        assert row["causal"] is False
+        assert row["effect"] > 0

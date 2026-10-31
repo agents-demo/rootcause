@@ -11,6 +11,7 @@ import csv
 import io
 import json
 import os
+import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -1476,6 +1477,81 @@ async def laix_outcome(request: Request) -> dict[str, Any]:
         window_days=int(body.get("window_days", 30)),
     )
     return outcome.as_dict()
+
+@app.get("/api/laix/actions")
+def laix_actions(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    actions = rc.store.list_laix_actions()
+    return {"count": len(actions), "actions": actions}
+
+
+@app.post("/api/laix/actions")
+async def laix_record_action(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    action_name = body.get("action")
+    if not action_name:
+        raise HTTPException(400, "action is required")
+    record = {
+        "id": str(body.get("id") or f"ACT-{uuid.uuid4().hex[:12]}"),
+        "at": str(body.get("at") or now_iso()),
+        "action": str(action_name),
+        "case_id": str(body.get("case_id", "")),
+        "line_id": str(body.get("line_id", "")),
+        "window_days": int(body.get("window_days", 30)),
+        "baseline_rate": float(body.get("baseline_rate", 0.0)),
+        "note": str(body.get("note", "")),
+    }
+    return rc.store.save_laix_action(record, actor=str(body.get("actor", "api")))
+
+
+@app.post("/api/laix/actions/{action_id}/followup")
+async def laix_record_followup(action_id: str, request: Request) -> dict[str, Any]:
+    rc = state(request)
+    body = await request.json()
+    if not isinstance(body.get("recurrence"), bool):
+        raise HTTPException(400, "recurrence must be true or false")
+    followup = {
+        "action_id": action_id,
+        "case_id": str(body.get("case_id", "")),
+        "at": str(body.get("at") or now_iso()),
+        "recurrence": body["recurrence"],
+        "line_id": str(body.get("line_id", "")),
+        "defect": str(body.get("defect", "")),
+        "notes": str(body.get("notes", "")),
+    }
+    return rc.store.add_laix_followup(followup, actor=str(body.get("actor", "api")))
+
+
+@app.get("/api/laix/outcomes")
+def laix_outcomes(request: Request) -> dict[str, Any]:
+    rc = state(request)
+    actions = rc.store.list_laix_actions()
+    followups = rc.store.list_laix_followups()
+    outcomes = []
+    for action in actions:
+        rows = [
+            LaixFollowUp(
+                action_id=row["action_id"],
+                case_id=row.get("case_id", ""),
+                at=row["at"],
+                recurrence=bool(row.get("recurrence")),
+                line_id=row.get("line_id", ""),
+                defect=row.get("defect", ""),
+                notes=row.get("notes", ""),
+            )
+            for row in followups
+            if row["action_id"] == action["id"]
+        ]
+        outcome = estimate_outcome(
+            action["id"],
+            action["action"],
+            rows,
+            float(action.get("baseline_rate", 0.0)),
+            window_days=int(action.get("window_days", 30)),
+        )
+        outcomes.append(outcome.as_dict())
+    return {"count": len(outcomes), "outcomes": outcomes}
 
 # Serve the built SPA when present. The dev server proxies /api instead.
 if config.WEB_DIST.exists():

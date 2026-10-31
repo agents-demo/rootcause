@@ -167,3 +167,31 @@ def test_json_schema_covers_the_contract():
     assert contract["$defs"]["Decision"]["properties"]["action"]["enum"] == [
         "wait", "ask", "guide", "act", "verify", "escalate"
     ]
+
+def test_outcome_loop_is_persisted(tmp_path):
+    from rootcause.store.db import Store
+
+    store = Store(tmp_path / "laix.sqlite3")
+    store.save_laix_action(
+        {
+            "id": "ACT-T1",
+            "at": "2026-10-31T00:00:00Z",
+            "action": "venting-check",
+            "case_id": "RC-1",
+            "line_id": "line-6",
+            "window_days": 30,
+            "baseline_rate": 0.3,
+            "note": "test",
+        }
+    )
+    store.add_laix_followup(
+        {"action_id": "ACT-T1", "case_id": "RC-2", "at": "2026-11-30T00:00:00Z", "recurrence": False}
+    )
+    store.add_laix_followup(
+        {"action_id": "ACT-T1", "case_id": "RC-3", "at": "2026-11-30T00:00:00Z", "recurrence": True}
+    )
+    assert store.list_laix_actions()[0]["id"] == "ACT-T1"
+    rows = store.list_laix_followups("ACT-T1")
+    assert len(rows) == 2
+    assert sum(1 for row in rows if row["recurrence"]) == 1
+    store.close()

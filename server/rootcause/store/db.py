@@ -102,6 +102,26 @@ CREATE TABLE IF NOT EXISTS followups (
   payload TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS laix_actions (
+  id TEXT PRIMARY KEY,
+  at TEXT NOT NULL,
+  action TEXT NOT NULL,
+  case_id TEXT NOT NULL,
+  line_id TEXT NOT NULL,
+  window_days INTEGER NOT NULL,
+  baseline_rate REAL NOT NULL,
+  payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS laix_followups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  action_id TEXT NOT NULL,
+  case_id TEXT NOT NULL,
+  at TEXT NOT NULL,
+  recurrence INTEGER NOT NULL,
+  line_id TEXT NOT NULL,
+  defect TEXT NOT NULL,
+  notes TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS notifications (
   id TEXT PRIMARY KEY,
   at TEXT NOT NULL,
@@ -487,6 +507,67 @@ class Store:
         )
         self._audit(actor, "followup.updated", followup["id"], detail or followup.get("status", ""))
         self._conn.commit()
+
+    def save_laix_action(self, action: dict[str, Any], *, actor: str = "system", detail: str = "") -> dict[str, Any]:
+        self._conn.execute(
+            "INSERT OR REPLACE INTO laix_actions(id, at, action, case_id, line_id, window_days, baseline_rate, payload) VALUES (?,?,?,?,?,?,?,?)",
+            (
+                action["id"],
+                action["at"],
+                action["action"],
+                action.get("case_id", ""),
+                action.get("line_id", ""),
+                int(action.get("window_days", 30)),
+                float(action.get("baseline_rate", 0.0)),
+                json.dumps(action),
+            ),
+        )
+        self._audit(actor, "laix.action", action["id"], detail or f"{action['action']} on {action.get('case_id', '')}")
+        self._conn.commit()
+        return action
+
+    def list_laix_actions(self) -> list[dict[str, Any]]:
+        rows = self._conn.execute("SELECT payload FROM laix_actions ORDER BY at DESC").fetchall()
+        return [json.loads(row["payload"]) for row in rows]
+
+    def add_laix_followup(self, followup: dict[str, Any], *, actor: str = "system") -> dict[str, Any]:
+        cursor = self._conn.execute(
+            "INSERT INTO laix_followups(action_id, case_id, at, recurrence, line_id, defect, notes) VALUES (?,?,?,?,?,?,?)",
+            (
+                followup["action_id"],
+                followup.get("case_id", ""),
+                followup["at"],
+                1 if followup.get("recurrence") else 0,
+                followup.get("line_id", ""),
+                followup.get("defect", ""),
+                followup.get("notes", ""),
+            ),
+        )
+        followup["id"] = cursor.lastrowid
+        self._audit(actor, "laix.followup", followup["action_id"], "recurrence" if followup.get("recurrence") else "no recurrence")
+        self._conn.commit()
+        return followup
+
+    def list_laix_followups(self, action_id: str | None = None) -> list[dict[str, Any]]:
+        if action_id:
+            rows = self._conn.execute(
+                "SELECT * FROM laix_followups WHERE action_id=? ORDER BY at DESC", (action_id,)
+            ).fetchall()
+        else:
+            rows = self._conn.execute("SELECT * FROM laix_followups ORDER BY at DESC").fetchall()
+        return [
+            {
+                "id": row["id"],
+                "action_id": row["action_id"],
+                "case_id": row["case_id"],
+                "at": row["at"],
+                "recurrence": bool(row["recurrence"]),
+                "line_id": row["line_id"],
+                "defect": row["defect"],
+                "notes": row["notes"],
+            }
+            for row in rows
+        ]
 
     def list_notifications(self, unread_only: bool = False) -> list[dict[str, Any]]:
         query = "SELECT payload, read FROM notifications"
