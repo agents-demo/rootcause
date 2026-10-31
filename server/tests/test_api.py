@@ -355,3 +355,28 @@ def test_laix_outcome_loop_endpoints(tmp_path, monkeypatch):
         assert row["recurred"] == 1
         assert row["causal"] is False
         assert row["effect"] > 0
+
+def test_approval_auto_records_a_laix_outcome(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROOTCAUSE_LAIX", "1")
+    monkeypatch.setenv("ROOTCAUSE_LAIX_BASELINE", "0.5")
+    for c in client(tmp_path, monkeypatch):
+        approved = c.post(
+            "/api/cases/RC-0417/approve",
+            json={"actor": "M. Weber", "scope": "report", "note": "test"},
+        )
+        assert approved.status_code == 200
+        status = c.get("/api/laix/status").json()
+        assert status["auto_record"] is True
+        actions = c.get("/api/laix/actions").json()["actions"]
+        action = next(item for item in actions if item["case_id"] == "RC-0417")
+        verified = c.post(
+            f"/api/followups/{action['id']}/verify",
+            json={"parameter_returned": False, "defect_rate_delta": 0.0},
+        )
+        assert verified.status_code == 200
+        outcomes = c.get("/api/laix/outcomes").json()["outcomes"]
+        outcome = next(item for item in outcomes if item["action_id"] == action["id"])
+        assert outcome["treated"] == 1
+        assert outcome["causal"] is False
+        assert outcome["case_id"] == "RC-0417"
+        assert outcome["next_check_at"]

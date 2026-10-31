@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useStore } from "../lib/store";
 import { eur, fmtDate } from "../lib/engine";
 import { Icon } from "../components/Icon";
+import { LaixPanel } from "../components/LaixPanel";
 import { PageHead, StatusBadge } from "../components/UI";
 
 export default function Admin() {
@@ -106,6 +107,8 @@ export default function Admin() {
           </div>
         </div>
       </div>
+
+      <LaixPanel />
 
       <div className="grid" style={{ gridTemplateColumns: "1.35fr 1fr", alignItems: "start" }}>
         <div className="col-stack">

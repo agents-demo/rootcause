@@ -9,6 +9,7 @@ If RootCause is later rebuilt on LAIX, this adapter shrinks to implementing the 
 
 from __future__ import annotations
 
+import os
 from collections.abc import Iterable
 
 from .laix import (
@@ -68,11 +69,11 @@ def constraints_for_scan(*, max_alerts: int, interruptions_used: int) -> Constra
     return Constraints(
         max_interruptions_per_shift=max(1, int(max_alerts)),
         interruptions_used=max(0, int(interruptions_used)),
-        interrupt_cost=1.0,
-        miss_cost=10.0,
+        interrupt_cost=float(os.getenv("ROOTCAUSE_LAIX_INTERRUPT_COST", "1.0")),
+        miss_cost=float(os.getenv("ROOTCAUSE_LAIX_MISS_COST", "10.0")),
         latency_budget_ms=1000,
         risk_ceiling="critical",
-        require_approval=False,  # the app only opens a watch/notification; it never controls the line
+        require_approval=os.getenv("ROOTCAUSE_LAIX_REQUIRE_APPROVAL", "0").lower() in {"1", "true", "yes"},  # the app only opens a watch/notification; it never controls the line
     )
 
 

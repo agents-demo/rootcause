@@ -732,7 +732,8 @@ still open.
 - [x] A sample case inside My workspace and a repeatable first-run script — web/public/examples/pump-housing + [example case](example-case.md)
 - [x] Evidence analysis for own cases — CSV sensor/batch parsing, computed signals, evidence-weighted cause ranking, prevention checks and falsifiers; image/ONNX ingestion and live connectors remain open
 - [x] LAIX outcome persistence — laix_actions / laix_followups, /api/laix/outcomes; recurrence vs baseline, observational
-- [ ] Auto-record LAIX actions from report approval / watch conversion and show outcomes in the dashboard
+- [x] Auto-record LAIX actions from report approval and show outcomes in the Admin panel
+- [ ] Auto-record from watch conversion and expose outcomes in the manager dashboard
 - [ ] Prevention loop for own cases — a persisted follow-up/watch created from the analysis, not only advice on the case
 - [x] Interface 2026 for the daily shell — shipped in Phase 6, Lighthouse 100/100/100 across routes
 - [ ] Adoption instrumentation: task families per user, time-to-first-decision, queue clearance, sign-off time
@@ -765,6 +766,7 @@ The portable decision layer is in server/rootcause/laix/ and documented in
 - [x] Decision records persisted in the append-only audit when LAIX is enabled
 - [x] Policy, outcome and adapter tests
 - [ ] Lift laix/ into the LAIX runtime and replace the in-memory tracker with the LAIX experience-state store
+- [x] Per-site LAIX config: interrupt/miss cost and approval via environment; budget from scan settings
 - [ ] Replace the rule policy with a calibrated scorer or bandit and replay it through LAIX-Bench
 - [ ] Causal outcome study on a real pilot with matching and a control window
 

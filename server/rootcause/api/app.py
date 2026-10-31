@@ -14,7 +14,7 @@ import os
 import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -78,6 +78,24 @@ from ..proactive.privacy import sanitize_note
 from ..proactive.queue import OfflineQueue
 from ..research import predictive
 from ..tenancy import DEFAULT_TENANT, StoreRouter, current_tenant, set_tenant
+
+
+def _laix_enabled() -> bool:
+    return os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"}
+
+
+def _laix_baseline() -> float:
+    try:
+        return max(0.0, float(os.getenv("ROOTCAUSE_LAIX_BASELINE", "0")))
+    except ValueError:
+        return 0.0
+
+
+def _laix_window_days() -> int:
+    try:
+        return max(1, int(os.getenv("ROOTCAUSE_LAIX_WINDOW_DAYS", "30")))
+    except ValueError:
+        return 30
 
 
 def load_pack() -> dict[str, Any]:
@@ -592,6 +610,22 @@ def approve(case_id: str, body: ApprovalRequest, request: Request) -> dict[str, 
                 watch_id=watch["id"] if watch else None,
             )
             rc.store.save_followup(follow.model_dump(mode="json"), actor=body.actor, detail="Post-fix monitoring window opened")
+    if _laix_enabled() and _laix_baseline() > 0:
+        case_follow = next((f for f in rc.store.list_followups() if f.get("case_id") == case_id), None)
+        if case_follow:
+            rc.store.save_laix_action(
+                {
+                    "id": case_follow["id"],
+                    "at": now_iso(),
+                    "action": "post-fix monitoring",
+                    "case_id": case_id,
+                    "line_id": s["case"]["line_id"],
+                    "window_days": _laix_window_days(),
+                    "baseline_rate": _laix_baseline(),
+                    "note": "auto-recorded from report approval",
+                },
+                actor=body.actor,
+            )
     return {"case": updated, "investigation": rc.investigation(s)}
 
 
@@ -1383,6 +1417,20 @@ async def verify_followup(followup_id: str, request: Request) -> dict[str, Any]:
         recurrence_watch_id=body.get("recurrence_watch_id"),
     )
     rc.store.save_followup(follow.model_dump(mode="json"), actor=body.get("actor", "M. Weber"), detail=follow.note)
+    if _laix_enabled() and any(action["id"] == followup_id for action in rc.store.list_laix_actions()):
+        case = rc.store.get_case(follow.case_id) or {}
+        rc.store.add_laix_followup(
+            {
+                "action_id": followup_id,
+                "case_id": follow.case_id,
+                "at": now_iso(),
+                "recurrence": bool(follow.parameter_returned),
+                "line_id": str(case.get("line_id", "")),
+                "defect": follow.title,
+                "notes": follow.note,
+            },
+            actor=body.get("actor", "M. Weber"),
+        )
     return follow.model_dump(mode="json")
 
 
@@ -1434,7 +1482,12 @@ def laix_decisions(request: Request, limit: int = 50) -> dict[str, Any]:
 def laix_status() -> dict[str, Any]:
     return {
         "policy": "quality-intervention.v1",
-        "enabled": os.getenv("ROOTCAUSE_LAIX", "0").lower() in {"1", "true", "yes"},
+        "enabled": _laix_enabled(),
+        "auto_record": _laix_enabled() and _laix_baseline() > 0,
+        "baseline_rate": _laix_baseline(),
+        "window_days": _laix_window_days(),
+        "interrupt_cost": float(os.getenv("ROOTCAUSE_LAIX_INTERRUPT_COST", "1.0")),
+        "miss_cost": float(os.getenv("ROOTCAUSE_LAIX_MISS_COST", "10.0")),
         "components": ["intervention", "outcome"],
         "actions": ["wait", "ask", "guide", "act", "verify", "escalate"],
         "note": (
@@ -1550,7 +1603,18 @@ def laix_outcomes(request: Request) -> dict[str, Any]:
             float(action.get("baseline_rate", 0.0)),
             window_days=int(action.get("window_days", 30)),
         )
-        outcomes.append(outcome.as_dict())
+        data = outcome.as_dict()
+        data["case_id"] = action.get("case_id", "")
+        data["line_id"] = action.get("line_id", "")
+        try:
+            started = datetime.fromisoformat(str(action.get("at", "")).replace("Z", "+00:00"))
+            next_check = started + timedelta(days=int(action.get("window_days", 30)))
+            data["next_check_at"] = next_check.isoformat().replace("+00:00", "Z")
+            data["due"] = next_check <= datetime.now(started.tzinfo)
+        except (TypeError, ValueError):
+            data["next_check_at"] = None
+            data["due"] = False
+        outcomes.append(data)
     return {"count": len(outcomes), "outcomes": outcomes}
 
 # Serve the built SPA when present. The dev server proxies /api instead.
