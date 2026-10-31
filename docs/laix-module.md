@@ -33,8 +33,17 @@ rules first; a calibrated scorer or bandit can replace `_score` without changing
 
 ## The outcome loop
 
-`QualityOutcomeTracker` records an action and its follow-ups (recurrence yes/no) and returns an
-`Outcome`:
+RootCause persists the loop in SQLite (`laix_actions`, `laix_followups`). `QualityOutcomeTracker`
+and `estimate_outcome` compute it; the API records actions and follow-ups:
+
+```bash
+GET  /api/laix/actions
+POST /api/laix/actions                  # action, case, line, baseline, window
+POST /api/laix/actions/{id}/followup    # recurrence true/false
+GET  /api/laix/outcomes                 # treated, recurred, effect, confidence
+```
+
+It returns an `Outcome`:
 
 - treated cases, recurrences, treated rate,
 - baseline rate, relative effect,
@@ -42,7 +51,8 @@ rules first; a calibrated scorer or bandit can replace `_score` without changing
 - `causal: false` and a note that this is observational, not a causal claim.
 
 This is the piece RootCause was missing: a corrective action now has a measurable “did it help?”
-answer instead of only “it was done”.
+answer instead of only “it was done”. The app does not auto-record actions from report approval yet;
+the caller supplies the real baseline and window.
 
 ## How RootCause uses it
 
@@ -54,14 +64,16 @@ ROOTCAUSE_LAIX=1
 
 When enabled, `scheduler.run_scan` calls the policy for each candidate signal. `wait` suppresses the
 watch; `ask`, `guide`, `act` and `escalate` open it. The scan result includes a `laix` block with the
-policy version and every decision record, so the decision is auditable next to the watch.
+policy version and every decision record; the records are also written to the append-only audit as
+`laix.decision`, so the “what, why, evidence, confidence” survives the request.
 
-There are also HTTP endpoints for a future TypeScript SDK or another app:
+There are HTTP endpoints for a future TypeScript SDK or another app:
 
 ```bash
 GET  /api/laix/status
+GET  /api/laix/decisions # recent decision records from the audit trail
 POST /api/laix/decide    # signal + state + constraints -> decision + record
-POST /api/laix/outcome   # action + follow-ups + baseline -> outcome
+POST /api/laix/outcome   # one-off estimate from supplied follow-ups
 ```
 
 The app does **not** use LAIX to approve a cause, control a line, or call a model. The engineer still
@@ -70,7 +82,7 @@ decides and signs.
 ## How to lift it into LAIX
 
 1. Copy `server/rootcause/laix/` into the LAIX runtime/SDK. It has no app dependency.
-2. Replace `QualityOutcomeTracker` (in-memory) with the LAIX experience-state store.
+2. Replace the SQLite-backed `laix_actions` / `laix_followups` store with the LAIX experience-state store.
 3. Keep `laix_adapter.py` in RootCause as the south-interface implementation: read state, run a skill,
    ask for approval, stream events.
 4. Add the policy to the LAIX decision registry. The contract is the north interface in
