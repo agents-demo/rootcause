@@ -758,7 +758,9 @@ The portable decision layer is in server/rootcause/laix/ and documented in
 - [x] Quality intervention policy: wait / ask / guide / act / verify / escalate, with why, evidence and costs
 - [x] Outcome loop: recurrence after an action vs baseline, observational confidence and a non-causal label
 - [x] RootCause adapter and optional ROOTCAUSE_LAIX=1 scheduler integration
-- [x] /api/laix/status, /api/laix/decide, /api/laix/outcome
+- [x] /api/laix/status, /api/laix/decide, /api/laix/outcome, /api/laix/decisions
+- [x] Language-neutral JSON Schema and a seven-case agreement benchmark (python -m rootcause.laix.bench)
+- [x] Decision records persisted in the append-only audit when LAIX is enabled
 - [x] Policy, outcome and adapter tests
 - [ ] Lift laix/ into the LAIX runtime and replace the in-memory tracker with the LAIX experience-state store
 - [ ] Replace the rule policy with a calibrated scorer or bandit and replay it through LAIX-Bench

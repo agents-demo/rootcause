@@ -147,3 +147,23 @@ def test_adapter_maps_risk_signal_and_decision():
     assert decision.action in {"act", "guide"}
     assert record.signal_id == "SIG-9"
     assert record.approval in {"pending", "not_required"}
+
+def test_bench_reaches_full_agreement():
+    from rootcause.laix.bench import run
+
+    report = run()
+    assert report["cases"] >= 7
+    assert report["fail"] == 0
+    assert report["agreement"] == 1.0
+    assert report["intervention_precision"] == 1.0
+
+
+def test_json_schema_covers_the_contract():
+    from rootcause.laix.schema import schema
+
+    contract = schema()
+    for name in ("Signal", "ExperienceState", "Constraints", "Decision", "DecisionRecord", "FollowUp", "Outcome"):
+        assert name in contract["$defs"]
+    assert contract["$defs"]["Decision"]["properties"]["action"]["enum"] == [
+        "wait", "ask", "guide", "act", "verify", "escalate"
+    ]

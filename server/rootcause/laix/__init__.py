@@ -23,6 +23,7 @@ from .contracts import (
 )
 from .intervention import QualityInterventionPolicy, decision_summary
 from .outcome import QualityOutcomeTracker, estimate_outcome
+from .schema import JSON_SCHEMA, schema
 
 __all__ = [
     "Action",
@@ -36,6 +37,8 @@ __all__ = [
     "QualityOutcomeTracker",
     "Severity",
     "Signal",
+    "JSON_SCHEMA",
     "decision_summary",
     "estimate_outcome",
+    "schema",
 ]

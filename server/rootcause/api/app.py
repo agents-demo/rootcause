@@ -949,6 +949,9 @@ async def proactive_scan(request: Request) -> dict[str, Any]:
     run = result["run"]
     run_data = run.model_dump(mode="json") if hasattr(run, "model_dump") else run
     rc.store.save_scan_run(run_data)
+    for record in result.get("laix", {}).get("decisions", []):
+        rc.store._audit("laix", "laix.decision", str(record.get("signal_id", "")), json.dumps(record))
+    rc.store._conn.commit()
     for candidate in result["candidates"]:
         w = _as_watch(candidate)
         rc.store.save_watch(candidate, actor="scheduler", action="watch.opened", detail=f"Open watch {w.id}: {w.title}")
@@ -1408,6 +1411,22 @@ def run() -> None:
     import uvicorn
 
     uvicorn.run("rootcause.api.app:app", host="127.0.0.1", port=8000, reload=False)
+
+
+@app.get("/api/laix/decisions")
+def laix_decisions(request: Request, limit: int = 50) -> dict[str, Any]:
+    rc = state(request)
+    decisions: list[dict[str, Any]] = []
+    for row in rc.store.audits(limit=500):
+        if row["action"] != "laix.decision":
+            continue
+        try:
+            decisions.append(json.loads(row["detail"]))
+        except (TypeError, ValueError):
+            continue
+        if len(decisions) >= max(1, limit):
+            break
+    return {"count": len(decisions), "decisions": decisions}
 
 
 @app.get("/api/laix/status")

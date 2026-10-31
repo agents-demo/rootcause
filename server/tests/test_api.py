@@ -325,3 +325,6 @@ def test_proactive_scan_reports_laix_decisions(tmp_path, monkeypatch):
         assert laix["enabled"] is True
         assert laix["policy"] == "quality-intervention.v1"
         assert laix["decisions"]
+        records = c.get("/api/laix/decisions").json()
+        assert records["count"] >= 1
+        assert records["decisions"][0]["action"] in {"wait", "ask", "guide", "act", "verify", "escalate"}
